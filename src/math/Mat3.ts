@@ -73,8 +73,23 @@ export class Mat3 extends Base {
     return this;
   }
   // 单位
-  static identity() {
+  static E() {
     return new Mat3(1, 0, 0, 0, 1, 0, 0, 0, 1);
+  }
+
+  // 零
+  static Zero() {
+    return new Mat3(0, 0, 0, 0, 0, 0, 0, 0, 0);
+  }
+
+  identity() {
+    this.elements = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+    return this;
+  }
+
+  empty() {
+    this.elements = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    return this;
   }
 
   // 转置
@@ -109,10 +124,56 @@ export class Mat3 extends Base {
 
   }
 
+  // 伴随，共轭
+  adjugate() {
+    let ele = this.elements;
+    let a00 = ele[0], a01 = ele[1], a02 = ele[2];
+    let a10 = ele[3], a11 = ele[4], a12 = ele[5];
+    let a20 = ele[6], a21 = ele[7], a22 = ele[8];
+
+    ele[0] = (a11 * a22 - a12 * a21);
+    ele[1] = (a02 * a21 - a01 * a22);
+    ele[2] = (a01 * a12 - a02 * a11);
+    ele[3] = (a12 * a20 - a10 * a22);
+    ele[4] = (a00 * a22 - a02 * a20);
+    ele[5] = (a02 * a10 - a00 * a12);
+    ele[6] = (a10 * a21 - a11 * a20);
+    ele[7] = (a01 * a20 - a00 * a21);
+    ele[8] = (a00 * a11 - a01 * a10);
+
+    return this;
+  }
+
   // 逆：
   // 行列式为0的矩阵，不可逆；行列式不为零的矩阵，可逆
   inverse() {
+    let ele = this.elements;
+    let a00 = ele[0], a01 = ele[1], a02 = ele[2];
+    let a10 = ele[3], a11 = ele[4], a12 = ele[5];
+    let a20 = ele[6], a21 = ele[7], a22 = ele[8];
 
+    let b01 = a22 * a11 - a12 * a21;
+    let b11 = -a22 * a10 + a12 * a20;
+    let b21 = a21 * a10 - a11 * a20;
+
+    // Calculate the determinant
+    let det = a00 * b01 + a01 * b11 + a02 * b21;
+
+    if (!det) {
+      return null;
+    }
+    det = 1.0 / det;
+
+    ele[0] = b01 * det;
+    ele[1] = (-a22 * a01 + a02 * a21) * det;
+    ele[2] = (a12 * a01 - a02 * a11) * det;
+    ele[3] = b11 * det;
+    ele[4] = (a22 * a00 - a02 * a20) * det;
+    ele[5] = (-a12 * a00 + a02 * a10) * det;
+    ele[6] = b21 * det;
+    ele[7] = (-a21 * a00 + a01 * a20) * det;
+    ele[8] = (a11 * a00 - a01 * a10) * det;
+    return this;
   }
   // 行（列）提取公因子；
   // 某一行（列）乘以一个常数加到另一行（列）；
@@ -121,7 +182,12 @@ export class Mat3 extends Base {
   // 行列式： 1、行列式就是线性变换下的图形面积或体积的伸缩因子
   //         2、构成的超平行多面体的有向面积或有向体积
   det() {
+    let ele = this.elements;
+    let r00 = ele[0], r01 = ele[1], r02 = ele[2];
+    let r10 = ele[3], r11 = ele[4], r12 = ele[5];
+    let r20 = ele[6], r21 = ele[7], r22 = ele[8];
 
+    return r00 * (r22 * r11 - r12 * r21) + r01 * (-r22 * r10 + r12 * r20) + r02 * (r21 * r10 - r11 * r20);
   }
 
   clone() {
@@ -130,6 +196,6 @@ export class Mat3 extends Base {
   }
 
   toString() {
-    return `(${JSON.stringify(this.elements)})`;
+    return `Mat3(${JSON.stringify(this.elements)})`;
   }
 }

@@ -20,10 +20,17 @@ export class Vec2 extends Base {
     return this;
   }
 
-  // 数乘
-  mul(scalar: number) {
-    this.x *= scalar;
-    this.y *= scalar;
+  // 乘
+  mul(v: number | Vec2) {
+    if (v instanceof Vec2) {
+      // === dot
+      this.x *= v.x;
+      this.y *= v.y;
+    } else {
+      this.x *= v;
+      this.y *= v;
+    }
+
     return this;
   }
 
@@ -84,6 +91,6 @@ export class Vec2 extends Base {
   }
 
   toString() {
-    return `(x=${this.x},y=${this.y})`;
+    return `Vec2(${this.x},${this.y})`;
   }
 }

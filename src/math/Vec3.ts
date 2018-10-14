@@ -23,10 +23,18 @@ export class Vec3 extends Base {
   }
 
   // 数乘
-  mul(scalar: number) {
-    this.x *= scalar;
-    this.y *= scalar;
-    this.z *= scalar;
+  mul(v: number | Vec3) {
+    if (v instanceof Vec3) {
+      // === dot
+      this.x *= v.x;
+      this.y *= v.y;
+      this.z *= v.z;
+    } else {
+      this.x *= v;
+      this.y *= v;
+      this.z *= v;
+    }
+
     return this;
   }
 
@@ -50,6 +58,16 @@ export class Vec3 extends Base {
     this.x *= -1;
     this.y *= -1;
     this.z *= -1;
+    return this;
+  }
+
+  normalize() {
+    let length = this.length();
+    if (length !== 0) {
+      this.x /= length;
+      this.y /= length;
+      this.z /= length;
+    }
     return this;
   }
 
@@ -80,6 +98,6 @@ export class Vec3 extends Base {
   }
 
   toString() {
-    return `(x=${this.x},y=${this.y},z=${this.z})`
+    return `Vec3(${this.x},${this.y},${this.z})`
   }
 }
