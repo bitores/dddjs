@@ -1,35 +1,44 @@
-const V = require('./V.js');
-
-class V3 extends V {
-  constructor(x, y, z) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
+import Base from '../Base';
+export class Vec3 extends Base {
+  constructor(public x: number = 0, public y: number = 0, public z: number = 0) {
+    super()
   }
 
-  add(x, y, z) {
+  get className() {
+    return 'Vec3';
+  }
+
+  add(x: number, y: number, z: number) {
     this.x += x;
     this.y += y;
     this.z += z;
     return this;
   }
 
-  sub(x, y, z) {
+  sub(x: number, y: number, z: number) {
     this.x -= x;
     this.y -= y;
     this.z -= z;
     return this;
   }
 
+  // 数乘
+  mul(scalar: number) {
+    this.x *= scalar;
+    this.y *= scalar;
+    this.z *= scalar;
+    return this;
+  }
+
   // 点乘-（内积）
-  dot(v) {
+  dot(x: number, y: number, z: number) {
     // 点乘:对应位一一相乘之后求和,结果是一个标量
     // 点乘的几何意义是可以用来表征或计算两个向量之间的夹角，以及在b向量在a向量方向上的投影
-    return this.x * v.x + this.y * v.y + this.z * v.z;
+    return this.x * x + this.y * y + this.z * z;
   }
 
   // 叉乘-（叉积、外积、向量积）
-  cross(x, y, z) {
+  cross(x: number, y: number, z: number) {
     // 叉乘结果是一个向量
     // 叉乘几何意义1：aXb生成第三个垂直于a，b的法向量
     // 叉乘几何意义2：aXb等于由向量a和向量b构成的平行四边形的面积
@@ -58,7 +67,7 @@ class V3 extends V {
     return x * x + y * y + z * z;
   }
 
-  distance(x, y) {
+  distance(x: number, y: number, z: number) {
     x -= this.x;
     y -= this.y;
     z -= this.z
@@ -66,8 +75,11 @@ class V3 extends V {
     return Math.sqrt(x * x + y * y + z * z);
   }
 
+  clone() {
+    return new Vec3(this.x, this.y, this.z);
+  }
 
-
+  toString() {
+    return `(x=${this.x},y=${this.y},z=${this.z})`
+  }
 }
-
-module.exports = V3;
