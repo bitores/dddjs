@@ -181,7 +181,7 @@ export class Mat4 extends Base {
     return this;
   }
 
-  // 逆 矩阵
+  // 逆 矩阵-其实矩阵的逆矩阵也跟倒数的性质一样
   // 行列式为0的矩阵，不可逆；行列式不为零的矩阵，可逆
   inverse() {
     let ele = this.elements;
@@ -311,7 +311,7 @@ export class Mat4 extends Base {
   }
 
 
-  view(eye: Vec3, target: Vec3, up: Vec3) {
+  static view(eye: Vec3, target: Vec3, up: Vec3) {
     // 一 相机状态描述
     // 视点：相机在世界坐标中的位置 eye(eyeX, eyeY, eyeZ)
     // 观测点：被观察的目标点，指明相机的朝向 at(atX, atY, atZ)
@@ -321,7 +321,7 @@ export class Mat4 extends Base {
     // zAxis：-dir = eye - at = (eyeX - atX, eyeY - atY, eyeZ - atZ) 归一化 N(Nx, Ny, Nz)
     // xAxis：up X zAxis 归一化 U(Ux, Uy, Uz)
     // yAxis: zAxis X xAxis 归一化 V(Vx, Vy, Vz)
-    let yAxis = up.clone();
+    // let yAxis = up.clone();
     let zAxis = target.clone().sub(eye.x, eye.y, eye.z);
     let N = zAxis.clone().normalize();
 
@@ -349,6 +349,15 @@ export class Mat4 extends Base {
 
     return r.clone().dot(t);
   }
+
+  static translation(tx: number, ty: number, tz: number) {
+    return new Mat4(
+      1, 0, 0, 0,
+      0, 1, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 1)
+  }
+
 
 
   clone() {

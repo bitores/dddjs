@@ -124,8 +124,12 @@ export class Mat3 extends Base {
 
   }
 
-  // 伴随，共轭 矩阵
+  // 伴随，共轭 矩阵A*
   adjugate() {
+    // 矩阵的代数余子式：划去任意选定的k行、k列后
+    // 矩阵的代数余子式 求伴随矩阵
+    // 代数余子式计算行列式是降阶法的一个应用,能简化它的计算
+    // A^(-1)=A*/|A|
     let ele = this.elements;
     let a00 = ele[0], a01 = ele[1], a02 = ele[2];
     let a10 = ele[3], a11 = ele[4], a12 = ele[5];
@@ -144,7 +148,8 @@ export class Mat3 extends Base {
     return this;
   }
 
-  // 逆 矩阵
+  // 逆 矩阵-其实矩阵的逆矩阵也跟倒数的性质一样:为什么我们需要矩阵的逆呢？主要原因是：矩阵没办法被除
+  // https://www.sohu.com/a/226465524_224832
   // 行列式为0的矩阵，不可逆；行列式不为零的矩阵，可逆
   inverse() {
     let ele = this.elements;
