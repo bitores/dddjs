@@ -86,6 +86,20 @@ export class Vec2 extends Base {
     return Math.sqrt(x * x + y * y);
   }
 
+  // 向量之间的角度
+  angle(v: Vec2) {
+    let length1 = this.length(),
+      length2 = v.length();
+
+    if (length1 <= 1e-10 || length2 <= 1e-10) {
+      return 0;
+    }
+
+    let dot = this.dot(v.x, v.y);
+
+    return Math.acos(dot / (length1 * length2))
+  }
+
   clone() {
     return new Vec2(this.x, this.y);
   }

@@ -50,8 +50,15 @@ export class Vec3 extends Base {
     // 叉乘结果是一个向量
     // 叉乘几何意义1：aXb生成第三个垂直于a，b的法向量
     // 叉乘几何意义2：aXb等于由向量a和向量b构成的平行四边形的面积
+    let a = this.y * z - this.z * y,
+      b = this.z * x - this.x * z,
+      c = this.x * y - this.y * x;
 
-    return this.y * z - this.z * y + this.z * x - this.x * z + this.x * y - this.y * x;
+    this.x = a;
+    this.y = b;
+    this.z = c;
+
+    return this;
   }
 
   negate() {
@@ -91,6 +98,20 @@ export class Vec3 extends Base {
     z -= this.z
 
     return Math.sqrt(x * x + y * y + z * z);
+  }
+
+  // 向量之间的角度
+  angle(v: Vec3) {
+    let length1 = this.length(),
+      length2 = v.length();
+
+    if (length1 <= 1e-10 || length2 <= 1e-10) {
+      return 0;
+    }
+
+    let dot = this.dot(v.x, v.y, v.z);
+
+    return Math.acos(dot / (length1 * length2))
   }
 
   clone() {

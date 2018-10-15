@@ -124,7 +124,7 @@ export class Mat3 extends Base {
 
   }
 
-  // 伴随，共轭
+  // 伴随，共轭 矩阵
   adjugate() {
     let ele = this.elements;
     let a00 = ele[0], a01 = ele[1], a02 = ele[2];
@@ -144,7 +144,7 @@ export class Mat3 extends Base {
     return this;
   }
 
-  // 逆：
+  // 逆 矩阵
   // 行列式为0的矩阵，不可逆；行列式不为零的矩阵，可逆
   inverse() {
     let ele = this.elements;

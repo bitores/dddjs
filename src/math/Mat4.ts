@@ -1,4 +1,5 @@
 import Base from '../Base';
+import { Vec3 } from './Vec3';
 export class Mat4 extends Base {
   elements: number[];
   constructor(a: number = 0, b: number = 0, c: number = 0, d: number = 0,
@@ -35,42 +36,47 @@ export class Mat4 extends Base {
     return this;
   }
 
-  mul(mat: Mat4 | number) {
+  mul(mat: number) {
     let _ele = this.elements;
-    if (mat instanceof Mat4) {
-      let ele = mat.elements;
-      let m1 = _ele[0], m2 = _ele[1], m3 = _ele[2], m4 = _ele[3],
-        m5 = _ele[4], m6 = _ele[5], m7 = _ele[6], m8 = _ele[7],
-        m9 = _ele[8], m10 = _ele[9], m11 = _ele[10], m12 = _ele[11],
-        m13 = _ele[12], m14 = _ele[13], m15 = _ele[14], m16 = _ele[15];
 
-      let n1 = ele[0], n2 = ele[1], n3 = ele[2], n4 = ele[3],
-        n5 = ele[4], n6 = ele[5], n7 = ele[6], n8 = ele[7],
-        n9 = ele[8], n10 = ele[9], n11 = ele[10], n12 = ele[11],
-        n13 = ele[12], n14 = ele[13], n15 = ele[14], n16 = ele[15];
+    _ele.forEach((item, index) => {
+      _ele[index] *= mat;
+    })
 
-      _ele[0] = m1 * n1 + m2 * n5 + m3 * n9 + m4 * n13;
-      _ele[1] = m1 * n2 + m2 * n6 + m3 * n10 + m4 * n14;
-      _ele[2] = m1 * n3 + m2 * n7 + m3 * n11 + m4 * n15;
-      _ele[3] = m1 * n4 + m2 * n8 + m3 * n12 + m4 * n16;
-      _ele[4] = m5 * n1 + m6 * n5 + m7 * n9 + m8 * n13;
-      _ele[5] = m5 * n2 + m6 * n6 + m7 * n10 + m8 * n14;
-      _ele[6] = m5 * n3 + m6 * n7 + m7 * n11 + m8 * n15;
-      _ele[7] = m5 * n4 + m6 * n8 + m7 * n12 + m8 * n16;
-      _ele[8] = m9 * n1 + m10 * n5 + m11 * n9 + m12 * n13;
-      _ele[9] = m9 * n2 + m10 * n6 + m11 * n10 + m12 * n14;
-      _ele[10] = m9 * n3 + m10 * n7 + m11 * n11 + m12 * n15;
-      _ele[11] = m9 * n4 + m10 * n8 + m11 * n12 + m12 * n16;
-      _ele[12] = m13 * n1 + m14 * n5 + m15 * n9 + m16 * n13;
-      _ele[13] = m13 * n2 + m14 * n6 + m15 * n10 + m16 * n14;
-      _ele[14] = m13 * n3 + m14 * n7 + m15 * n11 + m16 * n15;
-      _ele[15] = m13 * n4 + m14 * n8 + m15 * n12 + m16 * n16;
+    return this;
+  }
 
-    } else {
-      _ele.forEach((item, index) => {
-        _ele[index] *= mat;
-      })
-    }
+  dot(mat: Mat4) {
+    let _ele = this.elements;
+
+    let ele = mat.elements;
+    let m1 = _ele[0], m2 = _ele[1], m3 = _ele[2], m4 = _ele[3],
+      m5 = _ele[4], m6 = _ele[5], m7 = _ele[6], m8 = _ele[7],
+      m9 = _ele[8], m10 = _ele[9], m11 = _ele[10], m12 = _ele[11],
+      m13 = _ele[12], m14 = _ele[13], m15 = _ele[14], m16 = _ele[15];
+
+    let n1 = ele[0], n2 = ele[1], n3 = ele[2], n4 = ele[3],
+      n5 = ele[4], n6 = ele[5], n7 = ele[6], n8 = ele[7],
+      n9 = ele[8], n10 = ele[9], n11 = ele[10], n12 = ele[11],
+      n13 = ele[12], n14 = ele[13], n15 = ele[14], n16 = ele[15];
+
+    _ele[0] = m1 * n1 + m2 * n5 + m3 * n9 + m4 * n13;
+    _ele[1] = m1 * n2 + m2 * n6 + m3 * n10 + m4 * n14;
+    _ele[2] = m1 * n3 + m2 * n7 + m3 * n11 + m4 * n15;
+    _ele[3] = m1 * n4 + m2 * n8 + m3 * n12 + m4 * n16;
+    _ele[4] = m5 * n1 + m6 * n5 + m7 * n9 + m8 * n13;
+    _ele[5] = m5 * n2 + m6 * n6 + m7 * n10 + m8 * n14;
+    _ele[6] = m5 * n3 + m6 * n7 + m7 * n11 + m8 * n15;
+    _ele[7] = m5 * n4 + m6 * n8 + m7 * n12 + m8 * n16;
+    _ele[8] = m9 * n1 + m10 * n5 + m11 * n9 + m12 * n13;
+    _ele[9] = m9 * n2 + m10 * n6 + m11 * n10 + m12 * n14;
+    _ele[10] = m9 * n3 + m10 * n7 + m11 * n11 + m12 * n15;
+    _ele[11] = m9 * n4 + m10 * n8 + m11 * n12 + m12 * n16;
+    _ele[12] = m13 * n1 + m14 * n5 + m15 * n9 + m16 * n13;
+    _ele[13] = m13 * n2 + m14 * n6 + m15 * n10 + m16 * n14;
+    _ele[14] = m13 * n3 + m14 * n7 + m15 * n11 + m16 * n15;
+    _ele[15] = m13 * n4 + m14 * n8 + m15 * n12 + m16 * n16;
+
     return this;
   }
 
@@ -147,7 +153,7 @@ export class Mat4 extends Base {
 
   }
 
-  // 伴随，共轭
+  // 伴随，共轭 矩阵
   adjugate() {
     let ele = this.elements;
     let a00 = ele[0], a01 = ele[1], a02 = ele[2], a03 = ele[3];
@@ -175,7 +181,7 @@ export class Mat4 extends Base {
     return this;
   }
 
-  // 逆：
+  // 逆 矩阵
   // 行列式为0的矩阵，不可逆；行列式不为零的矩阵，可逆
   inverse() {
     let ele = this.elements;
@@ -250,31 +256,100 @@ export class Mat4 extends Base {
     return r00 * r11 - r01 * r10 + r02 * r09 + r03 * r08 - r04 * r07 + r05 * r06;
   }
 
-  // 透视变换
-  static perspective(fovy: number, aspect: number, near: number, far: number) {
-    let f = 1.0 / Math.tan(fovy / 2.0),
-      nf = 1.0 / (near - far);
-    let mat = new Mat4(), ele = mat.elements;
-
-    ele[0] = f / aspect;
-    ele[1] = 0;
-    ele[2] = 0;
-    ele[3] = 0;
-    ele[4] = 0;
-    ele[5] = f;
-    ele[6] = 0;
-    ele[7] = 0;
-    ele[8] = 0;
-    ele[9] = 0;
-    ele[10] = (far + near) * nf;
-    ele[11] = -1;
-    ele[12] = 0;
-    ele[13] = 0;
-    ele[14] = (2 * far * near) * nf;
-    ele[15] = 0;
+  // https://blog.csdn.net/gggg_ggg/article/details/45969499
+  // 正交投影
+  // Orthographic projection
+  static orthographicLRTBNF(left: number, right: number, top: number, bottom: number, near: number, far: number, isRightHand: boolean = true) {
+    // x [left, right] 映射 [-1,1]
+    // y [bottom, top] 映射 [-1,1]
+    // z [near, far] 映射 [ 0,1] -- near < far右手坐标系统
+    let mat = new Mat4();
+    let n = isRightHand ? near : far,
+      f = isRightHand ? far : near;
+    mat.elements = [
+      2 / (right - left), 0, 0, -(right + left) / (right - left),
+      0, 2 / (top - bottom), 0, -(top + bottom) / (top - bottom),
+      0, 0, 1 / (f - n), -n / (f - n),
+      0, 0, 0, 1
+    ]
 
     return mat;
   }
+
+  static orthographicWHNF(w: number, h: number, near: number, far: number, isRightHand: boolean = true) {
+    // x [left, right] 映射 [-1,1]
+    // y [bottom, top] 映射 [-1,1]
+    // z [near, far] 映射 [ 0,1] -- near < far右手坐标系统
+    let mat = new Mat4();
+    let n = isRightHand ? near : far,
+      f = isRightHand ? far : near;
+    mat.elements = [
+      2 / w, 0, 0, 0,
+      0, 2 / h, 0, 0,
+      0, 0, 1 / (f - n), -n / (f - n),
+      0, 0, 0, 1
+    ]
+
+    return mat;
+  }
+
+  // 透视变换 矩阵
+  // perspective projection
+  static perspective(fovy: number, aspect: number, near: number, far: number) {
+    let f = 1.0 / Math.tan(fovy / 2.0),
+      nf = 1.0 / (near - far);
+    let mat = new Mat4();
+
+    mat.elements = [
+      f / aspect, 0, 0, 0,
+      0, f, 0, 0,
+      0, 0, (far + near) * nf, -1,
+      0, 0, (2 * far * near) * nf, 0
+    ]
+
+    return mat;
+  }
+
+
+  view(eye: Vec3, target: Vec3, up: Vec3) {
+    // 一 相机状态描述
+    // 视点：相机在世界坐标中的位置 eye(eyeX, eyeY, eyeZ)
+    // 观测点：被观察的目标点，指明相机的朝向 at(atX, atY, atZ)
+    // 上方向：图像的上方向，指明相机以视线为轴的旋转角 up(upX, upY, upZ)
+    // 二 相机坐标系
+    // 定义： 以视点为原点，以视线为z轴负方向，x轴与y轴与图像的x,y轴平行。根据定义，首先可得出：
+    // zAxis：-dir = eye - at = (eyeX - atX, eyeY - atY, eyeZ - atZ) 归一化 N(Nx, Ny, Nz)
+    // xAxis：up X zAxis 归一化 U(Ux, Uy, Uz)
+    // yAxis: zAxis X xAxis 归一化 V(Vx, Vy, Vz)
+    let yAxis = up.clone();
+    let zAxis = target.clone().sub(eye.x, eye.y, eye.z);
+    let N = zAxis.clone().normalize();
+
+
+    let xAxis = N.clone().cross(up.x, up.y, up.z);
+    let U = xAxis.clone().normalize();
+
+    let V = U.clone().cross(N.x, N.y, N.z);
+
+    // 旋转的逆矩阵
+    let r = new Mat4(
+      U.x, U.y, U.z, 0,
+      V.x, V.y, V.z, 0,
+      -N.x, -N.y, -N.z, 0,
+      0.0, 0.0, 0.0, 1.0
+    )
+
+    // 平移的逆矩阵
+    let t = new Mat4(
+      1.0, 0.0, 0.0, 0.0,
+      0.0, 1.0, 0.0, 0.0,
+      0.0, 0.0, 1.0, 0.0,
+      -eye.x, -eye.y, -eye.z, 1.0,
+    )
+
+    return r.clone().dot(t);
+  }
+
 
   clone() {
     let _ele = this.elements;
