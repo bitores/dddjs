@@ -90,7 +90,7 @@ export class Mat4 extends Base {
   }
 
   // 单位
-  static E() {
+  static get E() {
     return new Mat4(
       1, 0, 0, 0,
       0, 1, 0, 0,
@@ -99,7 +99,7 @@ export class Mat4 extends Base {
   }
 
   // 零
-  static Zero() {
+  static get Zero() {
     return new Mat4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
   }
 
@@ -295,7 +295,7 @@ export class Mat4 extends Base {
 
   // 透视变换 矩阵
   // perspective projection
-  static perspective(fovy: number, aspect: number, near: number, far: number) {
+  static perspective(fovy: number = 45, aspect: number = 1, near: number = 1, far: number = 1000) {
     let f = 1.0 / Math.tan(fovy / 2.0),
       nf = 1.0 / (near - far);
     let mat = new Mat4();

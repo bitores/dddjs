@@ -73,12 +73,12 @@ export class Mat3 extends Base {
     return this;
   }
   // 单位
-  static E() {
+  static get E() {
     return new Mat3(1, 0, 0, 0, 1, 0, 0, 0, 1);
   }
 
   // 零
-  static Zero() {
+  static get Zero() {
     return new Mat3(0, 0, 0, 0, 0, 0, 0, 0, 0);
   }
 

@@ -7,8 +7,8 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
-    "strictNullChecks": true,
-    "declaration": true,
+    // "strictNullChecks": true, 可以使得null和undefined只能被赋值给void或本身对应的类型
+    "declaration": false,
     "sourceMap": true,
     "lib": [
       "es5",
@@ -21,11 +21,7 @@
     "skipLibCheck": true,
     "baseUrl": "./src/",
     "rootDir": "./src/",
-    // "paths": {
-    //     // "babylonjs": [
-    //     //     "../../dist/preview release/babylon.d.ts"
-    //     // ]
-    // },
+    "paths": {},
     "outDir": "./dist/debug"
   }
 }

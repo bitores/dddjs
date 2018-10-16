@@ -5,3 +5,7 @@ export * from './math/Mat3';
 export * from './math/Mat4';
 export * from './math/Quat';
 export * from './math/Euler';
+export * from './core/Camera';
+export * from './core/PerspectiveCamera';
+export * from './core/OrthographicCamera';
+
