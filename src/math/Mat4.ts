@@ -378,12 +378,32 @@ export class Mat4 extends Base {
       tx, ty, tz, 1)
   }
 
-  static rotation(angle: number, flag: string = "XY", isRightHand: boolean = true) {
-
-    if (isRightHand) {
+  static rotation(angle: number, x: number = 1, y: number = 0, z: number = 0, isRightHand: boolean = true) {
+    let r = isRightHand ? 1 : -1;
+    let cos = Math.cos, sin = Math.sin;
+    if (x > 0) {
       return new Mat4(
-
+        1, 0, 0, 0,
+        0, cos(angle), -r * sin(angle), 0,
+        0, r * sin(angle), cos(angle), 0,
+        0, 0, 0, 1
       )
+    } else if (y > 0) {
+      return new Mat4(
+        cos(angle), 0, r * sin(angle), 0,
+        0, 1, 0, 0,
+        -r * sin(angle), 0, cos(angle), 0,
+        0, 0, 0, 1
+      )
+    } else if (z > 0) {
+      return new Mat4(
+        cos(angle), -r * sin(angle), 0, 0,
+        r * sin(angle), cos(angle), 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+      )
+    } else {
+      throw new Error("...xyz ")
     }
   }
 
