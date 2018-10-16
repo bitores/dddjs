@@ -1,6 +1,40 @@
 
+世界坐标系->相机坐标系->投影坐标系->屏幕坐标系
+```
+引进相机的目的就是只需看到世界的一部分，而哪些是可以在相机里看到的，就需要进行筛选。将物体转换到相机坐标系，这样相机坐标系进行筛选时就会简单很多。这里的重点是构建相机坐标系。
+
+
+我们知道,旋转矩阵是个正交矩阵，它的逆矩阵和转置矩阵一样得到下面
+```
+
+
+
 RH
 LH
+[图形变换之基本矩阵变换](https://www.cnblogs.com/ll-10/p/5470637.html)
+```
+首先必须将原始的右手坐标系中的数据转换为左手坐标系中的数据，位置(Location)与位移(Translation)转换也比较简单，将X,Y,Z中的任意一个值取反即可。
+旋转比较麻烦，需要借助一个矩阵，直接上公式：
+//右手坐标系下旋转 RR，那么左手坐标系下的旋转LR应为
+	Matrix M = {
+      1,0,0,0
+			0,-1,0,0
+			0,0,1,0
+			0,0,0,1};
+	LR = M*RR*M;
+
+矩阵M很像一个单位矩阵，但是他不是，它的第二行有一个-1，这是转换的关键，其实将单位矩阵中的任何一个1变成-1，但是，一定要和Location,Translation取反的值一致，也就是说，如果Location是Y轴取反，那么矩阵M一定要是第二行为-1，其他两个轴同理，要对应起来。
+
+另外，以上是右手转左手，左手转右手也是同样的道理。
+
+而行列向量与矩阵的乘法代表的是变换，只要是在一个坐标系下的变换，用行和列得到的结果是一样的，左右手坐标系会影响view矩阵和project矩阵的计算
+左右手坐标系与行列向量之间没有直接关系，但是两者共同影响了view矩阵和project矩阵的构建，用view矩阵举例,左右手影响up，right，forward向量的计算，而行列向量影响up等三个向量在矩阵中的排布方式
+
+https://www.cnblogs.com/ll-10/p/5470637.html： 左右坐标系下，T、R 表示
+
+第一种形式（以右手坐标系为基准的）进行变换时将T与需要变换的点或向量A（列向量）相乘，即TA。第二种形式（以左手坐标系为基准）将需要变换的点或向量（行向量）与T相乘，即AT。
+OpenGL使用的是右手坐标系,而Direct3D使用的是左手坐标系
+```
 
 #### coordinated system
 - Object (M)
@@ -49,3 +83,11 @@ yAxis: zAxis X xAxis 归一化 V(Vx, Vy, Vz)
 P
 ```
 ```
+
+[](https://blog.csdn.net/u012419410/article/details/41980895)
+[](https://blog.csdn.net/xufeng0991/article/details/75949931)
+[](https://blog.csdn.net/zb1165048017/article/details/71104241)
+[](https://www.cnblogs.com/wbaoqing/p/5422974.html)
+[](https://www.cnblogs.com/ll-10/p/5470637.html)
+[](http://www.cnblogs.com/shanhaobo/articles/1065380.html)
+[]()

@@ -312,6 +312,8 @@ export class Mat4 extends Base {
 
 
   static view(eye: Vec3, target: Vec3, up: Vec3) {
+    // https://www.cnblogs.com/wbaoqing/p/5422974.html
+    // https://blog.csdn.net/xufeng0991/article/details/75949931
     // 一 相机状态描述
     // 视点：相机在世界坐标中的位置 eye(eyeX, eyeY, eyeZ)
     // 观测点：被观察的目标点，指明相机的朝向 at(atX, atY, atZ)
@@ -322,7 +324,8 @@ export class Mat4 extends Base {
     // xAxis：up X zAxis 归一化 U(Ux, Uy, Uz)
     // yAxis: zAxis X xAxis 归一化 V(Vx, Vy, Vz)
     // let yAxis = up.clone();
-    let zAxis = target.clone().sub(eye.x, eye.y, eye.z);
+    // 视线方向为 z 轴负方向， 
+    let zAxis = eye.clone().sub(target.x, target.y, target.z);
     let N = zAxis.clone().normalize();
 
 
@@ -331,33 +334,58 @@ export class Mat4 extends Base {
 
     let V = U.clone().cross(N.x, N.y, N.z);
 
+    // 旋转矩阵是个正交矩阵，它的逆矩阵和转置矩阵一样
     // 旋转的逆矩阵
     let r = new Mat4(
       U.x, U.y, U.z, 0,
       V.x, V.y, V.z, 0,
-      -N.x, -N.y, -N.z, 0,
+      N.x, N.y, N.z, 0,
       0.0, 0.0, 0.0, 1.0
     )
 
-    // 平移的逆矩阵
+    // // 右手平移矩阵
+    // let t0 = new Mat4(
+    //   1.0, 0.0, 0.0, eye.x,
+    //   0.0, 1.0, 0.0, eye.y,
+    //   0.0, 0.0, 1.0, eye.z,
+    //   0, 0, 0, 1.0,
+    // )
+
+    // 右手平移的逆矩阵
     let t = new Mat4(
-      1.0, 0.0, 0.0, 0.0,
-      0.0, 1.0, 0.0, 0.0,
-      0.0, 0.0, 1.0, 0.0,
-      -eye.x, -eye.y, -eye.z, 1.0,
+      1.0, 0.0, 0.0, -eye.x,
+      0.0, 1.0, 0.0, -eye.y,
+      0.0, 0.0, 1.0, -eye.z,
+      0, 0, 0, 1.0,
     )
 
     return r.clone().dot(t);
   }
 
-  static translation(tx: number, ty: number, tz: number) {
+  static translation(tx: number, ty: number, tz: number, isRightHand: boolean = true) {
+    if (isRightHand) {
+      return new Mat4(
+        1, 0, 0, tx,
+        0, 1, 0, ty,
+        0, 0, 1, tz,
+        0, 0, 0, 1)
+    }
+
     return new Mat4(
       1, 0, 0, 0,
       0, 1, 0, 0,
       0, 0, 1, 0,
-      0, 0, 0, 1)
+      tx, ty, tz, 1)
   }
 
+  static rotation(angle: number, flag: string = "XY", isRightHand: boolean = true) {
+
+    if (isRightHand) {
+      return new Mat4(
+
+      )
+    }
+  }
 
 
   clone() {
