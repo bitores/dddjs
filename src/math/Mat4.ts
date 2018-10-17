@@ -1,5 +1,6 @@
 import Base from '../Base';
 import { Vec3 } from './Vec3';
+import { Mat3 } from './Mat3';
 export class Mat4 extends Base {
   elements: number[];
   constructor(a: number = 0, b: number = 0, c: number = 0, d: number = 0,
@@ -42,6 +43,40 @@ export class Mat4 extends Base {
     _ele.forEach((item, index) => {
       _ele[index] *= mat;
     })
+
+    return this;
+  }
+
+  leftDot(mat: Mat4) {
+    let _ele = mat.elements;
+
+    let ele = this.elements;
+    let m1 = _ele[0], m2 = _ele[1], m3 = _ele[2], m4 = _ele[3],
+      m5 = _ele[4], m6 = _ele[5], m7 = _ele[6], m8 = _ele[7],
+      m9 = _ele[8], m10 = _ele[9], m11 = _ele[10], m12 = _ele[11],
+      m13 = _ele[12], m14 = _ele[13], m15 = _ele[14], m16 = _ele[15];
+
+    let n1 = ele[0], n2 = ele[1], n3 = ele[2], n4 = ele[3],
+      n5 = ele[4], n6 = ele[5], n7 = ele[6], n8 = ele[7],
+      n9 = ele[8], n10 = ele[9], n11 = ele[10], n12 = ele[11],
+      n13 = ele[12], n14 = ele[13], n15 = ele[14], n16 = ele[15];
+
+    ele[0] = m1 * n1 + m2 * n5 + m3 * n9 + m4 * n13;
+    ele[1] = m1 * n2 + m2 * n6 + m3 * n10 + m4 * n14;
+    ele[2] = m1 * n3 + m2 * n7 + m3 * n11 + m4 * n15;
+    ele[3] = m1 * n4 + m2 * n8 + m3 * n12 + m4 * n16;
+    ele[4] = m5 * n1 + m6 * n5 + m7 * n9 + m8 * n13;
+    ele[5] = m5 * n2 + m6 * n6 + m7 * n10 + m8 * n14;
+    ele[6] = m5 * n3 + m6 * n7 + m7 * n11 + m8 * n15;
+    ele[7] = m5 * n4 + m6 * n8 + m7 * n12 + m8 * n16;
+    ele[8] = m9 * n1 + m10 * n5 + m11 * n9 + m12 * n13;
+    ele[9] = m9 * n2 + m10 * n6 + m11 * n10 + m12 * n14;
+    ele[10] = m9 * n3 + m10 * n7 + m11 * n11 + m12 * n15;
+    ele[11] = m9 * n4 + m10 * n8 + m11 * n12 + m12 * n16;
+    ele[12] = m13 * n1 + m14 * n5 + m15 * n9 + m16 * n13;
+    ele[13] = m13 * n2 + m14 * n6 + m15 * n10 + m16 * n14;
+    ele[14] = m13 * n3 + m14 * n7 + m15 * n11 + m16 * n15;
+    ele[15] = m13 * n4 + m14 * n8 + m15 * n12 + m16 * n16;
 
     return this;
   }
@@ -256,6 +291,22 @@ export class Mat4 extends Base {
     return r00 * r11 - r01 * r10 + r02 * r09 + r03 * r08 - r04 * r07 + r05 * r06;
   }
 
+  // 判断给点矩阵是否为反射形式
+  isReflect() {
+    // 如果对缩放矩阵s的一个或者三个分量置负，就会产生一个反射矩阵（镜像矩阵）
+    // 需要计算该矩阵左上部3x3矩阵行列式的值，如果为负，那么该矩阵就为反射矩阵。
+    let ele = this.elements;
+    let mat = new Mat3(
+      ele[0], ele[1], ele[2],
+      ele[4], ele[5], ele[6],
+      ele[8], ele[9], ele[10]
+    )
+
+    if (mat.det() < 0) true;
+
+    return false;
+  }
+
   // https://blog.csdn.net/gggg_ggg/article/details/45969499
   // 正交投影
   // Orthographic projection
@@ -311,7 +362,7 @@ export class Mat4 extends Base {
   }
 
 
-  static view(eye: Vec3, target: Vec3, up: Vec3) {
+  static view(eye: Vec3 = new Vec3(), target: Vec3 = new Vec3(1, 1, 1), up: Vec3 = new Vec3(0, 1, 0)) {
     // https://www.cnblogs.com/wbaoqing/p/5422974.html
     // https://blog.csdn.net/xufeng0991/article/details/75949931
     // 一 相机状态描述
@@ -335,21 +386,13 @@ export class Mat4 extends Base {
     let V = U.clone().cross(N.x, N.y, N.z);
 
     // 旋转矩阵是个正交矩阵，它的逆矩阵和转置矩阵一样
-    // 旋转的逆矩阵
+    // 右手旋转的逆矩阵
     let r = new Mat4(
       U.x, U.y, U.z, 0,
       V.x, V.y, V.z, 0,
       N.x, N.y, N.z, 0,
       0.0, 0.0, 0.0, 1.0
     )
-
-    // // 右手平移矩阵
-    // let t0 = new Mat4(
-    //   1.0, 0.0, 0.0, eye.x,
-    //   0.0, 1.0, 0.0, eye.y,
-    //   0.0, 0.0, 1.0, eye.z,
-    //   0, 0, 0, 1.0,
-    // )
 
     // 右手平移的逆矩阵
     let t = new Mat4(
@@ -405,6 +448,15 @@ export class Mat4 extends Base {
     } else {
       throw new Error("...xyz ")
     }
+  }
+
+  static scaling(x: number = 1, y: number = 1, z: number = 1) {
+    return new Mat4(
+      x, 0, 0, 0,
+      0, y, 0, 0,
+      0, 0, z, 0,
+      0, 0, 0, 1
+    )
   }
 
 
