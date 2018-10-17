@@ -61,6 +61,14 @@ export class Vec3 extends Base {
     return this;
   }
 
+  static get E() {
+    return new Vec3(1, 1, 1)
+  }
+
+  static get Zero() {
+    return new Vec3(0, 0, 0)
+  }
+
   negate() {
     this.x *= -1;
     this.y *= -1;

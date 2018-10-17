@@ -49,6 +49,14 @@ export class Vec2 extends Base {
     throw new Error('The cross function is not defined in vector 2x2')
   }
 
+  static get E() {
+    return new Vec2(1, 1)
+  }
+
+  static get Zero() {
+    return new Vec2(0, 0)
+  }
+
   // 
   negate() {
     this.x *= -1;
