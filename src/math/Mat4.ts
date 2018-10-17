@@ -1,6 +1,8 @@
 import Base from '../Base';
 import { Vec3 } from './Vec3';
 import { Mat3 } from './Mat3';
+import { DEG2RAD } from '../utils/utils'
+
 export class Mat4 extends Base {
   elements: number[];
   constructor(a: number = 0, b: number = 0, c: number = 0, d: number = 0,
@@ -347,7 +349,7 @@ export class Mat4 extends Base {
   // 透视变换 矩阵
   // perspective projection
   static perspective(fovy: number = 45, aspect: number = 1, near: number = 1, far: number = 1000) {
-    let f = 1.0 / Math.tan(fovy / 2.0),
+    let f = 1.0 / Math.tan(DEG2RAD(fovy) / 2.0),
       nf = 1.0 / (near - far);
     let mat = new Mat4();
 
@@ -421,6 +423,7 @@ export class Mat4 extends Base {
       tx, ty, tz, 1)
   }
 
+  // angle 为孤独
   static rotation(angle: number, x: number = 1, y: number = 0, z: number = 0, isRightHand: boolean = true) {
     let r = isRightHand ? 1 : -1;
     let cos = Math.cos, sin = Math.sin;
