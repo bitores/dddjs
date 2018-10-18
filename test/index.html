@@ -11,35 +11,44 @@
       padding: 0;
       margin: 0;
     }
+
+    canvas {
+      display: inline-block;
+      /* position: absolute;
+      left: 50px;
+      top: 50px; */
+      width: 100%;
+      height: 100%;
+    }
   </style>
   <script src="../dist/ddd.js"></script>
 </head>
 
 <body>
-  <canvas width="200" height="300" id="my_Canvas"></canvas>
+  <canvas width="300" height="200" id="my_Canvas"></canvas>
 
   <script>
     /*============= Creating a canvas =================*/
     var mycanvas = document.getElementById('my_Canvas');
-    gl = mycanvas.getContext('experimental-webgl');
+    var client = new DDD.UICanvas(mycanvas)
+    gl = client.gl;
 
     /*============ Defining and storing the geometry =========*/
 
-    var obj = new DDD.UIObject("__", 1, 0, 0.5, 0.5);
+    var obj = new DDD.UIObject(1, 1, 1, 1, "__");
 
     var vertices = obj.vertices;
-
     var indices = obj.indices;
 
     // Create and store data into vertex buffer
     var vertex_buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 
     // Create and store data into index buffer
     var index_buffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index_buffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
 
     /*=================== Shaders =========================*/
 
@@ -57,31 +66,20 @@
       'gl_FragColor = vec4(1., 0., 1., 1.);' +
       '}';
 
-    var vertShader = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(vertShader, vertCode);
-    gl.compileShader(vertShader);
-
-    var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(fragShader, fragCode);
-    gl.compileShader(fragShader);
-
-    var shaderProgram = gl.createProgram();
-    gl.attachShader(shaderProgram, vertShader);
-    gl.attachShader(shaderProgram, fragShader);
-    gl.linkProgram(shaderProgram);
+    var shader = new DDD.UIShader(gl, vertCode, fragCode);
 
     /* ====== Associating attributes to vertex shader =====*/
-    var Pmatrix = gl.getUniformLocation(shaderProgram, "Pmatrix");
-    var Vmatrix = gl.getUniformLocation(shaderProgram, "Vmatrix");
-    var Mmatrix = gl.getUniformLocation(shaderProgram, "Mmatrix");
+    var Pmatrix = shader.getUniformLocation("Pmatrix");
+    var Vmatrix = shader.getUniformLocation("Vmatrix");
+    var Mmatrix = shader.getUniformLocation("Mmatrix");
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
-    var position = gl.getAttribLocation(shaderProgram, "position");
+    var position = shader.getAttribLocation("position");
     gl.vertexAttribPointer(position, 3, gl.FLOAT, false, 0, 0);
 
     // Position
     gl.enableVertexAttribArray(position);
-    gl.useProgram(shaderProgram);
+    shader.use();
 
     /*==================== MATRIX =====================*/
 

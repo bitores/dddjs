@@ -8,7 +8,7 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noStrictGenericChecks": false,
-    "strictNullChecks": true,
+    // "strictNullChecks": true,
     // 可以使得null和undefined只能被赋值给void或本身对应的类型 
     "declaration": false,
     "sourceMap": true,
