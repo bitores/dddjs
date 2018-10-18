@@ -6,7 +6,7 @@ export default class Node extends Base {
   protected _name: string;
   protected _pos: Vec3;
   protected _children: Node[];
-  protected _parent: Node = null;
+  protected _parent: Node | null;
   // _positon: Vec3 = new Vec3();
   // _scale: Vec3 = new Vec3(1, 1, 1);
   // _rotation: Vec3 = new Vec3();

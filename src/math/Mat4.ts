@@ -2,6 +2,7 @@ import Base from '../Base';
 import { Vec3 } from './Vec3';
 import { Mat3 } from './Mat3';
 import { DEG2RAD } from '../utils/utils'
+import { Quat } from './Quat';
 
 export class Mat4 extends Base {
   elements: number[];
@@ -423,28 +424,28 @@ export class Mat4 extends Base {
       tx, ty, tz, 1)
   }
 
-  // angle 为孤独
-  static rotation(angle: number, x: number = 1, y: number = 0, z: number = 0, isRightHand: boolean = true) {
+  // angle 为弧度
+  static rotation(angle_in_rad: number, x: number = 1, y: number = 0, z: number = 0, isRightHand: boolean = true) {
     let r = isRightHand ? 1 : -1;
-    let cos = Math.cos, sin = Math.sin;
+    let cos = Math.cos(angle_in_rad), sin = Math.sin(angle_in_rad);
     if (x > 0) {
       return new Mat4(
         1, 0, 0, 0,
-        0, cos(angle), -r * sin(angle), 0,
-        0, r * sin(angle), cos(angle), 0,
+        0, cos, -r * sin, 0,
+        0, r * sin, cos, 0,
         0, 0, 0, 1
       )
     } else if (y > 0) {
       return new Mat4(
-        cos(angle), 0, r * sin(angle), 0,
+        cos, 0, r * sin, 0,
         0, 1, 0, 0,
-        -r * sin(angle), 0, cos(angle), 0,
+        -r * sin, 0, cos, 0,
         0, 0, 0, 1
       )
     } else if (z > 0) {
       return new Mat4(
-        cos(angle), -r * sin(angle), 0, 0,
-        r * sin(angle), cos(angle), 0, 0,
+        cos, -r * sin, 0, 0,
+        r * sin, cos, 0, 0,
         0, 0, 1, 0,
         0, 0, 0, 1
       )
@@ -460,6 +461,82 @@ export class Mat4 extends Base {
       0, 0, z, 0,
       0, 0, 0, 1
     )
+  }
+
+  static fromQuat(x: number, y: number, z: number, w: number) {
+    let mat = new Mat4();
+    var te = mat.elements;
+
+    var x2 = x + x, y2 = y + y, z2 = z + z;
+    var xx = x * x2, xy = x * y2, xz = x * z2;
+    var yy = y * y2, yz = y * z2, zz = z * z2;
+    var wx = w * x2, wy = w * y2, wz = w * z2;
+
+    te[0] = (1 - (yy + zz));
+    te[1] = (xy + wz);
+    te[2] = (xz - wy);
+    te[3] = 0;
+
+    te[4] = (xy - wz);
+    te[5] = (1 - (xx + zz));
+    te[6] = (yz + wx);
+    te[7] = 0;
+
+    te[8] = (xz + wy);
+    te[9] = (yz - wx);
+    te[10] = (1 - (xx + yy));
+    te[11] = 0;
+
+    te[12] = 0;
+    te[13] = 0;
+    te[14] = 0;
+    te[15] = 1;
+
+    return mat;
+  }
+
+  decompose(position: Vec3 = new Vec3(), quaternion: Quat = new Quat(), scale: Vec3 = new Vec3()) {
+    var te = this.elements;
+
+    var sx = new Vec3(te[0], te[1], te[2]).length();
+    var sy = new Vec3(te[4], te[5], te[6]).length();
+    var sz = new Vec3(te[8], te[9], te[10]).length();
+
+    // if determine is negative, we need to invert one scale
+    var det = this.det();
+    if (det < 0) sx = - sx;
+
+    position.x = te[3];
+    position.y = te[7];
+    position.z = te[11];
+
+    scale.x = sx;
+    scale.y = sy;
+    scale.z = sz;
+
+    // scale the rotation part
+
+    var invSX = 1 / sx;
+    var invSY = 1 / sy;
+    var invSZ = 1 / sz;
+
+    let matrix = new Mat4();
+
+    matrix.elements[0] *= invSX;
+    matrix.elements[1] *= invSX;
+    matrix.elements[2] *= invSX;
+
+    matrix.elements[4] *= invSY;
+    matrix.elements[5] *= invSY;
+    matrix.elements[6] *= invSY;
+
+    matrix.elements[8] *= invSZ;
+    matrix.elements[9] *= invSZ;
+    matrix.elements[10] *= invSZ;
+
+    quaternion.fromMat4(matrix);
+
+    return this;
   }
 
 

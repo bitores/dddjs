@@ -9,7 +9,8 @@ import { Quat } from './Quat';
 // Roll:横滚 around the z-axis
 export class Euler extends Base {
   // pitch, yaw, roll 单位：角度
-  constructor(public pitch: number = 0, public yaw: number = 0, public roll: number = 0) {
+  // 按 z-y-x 顺序 RPY
+  constructor(public yaw: number = 0, public roll: number = 0, public pitch: number = 0) {
     super()
   }
 

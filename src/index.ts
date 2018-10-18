@@ -8,6 +8,9 @@ export * from './math/Euler';
 export * from './core/Camera';
 export * from './core/PerspectiveCamera';
 export * from './core/OrthographicCamera';
-export * from './core/UICamera';
 export * from './core/DataObject';
+export * from './ui/UICanvas';
+export * from './ui/UICamera';
+export * from './ui/UIObject';
+
 

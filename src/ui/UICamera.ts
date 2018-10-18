@@ -1,4 +1,4 @@
-import { Camera } from "./Camera";
+import { Camera } from "../core/Camera";
 import { Mat4 } from "../math/Mat4";
 
 export class UICamera extends Camera {

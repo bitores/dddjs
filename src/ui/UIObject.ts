@@ -3,9 +3,9 @@ import { Vec3 } from '../math/Vec3';
 
 export class UIObject extends Node {
   _data: number[];
-  _vertices: number[];
-  _indices: number[];
-  _colors: number[];
+  private _vertices: number[];
+  private _indices: number[];
+  // _colors: number[];
   private x: number;
   private y: number;
   private width: number;
@@ -28,13 +28,9 @@ export class UIObject extends Node {
     return this._indices;
   }
 
-  get color() {
-    return this._colors;
-  }
-
   calc() {
     this._vertices = [
-      this.x, this.y, 0,
+      -1 + this.x, 1 - this.y, 0,
       -1 + this.x + this.width, 1 - this.y, 0,
       -1 + this.x, 1 - (this.y + this.height), 0,
       -1 + this.x + this.width, 1 - (this.y + this.height), 0,
@@ -42,7 +38,7 @@ export class UIObject extends Node {
 
     this._indices = [
       1, 2, 0,
-      1, 3, 2
+      1, 2, 3
     ]
   }
 }
