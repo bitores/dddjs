@@ -36,6 +36,11 @@
     /*============ Defining and storing the geometry =========*/
 
     var obj = new DDD.UIObject(1, 1, 1, 1, "__");
+    var camera = new DDD.UICamera();
+
+    proj_matrix = camera._projectMatrix.elements;
+    mov_matrix = obj._modelMatrix.elements;
+    view_matrix = camera._viewMatrix.elements;
 
     var vertices = obj.vertices;
     var indices = obj.indices;
@@ -69,25 +74,13 @@
     var shader = new DDD.UIShader(gl, vertCode, fragCode);
 
     /* ====== Associating attributes to vertex shader =====*/
-    var Pmatrix = shader.getUniformLocation("Pmatrix");
-    var Vmatrix = shader.getUniformLocation("Vmatrix");
-    var Mmatrix = shader.getUniformLocation("Mmatrix");
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
-    var position = shader.getAttribLocation("position");
-    gl.vertexAttribPointer(position, 3, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(shader.location('position'), 3, gl.FLOAT, false, 0, 0);
 
     // Position
-    gl.enableVertexAttribArray(position);
+    gl.enableVertexAttribArray(shader.location('position'));
     shader.use();
-
-    /*==================== MATRIX =====================*/
-
-    var camera = new DDD.UICamera();
-
-    proj_matrix = camera._projectMatrix.elements;
-    mov_matrix = obj._modelMatrix.elements;
-    view_matrix = camera._viewMatrix.elements;
 
     // translating z
     camera.translateZ(1)
@@ -117,13 +110,11 @@
       gl.clearColor(0.5, 0.5, 0.5, 0.9);
       gl.clearDepth(1.0);
 
-
-
       gl.viewport(0.0, 0.0, mycanvas.width, mycanvas.height);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      gl.uniformMatrix4fv(Pmatrix, false, proj_matrix);
-      gl.uniformMatrix4fv(Vmatrix, false, view_matrix);
-      gl.uniformMatrix4fv(Mmatrix, false, mov_matrix);
+      gl.uniformMatrix4fv(shader.location('Pmatrix'), false, proj_matrix);
+      gl.uniformMatrix4fv(shader.location('Vmatrix'), false, view_matrix);
+      gl.uniformMatrix4fv(shader.location('Mmatrix'), false, mov_matrix);
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index_buffer);
       gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 

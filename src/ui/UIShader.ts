@@ -4,12 +4,11 @@ export class UIShader extends Base {
   vertShader: WebGLShader;
   fragShader: WebGLShader;
   program: WebGLProgram;
-  vars: Object = {
-    attribute: {},
-    uniform: {}
-  };
-  // private qq: RegExp = /\s+/g;
-  // /(attribute|uniform)\s\S+\s\S+;/g
+  // vars: Object = {
+  //   attribute: {},
+  //   uniform: {}
+  // };
+  locations: Object = {};
   constructor(public ctx: WebGLRenderingContext, public vertSource: string, public fragSource: string, public name: string = '') {
     super()
     this.vertShader = this.compileShader(vertSource, ctx.VERTEX_SHADER);
@@ -26,7 +25,19 @@ export class UIShader extends Base {
     matchs && matchs.forEach(record => {
       record = record.replace(';', '');
       let ret = record.split(' ');
-      this.vars[ret[0]][ret[2]] = ret[1];
+      let value = null;
+      if (ret[0] === "uniform") {
+        value = this.getUniformLocation(ret[2]);
+        // this.vars[ret[0]][ret[2]] = { type: ret[1], value };
+      } else if (ret[0] === "attribute") {
+        value = this.getAttribLocation(ret[2]);
+        // this.vars[ret[0]][ret[2]] = { type: ret[1], value };
+      }
+      this.locations[ret[2]] = {
+        t1: ret[0],
+        t2: ret[1],
+        value: value
+      }
     })
   }
 
@@ -56,6 +67,24 @@ export class UIShader extends Base {
   use() {
     this.ctx.useProgram(this.program);
   }
+
+  location(name: string) {
+    return this.locations[name].value;
+  }
+
+  // get(name: string) {
+  //   let val = this.uniform(name);
+  //   if (val) return val;
+  //   return this.attribute(name);
+  // }
+
+  // uniform(name: string) {
+  //   return this.vars['uniform'][name].value;
+  // }
+
+  // attribute(name: string) {
+  //   return this.vars['attribute'][name].value;
+  // }
 
   get className() {
     return 'Node';
