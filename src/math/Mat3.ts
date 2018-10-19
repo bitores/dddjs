@@ -201,6 +201,6 @@ export class Mat3 extends Base {
   }
 
   toString() {
-    return `Mat3(${JSON.stringify(this.elements)})`;
+    return `Mat3${JSON.stringify(this.elements)}`;
   }
 }

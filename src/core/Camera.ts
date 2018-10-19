@@ -4,16 +4,16 @@ import { Vec3 } from '../math/Vec3';
 export class Camera extends Node {
   _projectMatrix: Mat4; // 投影矩阵 - 正交投影|透视投影
   _viewMatrix: Mat4;
-  private isRightHand: boolean = false;
+  // private isRightHand: boolean = false;
   constructor(_name: string = "ddd-camera", _pos: Vec3 = new Vec3(0, 0, 0)) {
     super(_name, _pos);
     this._viewMatrix = Mat4.view(_pos, new Vec3(0, 0, 500), new Vec3(0, 1, 0))
+    this.isRightHand = false;
   }
 
   get className() {
     return 'Camera';
   }
-
 
   translateX(val: number) {
     this._viewMatrix.leftDot(Mat4.translation(val, 0, 0, this.isRightHand))
@@ -57,7 +57,6 @@ export class Camera extends Node {
     this._viewMatrix.leftDot(Mat4.scaling(1, 1, val))
     return this;
   }
-
 
   clone() {
     return new Camera();

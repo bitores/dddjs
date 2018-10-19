@@ -107,12 +107,13 @@
 
         /*==================== MATRIX =====================*/
 
-        var camera = new DDD.PerspectiveCamera(80, 2, 1, 50);
+        var camera = new DDD.PerspectiveCamera(45, 1, 1, 50);
         var obj = new DDD.DataObject();
 
         proj_matrix = camera._projectMatrix.elements;
         mov_matrix = obj._modelMatrix.elements;
         view_matrix = camera._viewMatrix.elements;
+
 
         // translating z
         camera.translateZ(6)
@@ -124,9 +125,9 @@
 
             var dt = time - time_old;
             /*==================== Rotation  start====================*/
-            obj.rotateX(dt * 0.005)
-            obj.rotateY(dt * 0.002)
-            obj.rotateZ(dt * 0.003)
+            // obj.rotateX(dt * 0.005)
+            // obj.rotateY(dt * 0.002)
+            // obj.rotateZ(dt * 0.003)
             // obj.rotateX(0.01)
             // obj.rotateY(0.01)
             // obj.rotateZ(0.01)

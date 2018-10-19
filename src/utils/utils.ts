@@ -1,13 +1,13 @@
 export function RAD2DEG(x: number) {
   //弧度转角度
 
-  return (x) * 180. / Math.PI;
+  return (x) * 180.0 / Math.PI;
 }
 
 export function DEG2RAD(x: number) {
   //角度转弧度
 
-  return (x) * Math.PI / 180;
+  return (x) * Math.PI / 180.0;
 }
 /**
  * pos_x: canvas x position

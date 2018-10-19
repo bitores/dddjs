@@ -465,32 +465,32 @@ export class Mat4 extends Base {
 
   static fromQuat(x: number, y: number, z: number, w: number) {
     let mat = new Mat4();
-    var te = mat.elements;
+    var ele = mat.elements;
 
     var x2 = x + x, y2 = y + y, z2 = z + z;
     var xx = x * x2, xy = x * y2, xz = x * z2;
     var yy = y * y2, yz = y * z2, zz = z * z2;
     var wx = w * x2, wy = w * y2, wz = w * z2;
 
-    te[0] = (1 - (yy + zz));
-    te[1] = (xy + wz);
-    te[2] = (xz - wy);
-    te[3] = 0;
+    ele[0] = (1 - (yy + zz));
+    ele[1] = (xy + wz);
+    ele[2] = (xz - wy);
+    ele[3] = 0;
 
-    te[4] = (xy - wz);
-    te[5] = (1 - (xx + zz));
-    te[6] = (yz + wx);
-    te[7] = 0;
+    ele[4] = (xy - wz);
+    ele[5] = (1 - (xx + zz));
+    ele[6] = (yz + wx);
+    ele[7] = 0;
 
-    te[8] = (xz + wy);
-    te[9] = (yz - wx);
-    te[10] = (1 - (xx + yy));
-    te[11] = 0;
+    ele[8] = (xz + wy);
+    ele[9] = (yz - wx);
+    ele[10] = (1 - (xx + yy));
+    ele[11] = 0;
 
-    te[12] = 0;
-    te[13] = 0;
-    te[14] = 0;
-    te[15] = 1;
+    ele[12] = 0;
+    ele[13] = 0;
+    ele[14] = 0;
+    ele[15] = 1;
 
     return mat;
   }
@@ -546,6 +546,6 @@ export class Mat4 extends Base {
   }
 
   toString() {
-    return `Mat4(${JSON.stringify(this.elements)})`;
+    return `Mat4${JSON.stringify(this.elements)}`;
   }
 }
