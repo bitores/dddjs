@@ -9,6 +9,7 @@ export class UIShader extends Base {
   //   uniform: {}
   // };
   locations: Object = {};
+  private shaderTypeReg = /(attribute|uniform)\s\S+\s\S+;/g;
   constructor(public ctx: WebGLRenderingContext, public vertSource: string, public fragSource: string, public name: string = '') {
     super()
     this.vertShader = this.compileShader(vertSource, ctx.VERTEX_SHADER);
@@ -16,12 +17,12 @@ export class UIShader extends Base {
     this.program = this.linkProgram(this.vertShader, this.fragShader)
     this.analySource(vertSource);
     this.analySource(fragSource);
-    console.log(this.vars)
+    // console.log(this.vars)
   }
 
   analySource(source: string) {
     let format = source.replace(/\s+/g, ' ');
-    let matchs = format.match(/(attribute|uniform)\s\S+\s\S+;/g);
+    let matchs = format.match(this.shaderTypeReg);
     matchs && matchs.forEach(record => {
       record = record.replace(';', '');
       let ret = record.split(' ');
@@ -33,10 +34,14 @@ export class UIShader extends Base {
         value = this.getAttribLocation(ret[2]);
         // this.vars[ret[0]][ret[2]] = { type: ret[1], value };
       }
-      this.locations[ret[2]] = {
-        t1: ret[0],
-        t2: ret[1],
-        value: value
+      if (value !== null) {
+        this.locations[ret[2]] = {
+          prefix: ret[0],
+          type: ret[1],
+          value: value
+        }
+      } else {
+        throw new Error()
       }
     })
   }
@@ -86,8 +91,53 @@ export class UIShader extends Base {
   //   return this.vars['attribute'][name].value;
   // }
 
+  upload(name: string, value) {
+    switch (name) {
+      case 'bool':
+        ; break;
+      case 'int':
+        ; break;
+      case 'float':
+        ; break;
+      case 'vec2':
+        ; break;
+      case 'vec3':
+        ; break;
+      case 'vec4':
+        ; break;
+      case 'bvec2':
+        ; break;
+      case 'bvec3':
+        ; break;
+      case 'bvec4':
+        ; break;
+      case 'ivec2':
+        ; break;
+      case 'ivec3':
+        ; break;
+      case 'ivec4':
+        ; break;
+      case 'mat2': {
+        let v = this.locations[name];
+        this.ctx.uniformMatrix2fv(v.value, false, value)
+      } break;
+      case 'mat3':
+        ; break;
+      case 'mat4':
+        ; break;
+      case 'sampler2D':
+        ; break;
+      case 'samplerCube':
+        ; break;
+      default:
+        throw new TypeError('')
+        ; break;
+
+    }
+  }
+
   get className() {
-    return 'Node';
+    return 'UIShader';
   }
 
   clone() {

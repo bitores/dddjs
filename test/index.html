@@ -37,23 +37,7 @@
 
     var obj = new DDD.UIObject(1, 1, 1, 1, "__");
     var camera = new DDD.UICamera();
-
-    proj_matrix = camera._projectMatrix.elements;
-    mov_matrix = obj._modelMatrix.elements;
-    view_matrix = camera._viewMatrix.elements;
-
-    var vertices = obj.vertices;
-    var indices = obj.indices;
-
-    // Create and store data into vertex buffer
-    var vertex_buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
-    // Create and store data into index buffer
-    var index_buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index_buffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+    var render = new DDD.UIRender(client, camera);
 
     /*=================== Shaders =========================*/
 
@@ -73,14 +57,9 @@
 
     var shader = new DDD.UIShader(gl, vertCode, fragCode);
 
+    render.addRenderObject(obj, shader);
+
     /* ====== Associating attributes to vertex shader =====*/
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
-    gl.vertexAttribPointer(shader.location('position'), 3, gl.FLOAT, false, 0, 0);
-
-    // Position
-    gl.enableVertexAttribArray(shader.location('position'));
-    shader.use();
 
     // translating z
     camera.translateZ(1)
@@ -89,9 +68,8 @@
     var time_old = 0;
 
     var animate = function (time) {
-
-      var dt = time - time_old;
       /*==================== Rotation  start====================*/
+      // var dt = time - time_old;
       // obj.rotateX(dt * 0.005)
       // obj.rotateY(dt * 0.002)
       // obj.rotateZ(dt * 0.003)
@@ -101,23 +79,9 @@
       // obj.scaleX(1.01);
       // obj.scaleY(1.01)
       // obj.scaleZ(1.01)
+      // time_old = time;
       /*==================== Rotation  end====================*/
-
-      time_old = time;
-
-      gl.enable(gl.DEPTH_TEST);
-      gl.depthFunc(gl.LEQUAL);
-      gl.clearColor(0.5, 0.5, 0.5, 0.9);
-      gl.clearDepth(1.0);
-
-      gl.viewport(0.0, 0.0, mycanvas.width, mycanvas.height);
-      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      gl.uniformMatrix4fv(shader.location('Pmatrix'), false, proj_matrix);
-      gl.uniformMatrix4fv(shader.location('Vmatrix'), false, view_matrix);
-      gl.uniformMatrix4fv(shader.location('Mmatrix'), false, mov_matrix);
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index_buffer);
-      gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
-
+      render.render();
       window.requestAnimationFrame(animate);
     }
     animate(0);
