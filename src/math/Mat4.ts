@@ -365,7 +365,7 @@ export class Mat4 extends Base {
   }
 
 
-  static view(eye: Vec3 = new Vec3(), target: Vec3 = new Vec3(1, 1, 1), up: Vec3 = new Vec3(0, 1, 0)) {
+  static view(eye: Vec3 = new Vec3(), target: Vec3 = new Vec3(1, 1, 1), up: Vec3 = new Vec3(0, 1, 0), isRightHand: boolean = true) {
     // https://www.cnblogs.com/wbaoqing/p/5422974.html
     // https://blog.csdn.net/xufeng0991/article/details/75949931
     // 一 相机状态描述
@@ -405,7 +405,7 @@ export class Mat4 extends Base {
       0, 0, 0, 1.0,
     )
 
-    return r.clone().dot(t);
+    return r.dot(t);
   }
 
   static translation(tx: number, ty: number, tz: number, isRightHand: boolean = true) {

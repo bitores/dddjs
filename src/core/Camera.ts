@@ -4,11 +4,10 @@ import { Vec3 } from '../math/Vec3';
 export class Camera extends Node {
   _projectMatrix: Mat4; // 投影矩阵 - 正交投影|透视投影
   _viewMatrix: Mat4;
-  // private isRightHand: boolean = false;
   constructor(_name: string = "ddd-camera", _pos: Vec3 = new Vec3(0, 0, 0)) {
     super(_name, _pos);
-    this._viewMatrix = Mat4.view(_pos, new Vec3(0, 0, 500), new Vec3(0, 1, 0))
     this.isRightHand = false;
+    this._viewMatrix = Mat4.view(_pos, new Vec3(0, 0, 500), new Vec3(0, 1, 0), this.isRightHand);
   }
 
   get className() {
