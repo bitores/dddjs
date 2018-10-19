@@ -41,7 +41,6 @@ export class UIRender extends Base {
     let vbo = this.createVBO(obj.vertices, false, true);
     let ibo = this.createVBO(obj.indices, true, true);
 
-
     this.pool.push({
       obj,
       vbo,
@@ -55,11 +54,11 @@ export class UIRender extends Base {
     shader.use();
 
     let proj_matrix = this.camera._projectMatrix.elements;
-    let mov_matrix = obj._modelMatrix.elements;
     let view_matrix = this.camera._viewMatrix.elements;
-    gl.uniformMatrix4fv(shader.location('Pmatrix'), false, proj_matrix);
-    gl.uniformMatrix4fv(shader.location('Vmatrix'), false, view_matrix);
-    gl.uniformMatrix4fv(shader.location('Mmatrix'), false, mov_matrix);
+    let mov_matrix = obj._modelMatrix.elements;
+    shader.uploadItem('Pmatrix', proj_matrix)
+    shader.uploadItem('Vmatrix', view_matrix)
+    shader.uploadItem('Mmatrix', mov_matrix)
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
     gl.vertexAttribPointer(shader.location('position'), 3, gl.FLOAT, false, 0, 0);

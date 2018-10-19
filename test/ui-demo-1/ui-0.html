@@ -32,13 +32,9 @@
 
     /*============ Defining and storing the geometry =========*/
 
-    var obj = new DDD.UIObject(1, 1, 0.5, 0.5, "__");
-    var obj2 = new DDD.UIObject(0.5, 0.5, 0.5, 0.5, "__");
+    var obj = new DDD.UIObject(1, 1, 1, 1, "__");
+    var obj2 = new DDD.UIObject(0, 0, 0.5, 0.5, "__");
     var camera = new DDD.UICamera();
-    // var camera = new DDD.PerspectiveCamera(45, 1, 1, 1000);
-    // var camera = new DDD.OrthographicCamera(2, 2, 1, 1000);
-
-
     var render = new DDD.UIRender(client, camera);
 
     /*=================== Shaders =========================*/
@@ -63,7 +59,7 @@
     render.addRenderObject(obj2, shader)
 
     // translating z
-    // camera.translateZ(1)
+    camera.translateZ(1)
 
     var animate = function (time) {
       render.render();

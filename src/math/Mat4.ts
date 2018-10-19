@@ -20,7 +20,7 @@ export class Mat4 extends Base {
   }
 
   get className() {
-    return 'Vec4';
+    return 'Mat4';
   }
 
   add(mat: Mat4) {

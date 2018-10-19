@@ -12,7 +12,7 @@ export class Quat extends Base {
     // quaternion 中 (x,y,z) 跟旋转轴有关, w 与绕旋转轴旋转的角度有关。
     // 对quaternion最大的误解在于认为w表示旋转角度，V表示旋转轴。正确的理解应该是w与旋转角度有关，v与旋转轴有关。
     super()
-    this.w = Math.sqrt(Math.abs(1.0 - x * x - y * y - z * z))
+    // this.w = Math.sqrt(Math.abs(1.0 - x * x - y * y - z * z))
   }
 
   get className() {

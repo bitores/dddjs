@@ -4,11 +4,7 @@ export class UIShader extends Base {
   vertShader: WebGLShader;
   fragShader: WebGLShader;
   program: WebGLProgram;
-  // vars: Object = {
-  //   attribute: {},
-  //   uniform: {}
-  // };
-  locations: Object = {};
+  locations: Object = Object.create(null);
   private shaderTypeReg = /(attribute|uniform)\s\S+\s\S+;/g;
   constructor(public ctx: WebGLRenderingContext, public vertSource: string, public fragSource: string, public name: string = '') {
     super()
@@ -77,54 +73,60 @@ export class UIShader extends Base {
     return this.locations[name].value;
   }
 
-  // get(name: string) {
-  //   let val = this.uniform(name);
-  //   if (val) return val;
-  //   return this.attribute(name);
-  // }
+  // 限制 gl.-----fv
+  uploadItem(name: string, v) {
+    let gl = this.ctx;
+    let location = this.locations[name],
+      prefix = location.prefix,
+      type = location.type;
 
-  // uniform(name: string) {
-  //   return this.vars['uniform'][name].value;
-  // }
-
-  // attribute(name: string) {
-  //   return this.vars['attribute'][name].value;
-  // }
-
-  upload(name: string, value) {
-    switch (name) {
+    switch (type) {
       case 'bool':
-        ; break;
       case 'int':
-        ; break;
-      case 'float':
-        ; break;
-      case 'vec2':
-        ; break;
-      case 'vec3':
-        ; break;
-      case 'vec4':
-        ; break;
-      case 'bvec2':
-        ; break;
-      case 'bvec3':
-        ; break;
-      case 'bvec4':
-        ; break;
-      case 'ivec2':
-        ; break;
-      case 'ivec3':
-        ; break;
-      case 'ivec4':
-        ; break;
-      case 'mat2': {
-        let v = this.locations[name];
-        this.ctx.uniformMatrix2fv(v.value, false, value)
+      case 'float': {
+        if (prefix == 'attribute') {
+          gl.vertexAttrib1fv(location.value, v);
+        } else {
+          gl.uniform1fv(location.value, v);
+        }
       } break;
-      case 'mat3':
-        ; break;
-      case 'mat4':
-        ; break;
+      case 'vec2':
+      case 'bvec2':
+      case 'ivec2': {
+        if (prefix == 'attribute') {
+          gl.vertexAttrib2fv(location.value, v);
+        } else {
+          gl.uniform2fv(location.value, v);
+        }
+      } break;
+
+      case 'vec3':
+      case 'bvec3':
+      case 'ivec3': {
+        if (prefix == 'attribute') {
+          gl.vertexAttrib3fv(location.value, v);
+        } else {
+          gl.uniform3fv(location.value, v);
+        }
+      } break;
+      case 'vec4':
+      case 'bvec4':
+      case 'ivec4': {
+        if (prefix == 'attribute') {
+          gl.vertexAttrib4fv(location.value, v);
+        } else {
+          gl.uniform4fv(location.value, v);
+        }
+      } break;
+      case 'mat2': {
+        gl.uniformMatrix2fv(location.value, false, v)
+      } break;
+      case 'mat3': {
+        gl.uniformMatrix3fv(location.value, false, v)
+      } break;
+      case 'mat4': {
+        gl.uniformMatrix4fv(location.value, false, v)
+      } break;
       case 'sampler2D':
         ; break;
       case 'samplerCube':
@@ -132,9 +134,14 @@ export class UIShader extends Base {
       default:
         throw new TypeError('')
         ; break;
-
     }
   }
+
+  // upload() {
+  //   for(let o in this.locations){
+  //     this.uploadItem(o)
+  //   }
+  // }
 
   get className() {
     return 'UIShader';

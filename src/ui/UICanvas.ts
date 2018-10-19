@@ -40,6 +40,10 @@ export class UICanvas extends Base {
     this.width = clientRect.width;
     this.height = clientRect.height;
 
+    // fix : canvas style- width and height, not the same as attribute
+    this.canvas.setAttribute('width', `${this.width}`);
+    this.canvas.setAttribute('height', `${this.height}`);
+
     return clientRect;
   }
 
