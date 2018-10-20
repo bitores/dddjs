@@ -10,7 +10,7 @@ export default class Node extends Base {
   // _positon: Vec3 = new Vec3();
   // _scale: Vec3 = new Vec3(1, 1, 1);
   // _rotation: Vec3 = new Vec3();
-  protected isRightHand: boolean = false;
+  protected isRightHand: boolean = true;
   protected _modelMatrix: Mat4 = Mat4.E;
   constructor(_name: string, _pos: Vec3 = new Vec3(0, 0, 0)) {
     super()
@@ -44,45 +44,45 @@ export default class Node extends Base {
   }
 
   translateX(val: number) {
-    this._modelMatrix.leftDot(Mat4.translation(val, 0, 0, this.isRightHand))
+    this._modelMatrix.dot(Mat4.translation(val, 0, 0, this.isRightHand), this.isRightHand)
     return this;
   }
 
   translateY(val: number) {
-    this._modelMatrix.leftDot(Mat4.translation(0, val, 0, this.isRightHand))
+    this._modelMatrix.dot(Mat4.translation(0, val, 0, this.isRightHand), this.isRightHand)
     return this;
   }
 
   translateZ(val: number) {
-    this._modelMatrix.leftDot(Mat4.translation(0, 0, val, this.isRightHand))
+    this._modelMatrix.dot(Mat4.translation(0, 0, val, this.isRightHand), this.isRightHand)
     return this;
   }
 
   rotateX(val: number) {
-    this._modelMatrix.leftDot(Mat4.rotation(val, 1, 0, 0, this.isRightHand))
+    this._modelMatrix.dot(Mat4.rotation(val, 1, 0, 0, this.isRightHand), this.isRightHand)
     return this;
   }
 
   rotateY(val: number) {
-    this._modelMatrix.leftDot(Mat4.rotation(val, 0, 1, 0, this.isRightHand))
+    this._modelMatrix.dot(Mat4.rotation(val, 0, 1, 0, this.isRightHand), this.isRightHand)
     return this;
   }
 
   rotateZ(val: number) {
-    this._modelMatrix.leftDot(Mat4.rotation(val, 0, 0, 1, this.isRightHand))
+    this._modelMatrix.dot(Mat4.rotation(val, 0, 0, 1, this.isRightHand), this.isRightHand)
     return this;
   }
 
   scaleX(val: number) {
-    this._modelMatrix.leftDot(Mat4.scaling(val, 1, 1))
+    this._modelMatrix.dot(Mat4.scaling(val, 1, 1))
     return this;
   }
   scaleY(val: number) {
-    this._modelMatrix.leftDot(Mat4.scaling(1, val, 1))
+    this._modelMatrix.dot(Mat4.scaling(1, val, 1))
     return this;
   }
   scaleZ(val: number) {
-    this._modelMatrix.leftDot(Mat4.scaling(1, 1, val))
+    this._modelMatrix.dot(Mat4.scaling(1, 1, val))
     return this;
   }
 

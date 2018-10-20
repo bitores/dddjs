@@ -20,17 +20,11 @@ export class Vec2 extends Base {
     return this;
   }
 
-  // 乘
-  mul(v: number | Vec2) {
-    if (v instanceof Vec2) {
-      // === dot
-      this.x *= v.x;
-      this.y *= v.y;
-    } else {
-      this.x *= v;
-      this.y *= v;
-    }
+  // 数乘
+  mul(v: number) {
 
+    this.x *= v;
+    this.y *= v;
     return this;
   }
 

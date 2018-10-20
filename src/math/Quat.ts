@@ -23,6 +23,7 @@ export class Quat extends Base {
 
   }
 
+  // 四元素的乘法－注意左乘和右乘是有区别的
   // 四元数的乘法的意义类似于矩阵的乘法，可以表示旋转的合成  
   // c=a*b (c,a,b∈Quaternion)可以理解为 ∠c=∠a+∠b 但是a*b 和b*a效果不一样的。
   mul(bx: number = 0, by: number, bz: number, bw: number) {

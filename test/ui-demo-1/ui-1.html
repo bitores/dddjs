@@ -41,7 +41,25 @@
 
     var render = new DDD.UIRender(client, camera);
 
+    /*=================== Shaders =========================*/
+
+    var vertSource = 'attribute vec3 position;' +
+      'uniform mat4 Pmatrix;' +
+      'uniform mat4 Vmatrix;' +
+      'uniform mat4 Mmatrix;' +
+
+      'void main(void) { ' + //pre-built function
+      'gl_Position = Pmatrix*Vmatrix*Mmatrix*vec4(position, 1.);' +
+      '}';
+
+    var fragSource = 'precision mediump float;' +
+      'void main(void) {' +
+      'gl_FragColor = vec4(1., 0., 1., 1.);' +
+      '}';
+
+    // 
     var source = new DDD.UIShaderSource();
+
     var shader = new DDD.UIShader(gl, source.vertSource, source.fragSource);
 
     render.addRenderObject(obj, shader);
@@ -55,10 +73,6 @@
       window.requestAnimationFrame(animate);
     }
     animate(0);
-
-    mycanvas.addEventListener('canvasevent', (e) => {
-      console.log('...', e)
-    })
   </script>
 
 </body>

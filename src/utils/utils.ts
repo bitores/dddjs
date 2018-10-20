@@ -1,13 +1,13 @@
 export function RAD2DEG(x: number) {
   //弧度转角度
 
-  return (x) * 180.0 / Math.PI;
+  return (x % 360) * 180.0 / Math.PI;
 }
 
 export function DEG2RAD(x: number) {
   //角度转弧度
 
-  return (x) * Math.PI / 180.0;
+  return (x % 360) * Math.PI / 180.0;
 }
 /**
  * pos_x: canvas x position
@@ -29,6 +29,13 @@ export function canvas2Webgl(pos_x: number, pos_y: number, width: number, height
   return {
     x: -1 + x0_webgl,
     y: 1 - y0_webgl
+  }
+}
+
+export function point2Webgl(pos_x: number, pos_y: number) {
+  return {
+    x: pos_x - 1,
+    y: 1 - pos_y
   }
 }
 

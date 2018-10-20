@@ -23,18 +23,11 @@ export class Vec3 extends Base {
   }
 
   // 数乘
-  mul(v: number | Vec3) {
-    if (v instanceof Vec3) {
-      // === dot
-      this.x *= v.x;
-      this.y *= v.y;
-      this.z *= v.z;
-    } else {
-      this.x *= v;
-      this.y *= v;
-      this.z *= v;
-    }
+  mul(v: number) {
 
+    this.x *= v;
+    this.y *= v;
+    this.z *= v;
     return this;
   }
 

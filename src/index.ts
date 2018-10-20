@@ -13,6 +13,8 @@ export * from './ui/UICanvas';
 export * from './ui/UICamera';
 export * from './ui/UIObject';
 export * from './ui/UIShader';
+export * from './ui/UIShaderSource';
 export * from './ui/UIRender';
+export * from './event/CanvasEvent';
 
 

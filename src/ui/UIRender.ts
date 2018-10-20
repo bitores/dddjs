@@ -12,7 +12,7 @@ export class UIRender extends Base {
     this.ctx = canvas.ctx;
   }
 
-  createVBO(data: Float32Array, is_index: boolean, buffer_static: any) {
+  createVBO(data: Float32Array, is_index: boolean = false, buffer_static: any = true) {
     let gl = this.ctx;
     let usage = null;
     let target = is_index ? gl.ELEMENT_ARRAY_BUFFER : gl.ARRAY_BUFFER;
@@ -33,6 +33,7 @@ export class UIRender extends Base {
     var vbo = gl.createBuffer();
     gl.bindBuffer(target, vbo);
     gl.bufferData(target, data, usage);
+    gl.bindBuffer(target, null);
 
     return vbo;
   }

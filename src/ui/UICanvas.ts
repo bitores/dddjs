@@ -1,4 +1,5 @@
 import Base from "../Base";
+import { CanvasEvent } from "../event/CanvasEvent";
 
 export class UICanvas extends Base {
   ctx: WebGLRenderingContext | null;
@@ -15,8 +16,13 @@ export class UICanvas extends Base {
     if (Object.prototype.toString.call(canvas) !== "[object HTMLCanvasElement]") {
       throw new TypeError('The first paramter is not the HTMLCanvasElement type.')
     }
-    this.initCanvasCtx()
+    this.initEvent();
+    this.initCanvasCtx();
     this.boundingRect();
+  }
+
+  initEvent() {
+    return new CanvasEvent(this.canvas);
   }
 
   private initCanvasCtx() {

@@ -17,7 +17,14 @@ export class UIShader extends Base {
   }
 
   analySource(source: string) {
-    let format = source.replace(/\s+/g, ' ');
+    // 标准化 shader
+    let format = source.replace(/[\s]+/g, ' ');
+    // 去 换行
+    format = format.replace(/[\r\n]/g, "");
+    // 去 首尾空格
+    format = format.replace(/(^\s*)|(\s*$)/g, "")
+    // 去 ; 左右空格
+    format = format.replace(/\s*;\s*/g, ';');
     let matchs = format.match(this.shaderTypeReg);
     matchs && matchs.forEach(record => {
       record = record.replace(';', '');

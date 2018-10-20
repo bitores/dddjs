@@ -50,6 +50,14 @@ export class Mat4 extends Base {
     return this;
   }
 
+  dot(mat: Mat4, isRightHand: boolean = true) {
+    if (isRightHand) {
+      return this.rightDot(mat);
+    } else {
+      return this.leftDot(mat);
+    }
+  }
+
   leftDot(mat: Mat4) {
     let _ele = mat.elements;
 
@@ -84,7 +92,7 @@ export class Mat4 extends Base {
     return this;
   }
 
-  dot(mat: Mat4) {
+  rightDot(mat: Mat4) {
     let _ele = this.elements;
 
     let ele = mat.elements;
@@ -188,7 +196,6 @@ export class Mat4 extends Base {
   // 若矩阵秩等于列数，称为列满秩
   // 满秩矩阵是是判断一个矩阵是否可逆的充分必要条件
   rank() {
-
   }
 
   // 伴随，共轭 矩阵
@@ -313,13 +320,13 @@ export class Mat4 extends Base {
   // https://blog.csdn.net/gggg_ggg/article/details/45969499
   // 正交投影
   // Orthographic projection
-  static orthographicLRTBNF(left: number, right: number, top: number, bottom: number, near: number, far: number, isRightHand: boolean = true) {
+  static orthographicLRTBNF(left: number, right: number, top: number, bottom: number, near: number, far: number) {
     // x [left, right] 映射 [-1,1]
     // y [bottom, top] 映射 [-1,1]
     // z [near, far] 映射 [ 0,1] -- near < far右手坐标系统
     let mat = new Mat4();
-    let n = isRightHand ? near : far,
-      f = isRightHand ? far : near;
+    let n = near,
+      f = far;
     mat.elements = [
       2 / (right - left), 0, 0, -(right + left) / (right - left),
       0, 2 / (top - bottom), 0, -(top + bottom) / (top - bottom),
@@ -330,13 +337,13 @@ export class Mat4 extends Base {
     return mat;
   }
 
-  static orthographicWHNF(w: number, h: number, near: number, far: number, isRightHand: boolean = true) {
+  static orthographicWHNF(w: number, h: number, near: number, far: number) {
     // x [left, right] 映射 [-1,1]
     // y [bottom, top] 映射 [-1,1]
     // z [near, far] 映射 [ 0,1] -- near < far右手坐标系统
     let mat = new Mat4();
-    let n = isRightHand ? near : far,
-      f = isRightHand ? far : near;
+    let n = near,
+      f = far;
     mat.elements = [
       2 / w, 0, 0, 0,
       0, 2 / h, 0, 0,
@@ -349,8 +356,8 @@ export class Mat4 extends Base {
 
   // 透视变换 矩阵
   // perspective projection
-  static perspective(fovy: number = 45, aspect: number = 1, near: number = 1, far: number = 1000) {
-    let f = 1.0 / Math.tan(DEG2RAD(fovy) / 2.0),
+  static perspective(fovy: number = 45, aspect: number = 1, near: number = 0.1, far: number = 1000) {
+    let f = 1.0 / Math.tan(DEG2RAD(fovy / 2.0)),
       nf = 1.0 / (near - far);
     let mat = new Mat4();
 
@@ -364,8 +371,8 @@ export class Mat4 extends Base {
     return mat;
   }
 
-
-  static view(eye: Vec3 = new Vec3(), target: Vec3 = new Vec3(1, 1, 1), up: Vec3 = new Vec3(0, 1, 0), isRightHand: boolean = true) {
+  // 这个矩阵的推导方式也不止一种啦，得到的最终矩阵也未必相同的。总之它是不固定的，使用哪种推导过程要根据你的已知参数是什么来决定。不过很多库都有封装成类，而不是单一的函数。如果要开发3D项目，这个类是必封装的东西，要不然代码会凌乱死。
+  static view(eye: Vec3 = new Vec3(0, 0, 0), target: Vec3 = new Vec3(0, 0, -1), up: Vec3 = new Vec3(0, 1, 0), isRightHand: boolean = true) {
     // https://www.cnblogs.com/wbaoqing/p/5422974.html
     // https://blog.csdn.net/xufeng0991/article/details/75949931
     // 一 相机状态描述
@@ -378,38 +385,69 @@ export class Mat4 extends Base {
     // xAxis：up X zAxis 归一化 U(Ux, Uy, Uz)
     // yAxis: zAxis X xAxis 归一化 V(Vx, Vy, Vz)
     // let yAxis = up.clone();
-    // 视线方向为 z 轴负方向， 
-    let zAxis = eye.clone().sub(target.x, target.y, target.z);
-    let N = zAxis.clone().normalize();
-
-
-    let xAxis = N.clone().cross(up.x, up.y, up.z);
-    let U = xAxis.clone().normalize();
-
-    let V = U.clone().cross(N.x, N.y, N.z);
+    if (eye.x == target.x && eye.y == target.y && eye.z == target.z) { return Mat4.E }
 
     // 旋转矩阵是个正交矩阵，它的逆矩阵和转置矩阵一样
-    // 右手旋转的逆矩阵
-    let r = new Mat4(
-      U.x, U.y, U.z, 0,
-      V.x, V.y, V.z, 0,
-      N.x, N.y, N.z, 0,
-      0.0, 0.0, 0.0, 1.0
-    )
+    if (isRightHand) {
+      // 视线方向为 z 轴负方向， 
+      let zAxis = eye.clone().sub(target.x, target.y, target.z);
+      let NZ = zAxis.clone().normalize();
 
-    // 右手平移的逆矩阵
-    let t = new Mat4(
-      1.0, 0.0, 0.0, -eye.x,
-      0.0, 1.0, 0.0, -eye.y,
-      0.0, 0.0, 1.0, -eye.z,
-      0, 0, 0, 1.0,
-    )
+      let xAxis = up.clone().cross(NZ.x, NZ.y, NZ.z);
+      let UX = xAxis.clone().normalize();
 
-    return r.dot(t);
+      let VY = NZ.clone().cross(UX.x, UX.y, UX.z);
+
+      // 右手旋转的逆矩阵
+      var r = new Mat4(
+        UX.x, UX.y, UX.z, 0,
+        VY.x, VY.y, VY.z, 0,
+        NZ.x, NZ.y, NZ.z, 0,
+        0.0, 0.0, 0.0, 1.0
+      )
+
+      // 右手平移的逆矩阵
+      var t = new Mat4(
+        1.0, 0.0, 0.0, -eye.x,
+        0.0, 1.0, 0.0, -eye.y,
+        0.0, 0.0, 1.0, -eye.z,
+        0, 0, 0, 1.0,
+      )
+
+      return r.dot(t);
+    } else {
+      // 视线方向为 z 轴正方向， 
+      let zAxis = target.clone().sub(eye.x, eye.y, eye.z);
+      let NZ = zAxis.clone().normalize();
+
+      let xAxis = NZ.clone().cross(up.x, up.y, up.z);
+      let UX = xAxis.clone().normalize();
+
+      let VY = UX.clone().cross(NZ.x, NZ.y, NZ.z);
+
+      // 左手旋转的逆矩阵
+      var r = new Mat4(
+        UX.x, VY.x, NZ.x, 0,
+        UX.y, VY.y, NZ.y, 0,
+        UX.z, VY.z, NZ.z, 0,
+        0.0, 0.0, 0.0, 1.0
+      )
+
+      // 左手平移的逆矩阵
+      var t = new Mat4(
+        1.0, 0.0, 0.0, 0,
+        0.0, 1.0, 0.0, 0,
+        0.0, 0.0, 1.0, 0,
+        -eye.x, -eye.y, -eye.z, 1.0,
+      )
+
+      return t.dot(r);
+    }
   }
 
   static translation(tx: number, ty: number, tz: number, isRightHand: boolean = true) {
     if (isRightHand) {
+      // 右：右坐标系，右乘
       return new Mat4(
         1, 0, 0, tx,
         0, 1, 0, ty,
@@ -417,6 +455,7 @@ export class Mat4 extends Base {
         0, 0, 0, 1)
     }
 
+    // 左：左坐标系，左乘
     return new Mat4(
       1, 0, 0, 0,
       0, 1, 0, 0,
