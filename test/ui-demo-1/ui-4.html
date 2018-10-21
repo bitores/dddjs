@@ -14,13 +14,11 @@
 
     canvas {
       display: inline-block;
-      width: 100%;
-      height: 100%;
-      /* width: 200px;
+      width: 200px;
       height: 200px;
       position: absolute;
       left: 100px;
-      top: 100px; */
+      top: 100px;
     }
   </style>
   <script src="../dist/ddd.js"></script>
@@ -62,16 +60,17 @@
     }
     animate(0);
 
-    let ray = new DDD.RayCaster();
-
     mycanvas.addEventListener('webgl', (e) => {
-      // console.log(e.webglX, e.webglY)
-      if (e.drag) {
-        var pointer = new DDD.UIObject(0.5, 0.5, 0.01, 0.01, "__");
-        pointer._modelMatrix.elements[12] = e.webglX;
-        pointer._modelMatrix.elements[13] = e.webglY;
-        render.addRenderObject(pointer, shader);
-      }
+      console.log(e.webglX, e.webglY)
+      // obj.translateX(e.webglX)
+      // obj.translateY(e.webglY)
+      // obj._modelMatrix.elements[12] = e.webglX;
+      // obj._modelMatrix.elements[13] = e.webglY;
+
+      var pointer = new DDD.UIObject(0.5, 0.5, 0.01, 0.01, "__");
+      pointer._modelMatrix.elements[12] = e.webglX;
+      pointer._modelMatrix.elements[13] = e.webglY;
+      render.addRenderObject(pointer, shader);
     })
   </script>
 

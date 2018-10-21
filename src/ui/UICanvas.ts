@@ -19,6 +19,7 @@ export class UICanvas extends Base {
     this.initEvent();
     this.initCanvasCtx();
     this.boundingRect();
+    this.resize();
   }
 
   initEvent() {
@@ -51,6 +52,10 @@ export class UICanvas extends Base {
     this.canvas.setAttribute('height', `${this.height}`);
 
     return clientRect;
+  }
+
+  resize() {
+    window.addEventListener('resize', () => this.boundingRect)
   }
 
   get gl() {
