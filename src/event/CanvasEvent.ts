@@ -53,11 +53,13 @@ export class CanvasEvent extends Base {
 
         if (name === 'mousedown' || name === 'touchstart') {
           this._drag = true;
+          _event['webgldown'] = true;
         } else if (name === 'mouseup' || name === 'touchend') {
           this._drag = false;
+          _event['webgldown'] = false;
         }
 
-        _event['drag'] = this._drag;
+        _event['webgldrag'] = this._drag;
         canvas.dispatchEvent(_event)
       })
     })

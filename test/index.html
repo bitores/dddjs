@@ -62,12 +62,13 @@
     }
     animate(0);
 
-    let ray = new DDD.RayCaster();
+    let ray = new DDD.RayCaster(camera);
+
 
     mycanvas.addEventListener('webgl', (e) => {
       // console.log(e.webglX, e.webglY)
-      if (e.drag) {
-        var pointer = new DDD.UIObject(0.5, 0.5, 0.01, 0.01, "__");
+      if (e.webgldrag) {
+        var pointer = new DDD.UIObject(0.5, 0.5, 0.05, 0.05, "__");
         pointer._modelMatrix.elements[12] = e.webglX;
         pointer._modelMatrix.elements[13] = e.webglY;
         render.addRenderObject(pointer, shader);
