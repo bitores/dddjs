@@ -94,7 +94,8 @@
         // render2.addRenderObject(pointer, shader2);
         obj2._modelMatrix.elements[12] = e.webglX;
         obj2._modelMatrix.elements[13] = e.webglY;
-      } else {
+      } else if (e.webglup) {
+        console.log(e)
         obj2._modelMatrix.elements[12] = 0;
         obj2._modelMatrix.elements[13] = 0;
       }

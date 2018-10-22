@@ -60,8 +60,12 @@ export class CanvasEvent extends Base {
 
         if (name === 'mousedown' || name === 'touchstart') {
           CanvasEvent._drag = true;
+          _event['webglup'] = false;
         } else if (name === 'mouseup' || name === 'touchend') {
           CanvasEvent._drag = false;
+          _event['webglup'] = true;
+        } else {
+          _event['webglup'] = false;
         }
 
         _event['webgldown'] = CanvasEvent._drag;
@@ -69,16 +73,50 @@ export class CanvasEvent extends Base {
         canvas.dispatchEvent(_event)
       });
 
-      document.addEventListener('mouseup', () => {
+      document.addEventListener('mouseup', (ev) => {
         if (_event === null) return;
+        _event['name'] = 'mouseup';
+        _event['clientWidth'] = canvas['clientWidth'];
+        _event['clientHeight'] = canvas['clientHeight'];
+        _event['offsetLeft'] = canvas['offsetLeft'];
+        _event['offsetTop'] = canvas['offsetTop'];
+
+        // _event['canvas'] = canvas;
+        // _event['origin'] = ev;
+
+        _event['clientX'] = 'ontouchstart' in window ? (ev["changedTouches"][0].clientX) : ev['clientX'];
+        _event['clientY'] = 'ontouchstart' in window ? (ev["changedTouches"][0].clientY) : ev['clientY'];
+
+        _event['webglX'] = -1.0 + 2.0 * (_event['clientX'] - canvas['offsetLeft']) / canvas['clientWidth'];
+        _event['webglY'] = 1.0 - 2.0 * (_event['clientY'] - canvas['offsetTop']) / canvas['clientHeight'];
+
+        _event['webglup'] = true;
+
         CanvasEvent._drag = false;
         _event['webgldown'] = CanvasEvent._drag;
         _event['webgldrag'] = CanvasEvent._drag;
         canvas.dispatchEvent(_event)
       })
 
-      document.addEventListener('touchend', () => {
+      document.addEventListener('touchend', (ev) => {
         if (_event === null) return;
+        _event['name'] = 'touchend';
+        _event['clientWidth'] = canvas['clientWidth'];
+        _event['clientHeight'] = canvas['clientHeight'];
+        _event['offsetLeft'] = canvas['offsetLeft'];
+        _event['offsetTop'] = canvas['offsetTop'];
+
+        // _event['canvas'] = canvas;
+        // _event['origin'] = ev;
+
+        _event['clientX'] = 'ontouchstart' in window ? (ev["changedTouches"][0].clientX) : ev['clientX'];
+        _event['clientY'] = 'ontouchstart' in window ? (ev["changedTouches"][0].clientY) : ev['clientY'];
+
+        _event['webglX'] = -1.0 + 2.0 * (_event['clientX'] - canvas['offsetLeft']) / canvas['clientWidth'];
+        _event['webglY'] = 1.0 - 2.0 * (_event['clientY'] - canvas['offsetTop']) / canvas['clientHeight'];
+
+        _event['webglup'] = true;
+
         CanvasEvent._drag = false;
         _event['webgldown'] = CanvasEvent._drag;
         _event['webgldrag'] = CanvasEvent._drag;
