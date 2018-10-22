@@ -1,41 +1,48 @@
 import Base from "../Base";
 
 export class CanvasEvent extends Base {
-  private eventName: string;
-  private _event: Event;
-  private _event_list: string[];
-  private _drag: boolean = false;
+  static eventName: string;
+  static _event: Event = null;
+  static _event_list: string[];
+  static _drag: boolean = false;
   constructor(public canvas: HTMLCanvasElement) {
     super()
+    if (this instanceof CanvasEvent === false) {
+      return new CanvasEvent(canvas);
+    }
 
-    this.platformEvent();
-    this.init()
+    if (CanvasEvent._event === null) {
+
+      CanvasEvent.eventName = 'webgl';
+      this.createEvent()
+      this.platformEvent();
+    }
     this.listen()
   }
 
   platformEvent() {
     let mobile = 'ontouchstart' in window;
     if (mobile) {
-      this._event_list = [
+      CanvasEvent._event_list = [
         'touchstart',
         'touchmove',
         'touchend'
       ]
     } else {
-      this._event_list = [
+      CanvasEvent._event_list = [
         'mousedown',
         'mousemove',
         'mouseup'
       ];
     }
-
-    this.eventName = 'webgl';
   }
 
+
   listen() {
-    let canvas = this.canvas, _event = this._event;
-    this._event_list.forEach(name => {
+    let canvas = this.canvas, _event = CanvasEvent._event;
+    CanvasEvent._event_list.forEach(name => {
       canvas.addEventListener(name, (ev) => {
+
         _event['name'] = name;
         _event['clientWidth'] = canvas['clientWidth'];
         _event['clientHeight'] = canvas['clientHeight'];
@@ -52,34 +59,48 @@ export class CanvasEvent extends Base {
         _event['webglY'] = 1.0 - 2.0 * (_event['clientY'] - canvas['offsetTop']) / canvas['clientHeight'];
 
         if (name === 'mousedown' || name === 'touchstart') {
-          this._drag = true;
-          _event['webgldown'] = true;
+          CanvasEvent._drag = true;
         } else if (name === 'mouseup' || name === 'touchend') {
-          this._drag = false;
-          _event['webgldown'] = false;
+          CanvasEvent._drag = false;
         }
 
-        _event['webgldrag'] = this._drag;
+        _event['webgldown'] = CanvasEvent._drag;
+        _event['webgldrag'] = CanvasEvent._drag;
+        canvas.dispatchEvent(_event)
+      });
+
+      document.addEventListener('mouseup', () => {
+        console.log('')
+        CanvasEvent._drag = false;
+        _event['webgldown'] = CanvasEvent._drag;
+        _event['webgldrag'] = CanvasEvent._drag;
+        canvas.dispatchEvent(_event)
+      })
+
+      document.addEventListener('touchend', () => {
+        CanvasEvent._drag = false;
+        _event['webgldown'] = CanvasEvent._drag;
+        _event['webgldrag'] = CanvasEvent._drag;
         canvas.dispatchEvent(_event)
       })
     })
   }
 
-  unlisten() {
-    let canvas = this.canvas;
-    this._event_list.forEach(name => {
-      canvas.removeEventListener(name, () => { })
-    })
-  }
+  // unlisten() {
+  //   let canvas = this.canvas;
+  //   CanvasEvent._event_list.forEach(name => {
+  //     canvas.removeEventListener(name, this.handListener)
+  //   })
+  // }
 
-  init() {
+  createEvent() {
     // 创建
     let ev = document.createEvent('HTMLEvents');
     // 初始化，事件类型，是否冒泡，是否阻止浏览器的默认行为
-    ev.initEvent(this.eventName, false, true)
+    ev.initEvent('webgl', false, true)
     //dfgdf
     ev["eventType"] = 'canvasevent';
-    this._event = ev;
+    CanvasEvent._event = ev;
   }
 
 

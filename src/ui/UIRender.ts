@@ -12,7 +12,8 @@ export class UIRender extends Base {
     this.ctx = canvas.ctx;
   }
 
-  createVBO(data: Float32Array, is_index: boolean = false, buffer_static: any = true) {
+  // create buffer object
+  createBO(data: Float32Array, is_index: boolean = false, buffer_static: any = true) {
     let gl = this.ctx;
     let usage = null;
     let target = is_index ? gl.ELEMENT_ARRAY_BUFFER : gl.ARRAY_BUFFER;
@@ -30,17 +31,17 @@ export class UIRender extends Base {
         usage = gl.STATIC_DRAW;
       } break;
     }
-    var vbo = gl.createBuffer();
-    gl.bindBuffer(target, vbo);
+    var bo = gl.createBuffer();
+    gl.bindBuffer(target, bo);
     gl.bufferData(target, data, usage);
     gl.bindBuffer(target, null);
 
-    return vbo;
+    return bo;
   }
 
   addRenderObject(obj: UIObject, shader: UIShader) {
-    let vbo = this.createVBO(obj.vertices, false, true);
-    let ibo = this.createVBO(obj.indices, true, true);
+    let vbo = this.createBO(obj.vertices, false, true);
+    let ibo = this.createBO(obj.indices, true, true);
 
     this.pool.push({
       obj,
