@@ -8,6 +8,10 @@ export class RayCaster extends Base {
 
   intersectObjects(x, y, objects: []) {
 
+    objects.forEach(obj => {
+
+    })
+
     return [];
   }
 

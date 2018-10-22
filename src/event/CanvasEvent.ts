@@ -2,7 +2,7 @@ import Base from "../Base";
 
 export class CanvasEvent extends Base {
   static eventName: string;
-  static _event: Event = null;
+  static _event: Event | null = null;
   static _event_list: string[];
   static _drag: boolean = false;
   constructor(public canvas: HTMLCanvasElement) {
@@ -42,7 +42,7 @@ export class CanvasEvent extends Base {
     let canvas = this.canvas, _event = CanvasEvent._event;
     CanvasEvent._event_list.forEach(name => {
       canvas.addEventListener(name, (ev) => {
-
+        if (_event === null) return;
         _event['name'] = name;
         _event['clientWidth'] = canvas['clientWidth'];
         _event['clientHeight'] = canvas['clientHeight'];
@@ -70,7 +70,7 @@ export class CanvasEvent extends Base {
       });
 
       document.addEventListener('mouseup', () => {
-        console.log('')
+        if (_event === null) return;
         CanvasEvent._drag = false;
         _event['webgldown'] = CanvasEvent._drag;
         _event['webgldrag'] = CanvasEvent._drag;
@@ -78,6 +78,7 @@ export class CanvasEvent extends Base {
       })
 
       document.addEventListener('touchend', () => {
+        if (_event === null) return;
         CanvasEvent._drag = false;
         _event['webgldown'] = CanvasEvent._drag;
         _event['webgldrag'] = CanvasEvent._drag;

@@ -2,7 +2,7 @@ import Base from '../Base';
 import { Vec3 } from './Vec3';
 import { Mat3 } from './Mat3';
 import { DEG2RAD } from '../utils/utils'
-import { Quat } from './Quat';
+import { Quaternion } from './Quaternion';
 
 export class Mat4 extends Base {
   elements: number[];
@@ -534,7 +534,7 @@ export class Mat4 extends Base {
     return mat;
   }
 
-  decompose(position: Vec3 = new Vec3(), quaternion: Quat = new Quat(), scale: Vec3 = new Vec3()) {
+  decompose(position: Vec3 = new Vec3(), quaternion: Quaternion = new Quaternion(), scale: Vec3 = new Vec3()) {
     var te = this.elements;
 
     var sx = new Vec3(te[0], te[1], te[2]).length();

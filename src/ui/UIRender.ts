@@ -5,7 +5,7 @@ import { UICamera } from "./UICamera";
 import { UICanvas } from "./UICanvas";
 
 export class UIRender extends Base {
-  public ctx: WebGLRenderingContext;
+  public ctx: WebGLRenderingContext | null;
   private pool: Object[] = [];
   constructor(public canvas: UICanvas, public camera: UICamera) {
     super()
@@ -14,8 +14,9 @@ export class UIRender extends Base {
 
   // create buffer object
   createBO(data: Float32Array, is_index: boolean = false, buffer_static: any = true) {
+    if (this.ctx === null) return null;
     let gl = this.ctx;
-    let usage = null;
+    let usage: number | null = null;
     let target = is_index ? gl.ELEMENT_ARRAY_BUFFER : gl.ARRAY_BUFFER;
     switch (buffer_static) {
       case false:
@@ -52,8 +53,10 @@ export class UIRender extends Base {
   }
 
   renderItem(item: any) {
+    if (this.ctx === null) return;
     let gl = this.ctx, shader = item.shader, vbo = item.vbo, ibo = item.ibo, obj = item.obj;
     shader.use();
+
 
     let proj_matrix = this.camera._projectMatrix.elements;
     let view_matrix = this.camera._viewMatrix.elements;
@@ -70,6 +73,7 @@ export class UIRender extends Base {
   }
 
   clean() {
+    if (this.ctx === null) return;
     let gl = this.ctx;
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);

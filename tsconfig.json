@@ -1,14 +1,19 @@
 {
   "compilerOptions": {
-    "experimentalDecorators": true,
-    "module": "commonjs",
     "target": "es5",
+    "module": "commonjs",
+    "baseUrl": "./src/",
+    "rootDir": "./src/",
+    "outDir": "./dist/debug",
+    "experimentalDecorators": true,
     // "noImplicitAny": true,
+    // "allowJs": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noStrictGenericChecks": false,
-    // "strictNullChecks": true,
+    "removeComments": true,
+    "strictNullChecks": true,
     // 可以使得null和undefined只能被赋值给void或本身对应的类型 
     "declaration": false,
     "sourceMap": true,
@@ -21,9 +26,8 @@
     ],
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
-    "baseUrl": "./src/",
-    "rootDir": "./src/",
-    "paths": {},
-    "outDir": "./dist/debug"
+
+    "paths": {}
+
   }
 }

@@ -1,5 +1,5 @@
 import Base from '../Base';
-import { Quat } from './Quat';
+import { Quaternion } from './Quaternion';
 // 欧拉角：常用的旋转表示方法便是四元数和欧拉角
 // 欧拉角描述旋转的过程中，可能会出现一种被称为“万向节死锁”的情况
 // 死锁:pitch为90度后,不能在实现yaw的旋转了
@@ -18,7 +18,7 @@ export class Euler extends Base {
     return 'Euler';
   }
 
-  quat() {
+  quaternion() {
     let halfToRad = 0.5 * Math.PI / 180.0;
 
     let halX = this.pitch * halfToRad, halY = this.yaw * halfToRad, halZ = this.roll * halfToRad;
@@ -33,7 +33,7 @@ export class Euler extends Base {
     let y = cx * sy * cz + sx * cy * sz;
     let z = cx * cy * sz - sx * sy * cz;
     let w = cx * cy * cz + sx * sy * sz;
-    return new Quat(x, y, z, w);
+    return new Quaternion(x, y, z, w);
   }
 
   clone() {

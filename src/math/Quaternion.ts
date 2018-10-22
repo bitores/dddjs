@@ -4,19 +4,18 @@ import { Mat4 } from './Mat4';
 // 若绕z-y-x轴的顺序旋转，欧拉角为yaw (ψ), pitch (θ) and roll (φ) 。
 // 求出四元数q=(x,y,z,w),这里w为角度
 // x2+y2+z2+w2=1
-export class Quat extends Base {
+export class Quaternion extends Base {
   // ref https://www.3dgep.com/understanding-quaternions/
   // ref https://www.douban.com/note/537268961/
 
-  constructor(public x: number = 0, public y: number = 0, public z: number = 0, public w: number = 0) {
+  constructor(public x: number = 0, public y: number = 0, public z: number = 0, public w: number = 1.0) {
     // quaternion 中 (x,y,z) 跟旋转轴有关, w 与绕旋转轴旋转的角度有关。
     // 对quaternion最大的误解在于认为w表示旋转角度，V表示旋转轴。正确的理解应该是w与旋转角度有关，v与旋转轴有关。
     super()
-    // this.w = Math.sqrt(Math.abs(1.0 - x * x - y * y - z * z))
   }
 
   get className() {
-    return 'Quat';
+    return 'Quaternion';
   }
 
   add() {
@@ -79,7 +78,7 @@ export class Quat extends Base {
   // for rotSeq xyz
   // z = res[0], y = res[1], x = res[2]
   // ...
-  toEuler(q: Quat, rotSeq: string) {
+  toEuler(q: Quaternion, rotSeq: string) {
     // http://bediyap.com/programming/convert-quaternion-to-euler-rotations/
     let ret = {};
     switch (rotSeq) {
@@ -248,11 +247,11 @@ export class Quat extends Base {
   }
 
   static E() {
-    return new Quat(0, 0, 0, 1);
+    return new Quaternion(0, 0, 0, 1);
   }
 
   static Zero() {
-    return new Quat(0, 0, 0, 0);
+    return new Quaternion(0, 0, 0, 0);
   }
 
   identity() {
@@ -314,10 +313,10 @@ export class Quat extends Base {
   }
 
   clone() {
-    return new Quat(this.x, this.y, this.z, this.w);
+    return new Quaternion(this.x, this.y, this.z, this.w);
   }
 
   toString() {
-    return `Quat(${this.x},${this.y},${this.z},${this.w})`;
+    return `Quaternion(${this.x},${this.y},${this.z},${this.w})`;
   }
 }

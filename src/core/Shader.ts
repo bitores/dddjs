@@ -1,16 +1,19 @@
 import Base from "../Base";
 
 export class Shader extends Base {
-  vertShader: WebGLShader;
-  fragShader: WebGLShader;
-  program: WebGLProgram;
+  vertShader: WebGLShader | null;
+  fragShader: WebGLShader | null;
+  program: WebGLProgram | null;
   locations: Object = Object.create(null);
   private shaderTypeReg = /(attribute|uniform)\s\S+\s\S+;/g;
   constructor(public ctx: WebGLRenderingContext, public vertSource: string, public fragSource: string, locations: Object = Object.create(null)) {
     super()
     this.vertShader = this.compileShader(vertSource, ctx.VERTEX_SHADER);
     this.fragShader = this.compileShader(fragSource, ctx.FRAGMENT_SHADER);
-    this.program = this.linkProgram(this.vertShader, this.fragShader)
+    if (this.vertShader && this.fragShader) {
+      this.program = this.linkProgram(this.vertShader, this.fragShader)
+    }
+
 
     // this.locations = locations;
     // this.analySource(vertSource);
@@ -35,7 +38,7 @@ export class Shader extends Base {
     matchs && matchs.forEach(record => {
       record = record.replace(';', '');
       let ret = record.split(' ');
-      let value = null;
+      let value: WebGLUniformLocation | null = null;
       if (ret[0] === "uniform") {
         value = this.getUniformLocation(ret[2]);
         // this.vars[ret[0]][ret[2]] = { type: ret[1], value };
@@ -57,25 +60,37 @@ export class Shader extends Base {
 
   private compileShader(source: string, shaderType: number) {
     var shader = this.ctx.createShader(shaderType);
-    this.ctx.shaderSource(shader, source);
-    this.ctx.compileShader(shader);
+    if (shader) {
+      this.ctx.shaderSource(shader, source);
+      this.ctx.compileShader(shader);
+    }
+
     return shader;
   }
 
   private linkProgram(vertShader: WebGLShader, fragShader: WebGLShader) {
     var shaderProgram = this.ctx.createProgram();
-    this.ctx.attachShader(shaderProgram, vertShader);
-    this.ctx.attachShader(shaderProgram, fragShader);
-    this.ctx.linkProgram(shaderProgram);
+    if (shaderProgram) {
+      this.ctx.attachShader(shaderProgram, vertShader);
+      this.ctx.attachShader(shaderProgram, fragShader);
+      this.ctx.linkProgram(shaderProgram);
+    }
+
     return shaderProgram;
   }
 
   getUniformLocation(name: string) {
-    return this.ctx.getUniformLocation(this.program, name);
+    if (this.program) {
+      return this.ctx.getUniformLocation(this.program, name);
+    }
+    return null;
   }
 
   getAttribLocation(name: string) {
-    return this.ctx.getAttribLocation(this.program, name);
+    if (this.program) {
+      return this.ctx.getAttribLocation(this.program, name);
+    }
+    return null;
   }
 
   use() {
