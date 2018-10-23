@@ -534,6 +534,40 @@ export class Mat4 extends Base {
     return mat;
   }
 
+  compose(position: Vec3 = new Vec3(), quaternion: Quaternion = new Quaternion(), scale: Vec3 = new Vec3()) {
+    var te = this.elements;
+
+    var x = quaternion.x, y = quaternion.y, z = quaternion.z, w = quaternion.w;
+    var x2 = x + x, y2 = y + y, z2 = z + z;
+    var xx = x * x2, xy = x * y2, xz = x * z2;
+    var yy = y * y2, yz = y * z2, zz = z * z2;
+    var wx = w * x2, wy = w * y2, wz = w * z2;
+
+    var sx = scale.x, sy = scale.y, sz = scale.z;
+
+    te[0] = (1 - (yy + zz)) * sx;
+    te[1] = (xy + wz) * sx;
+    te[2] = (xz - wy) * sx;
+    te[3] = 0;
+
+    te[4] = (xy - wz) * sy;
+    te[5] = (1 - (xx + zz)) * sy;
+    te[6] = (yz + wx) * sy;
+    te[7] = 0;
+
+    te[8] = (xz + wy) * sz;
+    te[9] = (yz - wx) * sz;
+    te[10] = (1 - (xx + yy)) * sz;
+    te[11] = 0;
+
+    te[12] = position.x;
+    te[13] = position.y;
+    te[14] = position.z;
+    te[15] = 1;
+
+    return this;
+  }
+
   decompose(position: Vec3 = new Vec3(), quaternion: Quaternion = new Quaternion(), scale: Vec3 = new Vec3()) {
     var te = this.elements;
 
@@ -545,9 +579,9 @@ export class Mat4 extends Base {
     var det = this.det();
     if (det < 0) sx = - sx;
 
-    position.x = te[3];
-    position.y = te[7];
-    position.z = te[11];
+    position.x = te[12];
+    position.y = te[13];
+    position.z = te[14];
 
     scale.x = sx;
     scale.y = sy;
@@ -559,7 +593,7 @@ export class Mat4 extends Base {
     var invSY = 1 / sy;
     var invSZ = 1 / sz;
 
-    let matrix = new Mat4();
+    let matrix = this.clone();
 
     matrix.elements[0] *= invSX;
     matrix.elements[1] *= invSX;
@@ -577,6 +611,21 @@ export class Mat4 extends Base {
 
     return this;
   }
+
+
+  // --------  start
+  trigger() {
+    this._onChangeCallback();
+  }
+
+  onChange(callback) {
+    this._onChangeCallback = callback;
+  }
+
+  _onChangeCallback() {
+
+  }
+  // ---------- end
 
 
   clone() {

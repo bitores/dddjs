@@ -1,5 +1,7 @@
 import Base from '../Base';
 import { Mat4 } from './Mat4';
+import { Vec3 } from './Vec3';
+import { Euler } from './Euler';
 // 四元素：常用的旋转表示方法便是四元数和欧拉角
 // 若绕z-y-x轴的顺序旋转，欧拉角为yaw (ψ), pitch (θ) and roll (φ) 。
 // 求出四元数q=(x,y,z,w),这里w为角度
@@ -22,6 +24,17 @@ export class Quaternion extends Base {
 
   }
 
+  leftmul(bx: number = 0, by: number, bz: number, bw: number) {
+    let ax = this.x, ay = this.y, az = this.z, aw = this.w;
+
+    this.x = bx * aw + bw * ax + by * az - bz * ay;
+    this.y = by * aw + bw * ay + bz * ax - bx * az;
+    this.z = bz * aw + bw * az + bx * ay - by * ax;
+    this.w = bw * aw - bx * ax - by * ay - bz * az;
+
+    return this;
+  }
+
   // 四元素的乘法－注意左乘和右乘是有区别的
   // 四元数的乘法的意义类似于矩阵的乘法，可以表示旋转的合成  
   // c=a*b (c,a,b∈Quaternion)可以理解为 ∠c=∠a+∠b 但是a*b 和b*a效果不一样的。
@@ -36,8 +49,6 @@ export class Quaternion extends Base {
     return this;
   }
 
-
-
   dot(bx: number = 0, by: number, bz: number, bw: number) {
     // 点乘的结果，判断a和b对应欧拉角的关系 结果值f的范围为[-1,1]。
     // 当f=+(-)1时，q1和q2对应的欧拉角是相等的，即旋转状态是一致的。特别地，
@@ -51,11 +62,7 @@ export class Quaternion extends Base {
     let y = Math.acos(r21);
     let z = Math.atan2(r31, r32);
 
-    return {
-      x,
-      y,
-      z
-    }
+    return new Euler(x, y, z)
   }
 
   private threeaxisrot(r11: number, r12: number, r21: number, r31: number, r32: number) {
@@ -63,11 +70,8 @@ export class Quaternion extends Base {
     let x = Math.atan2(r31, r32);
     let y = Math.acos(r21);
     let z = Math.atan2(r11, r12);
-    return {
-      x,
-      y,
-      z
-    }
+
+    return new Euler(x, y, z)
   }
 
   // note: 
@@ -78,115 +82,115 @@ export class Quaternion extends Base {
   // for rotSeq xyz
   // z = res[0], y = res[1], x = res[2]
   // ...
-  toEuler(q: Quaternion, rotSeq: string) {
+  toEuler(rotSeq: string) {
     // http://bediyap.com/programming/convert-quaternion-to-euler-rotations/
-    let ret = {};
+    let ret, x = this.x, y = this.y, z = this.z, w = this.w;
     switch (rotSeq) {
       case "zyx":
-        ret = this.threeaxisrot(2 * (q.x * q.y + q.w * q.z),
-          q.w * q.w + q.x * q.x - q.y * q.y - q.z * q.z,
-          -2 * (q.x * q.z - q.w * q.y),
-          2 * (q.y * q.z + q.w * q.x),
-          q.w * q.w - q.x * q.x - q.y * q.y + q.z * q.z,
+        ret = this.threeaxisrot(2 * (x * y + w * z),
+          w * w + x * x - y * y - z * z,
+          -2 * (x * z - w * y),
+          2 * (y * z + w * x),
+          w * w - x * x - y * y + z * z,
         );
         break;
 
       case "zyz":
-        ret = this.twoaxisrot(2 * (q.y * q.z - q.w * q.x),
-          2 * (q.x * q.z + q.w * q.y),
-          q.w * q.w - q.x * q.x - q.y * q.y + q.z * q.z,
-          2 * (q.y * q.z + q.w * q.x),
-          -2 * (q.x * q.z - q.w * q.y),
+        ret = this.twoaxisrot(2 * (y * z - w * x),
+          2 * (x * z + w * y),
+          w * w - x * x - y * y + z * z,
+          2 * (y * z + w * x),
+          -2 * (x * z - w * y),
         );
         break;
 
       case "zxy":
-        ret = this.threeaxisrot(-2 * (q.x * q.y - q.w * q.z),
-          q.w * q.w - q.x * q.x + q.y * q.y - q.z * q.z,
-          2 * (q.y * q.z + q.w * q.x),
-          -2 * (q.x * q.z - q.w * q.y),
-          q.w * q.w - q.x * q.x - q.y * q.y + q.z * q.z,
+        ret = this.threeaxisrot(-2 * (x * y - w * z),
+          w * w - x * x + y * y - z * z,
+          2 * (y * z + w * x),
+          -2 * (x * z - w * y),
+          w * w - x * x - y * y + z * z,
         );
         break;
 
       case "zxz":
-        ret = this.twoaxisrot(2 * (q.x * q.z + q.w * q.y),
-          -2 * (q.y * q.z - q.w * q.x),
-          q.w * q.w - q.x * q.x - q.y * q.y + q.z * q.z,
-          2 * (q.x * q.z - q.w * q.y),
-          2 * (q.y * q.z + q.w * q.x),
+        ret = this.twoaxisrot(2 * (x * z + w * y),
+          -2 * (y * z - w * x),
+          w * w - x * x - y * y + z * z,
+          2 * (x * z - w * y),
+          2 * (y * z + w * x),
         );
         break;
 
       case "yxz":
-        ret = this.threeaxisrot(2 * (q.x * q.z + q.w * q.y),
-          q.w * q.w - q.x * q.x - q.y * q.y + q.z * q.z,
-          -2 * (q.y * q.z - q.w * q.x),
-          2 * (q.x * q.y + q.w * q.z),
-          q.w * q.w - q.x * q.x + q.y * q.y - q.z * q.z,
+        ret = this.threeaxisrot(2 * (x * z + w * y),
+          w * w - x * x - y * y + z * z,
+          -2 * (y * z - w * x),
+          2 * (x * y + w * z),
+          w * w - x * x + y * y - z * z,
         );
         break;
 
       case "yxy":
-        ret = this.twoaxisrot(2 * (q.x * q.y - q.w * q.z),
-          2 * (q.y * q.z + q.w * q.x),
-          q.w * q.w - q.x * q.x + q.y * q.y - q.z * q.z,
-          2 * (q.x * q.y + q.w * q.z),
-          -2 * (q.y * q.z - q.w * q.x),
+        ret = this.twoaxisrot(2 * (x * y - w * z),
+          2 * (y * z + w * x),
+          w * w - x * x + y * y - z * z,
+          2 * (x * y + w * z),
+          -2 * (y * z - w * x),
         );
         break;
 
       case "yzx":
-        ret = this.threeaxisrot(-2 * (q.x * q.z - q.w * q.y),
-          q.w * q.w + q.x * q.x - q.y * q.y - q.z * q.z,
-          2 * (q.x * q.y + q.w * q.z),
-          -2 * (q.y * q.z - q.w * q.x),
-          q.w * q.w - q.x * q.x + q.y * q.y - q.z * q.z,
+        ret = this.threeaxisrot(-2 * (x * z - w * y),
+          w * w + x * x - y * y - z * z,
+          2 * (x * y + w * z),
+          -2 * (y * z - w * x),
+          w * w - x * x + y * y - z * z,
         );
         break;
 
       case "yzy":
-        ret = this.twoaxisrot(2 * (q.y * q.z + q.w * q.x),
-          -2 * (q.x * q.y - q.w * q.z),
-          q.w * q.w - q.x * q.x + q.y * q.y - q.z * q.z,
-          2 * (q.y * q.z - q.w * q.x),
-          2 * (q.x * q.y + q.w * q.z),
+        ret = this.twoaxisrot(2 * (y * z + w * x),
+          -2 * (x * y - w * z),
+          w * w - x * x + y * y - z * z,
+          2 * (y * z - w * x),
+          2 * (x * y + w * z),
         );
         break;
 
       case "xyz":
-        ret = this.threeaxisrot(-2 * (q.y * q.z - q.w * q.x),
-          q.w * q.w - q.x * q.x - q.y * q.y + q.z * q.z,
-          2 * (q.x * q.z + q.w * q.y),
-          -2 * (q.x * q.y - q.w * q.z),
-          q.w * q.w + q.x * q.x - q.y * q.y - q.z * q.z,
+        ret = this.threeaxisrot(-2 * (y * z - w * x),
+          w * w - x * x - y * y + z * z,
+          2 * (x * z + w * y),
+          -2 * (x * y - w * z),
+          w * w + x * x - y * y - z * z,
         );
         break;
 
       case "xyx":
-        ret = this.twoaxisrot(2 * (q.x * q.y + q.w * q.z),
-          -2 * (q.x * q.z - q.w * q.y),
-          q.w * q.w + q.x * q.x - q.y * q.y - q.z * q.z,
-          2 * (q.x * q.y - q.w * q.z),
-          2 * (q.x * q.z + q.w * q.y),
+        ret = this.twoaxisrot(2 * (x * y + w * z),
+          -2 * (x * z - w * y),
+          w * w + x * x - y * y - z * z,
+          2 * (x * y - w * z),
+          2 * (x * z + w * y),
         );
         break;
 
       case "xzy":
-        ret = this.threeaxisrot(2 * (q.y * q.z + q.w * q.x),
-          q.w * q.w - q.x * q.x + q.y * q.y - q.z * q.z,
-          -2 * (q.x * q.y - q.w * q.z),
-          2 * (q.x * q.z + q.w * q.y),
-          q.w * q.w + q.x * q.x - q.y * q.y - q.z * q.z,
+        ret = this.threeaxisrot(2 * (y * z + w * x),
+          w * w - x * x + y * y - z * z,
+          -2 * (x * y - w * z),
+          2 * (x * z + w * y),
+          w * w + x * x - y * y - z * z,
         );
         break;
 
       case "xzx":
-        ret = this.twoaxisrot(2 * (q.x * q.z - q.w * q.y),
-          2 * (q.x * q.y + q.w * q.z),
-          q.w * q.w + q.x * q.x - q.y * q.y - q.z * q.z,
-          2 * (q.x * q.z + q.w * q.y),
-          -2 * (q.x * q.y - q.w * q.z),
+        ret = this.twoaxisrot(2 * (x * z - w * y),
+          2 * (x * y + w * z),
+          w * w + x * x - y * y - z * z,
+          2 * (x * z + w * y),
+          -2 * (x * y - w * z),
         );
         break;
       default:
@@ -244,6 +248,18 @@ export class Quaternion extends Base {
     this.z = (a10 - a01) / (4 * this.w);
 
     return this;
+  }
+
+  fromAxisAngle(axis: Vec3, angle_in_rad: number) {
+    // http://www.euclideanspace.com/maths/geometry/rotations/conversions/angleToQuaternion/index.htm
+    var halfAngle = angle_in_rad / 2, s = Math.sin(halfAngle);
+
+    this.x = axis.x * s;
+    this.y = axis.y * s;
+    this.z = axis.z * s;
+    this.w = Math.cos(halfAngle);
+
+    // this.onChangeCallback();
   }
 
   static E() {
@@ -311,6 +327,20 @@ export class Quaternion extends Base {
     this.w = 0;
     return this;
   }
+
+  // --------  start
+  trigger() {
+    this._onChangeCallback();
+  }
+
+  onChange(callback) {
+    this._onChangeCallback = callback;
+  }
+
+  _onChangeCallback() {
+
+  }
+  // ---------- end
 
   clone() {
     return new Quaternion(this.x, this.y, this.z, this.w);

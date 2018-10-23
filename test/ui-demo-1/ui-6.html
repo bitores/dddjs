@@ -83,8 +83,7 @@
       // console.log(e.webglX, e.webglY, e.webgldrag)
       if (e.webgldrag) {
         var pointer = new DDD.UIObject(0.5, 0.5, 0.1, 0.1, "__");
-        pointer._modelMatrix.elements[12] = e.webglX;
-        pointer._modelMatrix.elements[13] = e.webglY;
+        pointer.setPosition(e.webglX, e.webglY, 0)
         render.addRenderObject(pointer, shader);
       }
     })
@@ -92,13 +91,9 @@
     mycanvas2.addEventListener('webgl', (e) => {
       // console.log('webgl...', e.webglX, e.webglY, e.webgldrag)
       if (e.webgldrag) {
-        // obj2._modelMatrix.elements[12] = e.webglX;
-        // obj2._modelMatrix.elements[13] = e.webglY;
         obj2.setPosition(e.webglX, e.webglY, 0)
       } else if (e.webgldragend) {
         obj2.setPosition(0, 0, 0)
-        // obj2._modelMatrix.elements[12] = 0;
-        // obj2._modelMatrix.elements[13] = 0;
       }
 
     })

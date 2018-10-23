@@ -10,13 +10,15 @@ import { Quaternion } from './Quaternion';
 export class Euler extends Base {
   // pitch, yaw, roll 单位：角度
   // 按 z-y-x 顺序 RPY
-  constructor(public yaw: number = 0, public roll: number = 0, public pitch: number = 0) {
+  static DefaultOrder: string = 'XYZ';
+  constructor(public pitch: number = 0, public yaw: number = 0, public roll: number = 0, public order: string = Euler.DefaultOrder) {
     super()
   }
 
   get className() {
     return 'Euler';
   }
+
 
   quaternion() {
     let halfToRad = 0.5 * Math.PI / 180.0;
@@ -35,6 +37,21 @@ export class Euler extends Base {
     let w = cx * cy * cz + sx * sy * sz;
     return new Quaternion(x, y, z, w);
   }
+
+  // --------  start
+  trigger() {
+    this._onChangeCallback();
+  }
+
+  onChange(callback) {
+    this._onChangeCallback = callback;
+  }
+
+  _onChangeCallback() {
+
+  }
+  // ---------- end
+
 
   clone() {
     return new Euler(this.pitch, this.yaw, this.roll);

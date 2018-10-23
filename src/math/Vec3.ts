@@ -8,6 +8,17 @@ export class Vec3 extends Base {
     return 'Vec3';
   }
 
+  set(x: number, y: number, z: number) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    return this;
+  }
+
+  copy(x: number, y: number, z: number) {
+    return this.set(x, y, z);
+  }
+
   add(x: number, y: number, z: number) {
     this.x += x;
     this.y += y;
@@ -114,6 +125,41 @@ export class Vec3 extends Base {
 
     return Math.acos(dot / (length1 * length2))
   }
+
+  //-------- start
+
+  fromQuaternion(qx: number, qy: number, qz: number, qw: number) {
+    var x = this.x, y = this.y, z = this.z;
+
+    // calculate quat * vector
+
+    var ix = qw * x + qy * z - qz * y;
+    var iy = qw * y + qz * x - qx * z;
+    var iz = qw * z + qx * y - qy * x;
+    var iw = - qx * x - qy * y - qz * z;
+
+    // calculate result * inverse quat
+
+    this.x = ix * qw + iw * - qx + iy * - qz - iz * - qy;
+    this.y = iy * qw + iw * - qy + iz * - qx - ix * - qz;
+    this.z = iz * qw + iw * - qz + ix * - qy - iy * - qx;
+
+    return this;
+  }
+
+  trigger() {
+    this._onChangeCallback();
+  }
+
+  onChange(callback) {
+    this._onChangeCallback = callback;
+  }
+
+  _onChangeCallback() {
+
+  }
+
+  //--------  end
 
   clone() {
     return new Vec3(this.x, this.y, this.z);

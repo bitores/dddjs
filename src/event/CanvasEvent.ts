@@ -1,12 +1,9 @@
-import Base from "../Base";
-
-export class CanvasEvent extends Base {
+export class CanvasEvent {
   static eventName: string;
   static _event: Event | null = null;
   static _event_list: string[];
   static _drag: boolean = false;
   constructor(public canvas: HTMLCanvasElement) {
-    super()
     if (this instanceof CanvasEvent === false) {
       return new CanvasEvent(canvas);
     }
@@ -16,6 +13,7 @@ export class CanvasEvent extends Base {
       CanvasEvent.eventName = 'webgl';
       this.createEvent()
       this.platformEvent();
+      // this.listenUp()
     }
     this.listen()
   }
@@ -32,105 +30,61 @@ export class CanvasEvent extends Base {
       CanvasEvent._event_list = [
         'mousedown',
         'mousemove',
-        'mouseup'
+        'mouseup',
+        'mouseout'
       ];
     }
   }
 
+  handleCommon(name, _event, canvas, ev) {
+    if (_event === null) return;
+    _event['name'] = name;
+    _event['clientWidth'] = canvas['clientWidth'];
+    _event['clientHeight'] = canvas['clientHeight'];
+    _event['offsetLeft'] = canvas['offsetLeft'];
+    _event['offsetTop'] = canvas['offsetTop'];
+
+    // _event['canvas'] = canvas;
+    // _event['origin'] = ev;
+
+    _event['clientX'] = 'ontouchstart' in window ? (ev["changedTouches"][0].clientX) : ev['clientX'];
+    _event['clientY'] = 'ontouchstart' in window ? (ev["changedTouches"][0].clientY) : ev['clientY'];
+
+    _event['webglX'] = -1.0 + 2.0 * (_event['clientX'] - canvas['offsetLeft']) / canvas['clientWidth'];
+    _event['webglY'] = 1.0 - 2.0 * (_event['clientY'] - canvas['offsetTop']) / canvas['clientHeight'];
+  }
 
   listen() {
     let canvas = this.canvas, _event = CanvasEvent._event;
+
     CanvasEvent._event_list.forEach(name => {
       canvas.addEventListener(name, (ev) => {
         if (_event === null) return;
         _event['name'] = name;
-        _event['clientWidth'] = canvas['clientWidth'];
-        _event['clientHeight'] = canvas['clientHeight'];
-        _event['offsetLeft'] = canvas['offsetLeft'];
-        _event['offsetTop'] = canvas['offsetTop'];
-
-        // _event['canvas'] = canvas;
-        // _event['origin'] = ev;
-
-        _event['clientX'] = 'ontouchstart' in window ? (ev["changedTouches"][0].clientX) : ev['clientX'];
-        _event['clientY'] = 'ontouchstart' in window ? (ev["changedTouches"][0].clientY) : ev['clientY'];
-
-        _event['webglX'] = -1.0 + 2.0 * (_event['clientX'] - canvas['offsetLeft']) / canvas['clientWidth'];
-        _event['webglY'] = 1.0 - 2.0 * (_event['clientY'] - canvas['offsetTop']) / canvas['clientHeight'];
+        this.handleCommon(name, _event, canvas, ev);
 
         if (name === 'mousedown' || name === 'touchstart') {
           CanvasEvent._drag = true;
-          _event['webglup'] = false;
-        } else if (name === 'mouseup' || name === 'touchend') {
+          _event['webgldragend'] = false;
+        } else if (name == "mouseout" || name === 'mouseup' || name === 'touchend') {
           CanvasEvent._drag = false;
-          _event['webglup'] = true;
+          _event['webgldragend'] = true;
+        } else if (Math.abs(_event['webglX']) > 1 || Math.abs(_event['webglY']) > 1) {
+          // 检测 离开 元素
+          CanvasEvent._drag = false;
+          _event['webgldragend'] = true;
         } else {
-          _event['webglup'] = false;
+          _event['webgldragend'] = false;
         }
 
         _event['webgldown'] = CanvasEvent._drag;
         _event['webgldrag'] = CanvasEvent._drag;
         canvas.dispatchEvent(_event)
-      });
+      }, false);
 
-      document.addEventListener('mouseup', (ev) => {
-        if (_event === null) return;
-        _event['name'] = 'mouseup';
-        _event['clientWidth'] = canvas['clientWidth'];
-        _event['clientHeight'] = canvas['clientHeight'];
-        _event['offsetLeft'] = canvas['offsetLeft'];
-        _event['offsetTop'] = canvas['offsetTop'];
-
-        // _event['canvas'] = canvas;
-        // _event['origin'] = ev;
-
-        _event['clientX'] = 'ontouchstart' in window ? (ev["changedTouches"][0].clientX) : ev['clientX'];
-        _event['clientY'] = 'ontouchstart' in window ? (ev["changedTouches"][0].clientY) : ev['clientY'];
-
-        _event['webglX'] = -1.0 + 2.0 * (_event['clientX'] - canvas['offsetLeft']) / canvas['clientWidth'];
-        _event['webglY'] = 1.0 - 2.0 * (_event['clientY'] - canvas['offsetTop']) / canvas['clientHeight'];
-
-        _event['webglup'] = true;
-
-        CanvasEvent._drag = false;
-        _event['webgldown'] = CanvasEvent._drag;
-        _event['webgldrag'] = CanvasEvent._drag;
-        canvas.dispatchEvent(_event)
-      })
-
-      document.addEventListener('touchend', (ev) => {
-        if (_event === null) return;
-        _event['name'] = 'touchend';
-        _event['clientWidth'] = canvas['clientWidth'];
-        _event['clientHeight'] = canvas['clientHeight'];
-        _event['offsetLeft'] = canvas['offsetLeft'];
-        _event['offsetTop'] = canvas['offsetTop'];
-
-        // _event['canvas'] = canvas;
-        // _event['origin'] = ev;
-
-        _event['clientX'] = 'ontouchstart' in window ? (ev["changedTouches"][0].clientX) : ev['clientX'];
-        _event['clientY'] = 'ontouchstart' in window ? (ev["changedTouches"][0].clientY) : ev['clientY'];
-
-        _event['webglX'] = -1.0 + 2.0 * (_event['clientX'] - canvas['offsetLeft']) / canvas['clientWidth'];
-        _event['webglY'] = 1.0 - 2.0 * (_event['clientY'] - canvas['offsetTop']) / canvas['clientHeight'];
-
-        _event['webglup'] = true;
-
-        CanvasEvent._drag = false;
-        _event['webgldown'] = CanvasEvent._drag;
-        _event['webgldrag'] = CanvasEvent._drag;
-        canvas.dispatchEvent(_event)
-      })
     })
   }
 
-  // unlisten() {
-  //   let canvas = this.canvas;
-  //   CanvasEvent._event_list.forEach(name => {
-  //     canvas.removeEventListener(name, this.handListener)
-  //   })
-  // }
 
   createEvent() {
     // 创建
@@ -140,18 +94,5 @@ export class CanvasEvent extends Base {
     //dfgdf
     ev["eventType"] = 'canvasevent';
     CanvasEvent._event = ev;
-  }
-
-
-  get className() {
-    return 'CanvasEvent';
-  }
-
-  clone() {
-    // return new UIShaderSource();
-  }
-
-  toString() {
-    return '()';
   }
 }

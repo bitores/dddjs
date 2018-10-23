@@ -102,6 +102,22 @@ export class Vec2 extends Base {
     return Math.acos(dot / (length1 * length2))
   }
 
+  // ------- start
+
+  trigger() {
+    this._onChangeCallback();
+  }
+
+  onChange(callback) {
+    this._onChangeCallback = callback;
+  }
+
+  _onChangeCallback() {
+
+  }
+
+  //--------  end
+
   clone() {
     return new Vec2(this.x, this.y);
   }

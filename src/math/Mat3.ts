@@ -195,6 +195,22 @@ export class Mat3 extends Base {
     return r00 * (r22 * r11 - r12 * r21) + r01 * (-r22 * r10 + r12 * r20) + r02 * (r21 * r10 - r11 * r20);
   }
 
+  //--------
+
+  trigger() {
+    this._onChangeCallback();
+  }
+
+  onChange(callback) {
+    this._onChangeCallback = callback;
+  }
+
+  _onChangeCallback() {
+
+  }
+
+  //--------  end
+
   clone() {
     let _ele = this.elements;
     return new Mat3(..._ele);
