@@ -41,6 +41,7 @@ export class UIRender extends Base {
   }
 
   addRenderObject(obj: UIObject, shader: UIShader) {
+    if (this.ctx) shader.init(this.ctx);
     let vbo = this.createBO(obj.vertices, false, true);
     let ibo = this.createBO(obj.indices, true, true);
 

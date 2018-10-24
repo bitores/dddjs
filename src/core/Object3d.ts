@@ -45,7 +45,7 @@ export class Object3d extends Base {
     return this._position;
   }
 
-  setPosition(x: number, y: number, z: number) {
+  setPosition(x: number = 0, y: number = 0, z: number = 0) {
     this._position.set(x, y, z).trigger()
   }
 

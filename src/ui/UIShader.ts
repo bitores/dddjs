@@ -6,15 +6,22 @@ export class UIShader extends Base {
   program: WebGLProgram | null;
   locations: Object = Object.create(null);
   private shaderTypeReg = /(attribute|uniform)\s\S+\s\S+;/g;
-  constructor(public ctx: WebGLRenderingContext, public vertSource: string, public fragSource: string, public name: string = '') {
+  public ctx: WebGLRenderingContext;
+  // public vertSource: string; 
+  // public fragSource: string;
+  constructor(public vertSource: string, public fragSource: string, public name: string = '') {
     super()
-    this.vertShader = this.compileShader(vertSource, ctx.VERTEX_SHADER);
-    this.fragShader = this.compileShader(fragSource, ctx.FRAGMENT_SHADER);
+  }
+
+  init(ctx: WebGLRenderingContext) {
+    this.ctx = ctx;
+    this.vertShader = this.compileShader(this.vertSource, ctx.VERTEX_SHADER);
+    this.fragShader = this.compileShader(this.fragSource, ctx.FRAGMENT_SHADER);
     if (this.vertShader && this.fragShader) {
       this.program = this.linkProgram(this.vertShader, this.fragShader)
     }
-    this.analySource(vertSource);
-    this.analySource(fragSource);
+    this.analySource(this.vertSource);
+    this.analySource(this.fragSource);
     // console.log(this.vars)
   }
 
@@ -200,7 +207,7 @@ export class UIShader extends Base {
   }
 
   clone() {
-    return new UIShader(this.ctx, this.vertSource, this.fragSource, this.name);
+    return new UIShader(this.vertSource, this.fragSource, this.name);
   }
 
   toString() {
