@@ -65,6 +65,29 @@
     // translating z
     camera.translateZ(-1)
 
+
+    var animation = new DDD.Animation(true)
+    animation._duration = 1000;
+    animation._repeatCount = 2;
+    // animation._startOffset = 1000;
+    // animation._repeatMode = 'reverse'
+    animation.registerAnimationStartListener((ani) => {
+      console.log('start...')
+    })
+
+    animation.registerAnimationEndListener((ani) => {
+      console.log('end...', ani._oneMoreTime, ani._started, ani._ended, ani._more)
+    })
+
+    animation.registerAnimationRepeatListener((ani) => {
+      console.log('repeat...', ani._repeated)
+    })
+
+    animation.registerAnimationProgressListener((ani, progress) => {
+      console.log('progress...', progress, ani._cycleFlip, ani._oneMoreTime, ani._started, ani._ended, ani._more)
+    })
+
+
     var animate = function (time) {
       render.render();
       render2.render();
@@ -72,6 +95,7 @@
       // camera.rotateY(0.1)
       // camera.translateY(-0.01)
       obj2.roll(10)
+      animation.updateAnimation();
       window.requestAnimationFrame(animate);
     }
     animate(0);
