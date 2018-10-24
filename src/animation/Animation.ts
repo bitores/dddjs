@@ -16,7 +16,7 @@ export class Animation extends Base {
   protected _repeatMode: string = 'restart';// reverse表示倒序回放，restart表示从头播放
 
   protected _fillEnabled: boolean = true;
-  // fillBefore 与 fillAfter 不互斥，意思就说，可以同时为true或false
+  // fillBefore 与 fillAfter 表示在 [0,1]范围外， 不互斥，意思就说，可以同时为true或false
   protected _fillBefore: boolean = true; // fillBefore支持时间<0 :
   protected _fillAfter: boolean = false; // fillAfter支持时间>1 : true表示在动画执行结束后，动画效果还持续存在，false表示执行结束后View展示回到原始位置，也就是View的可视区域的大小；
 
