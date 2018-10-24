@@ -3,6 +3,7 @@ import { Vec3 } from "../math/Vec3";
 import { Mat4 } from "../math/Mat4";
 import { Quaternion } from "../math/Quaternion";
 import { Euler } from "../math/Euler";
+import { ValueAnimation } from "../animation/ValueAnimation";
 
 export class Object3d extends Base {
   protected _children: Node[];
@@ -140,6 +141,11 @@ export class Object3d extends Base {
 
   }
 
+  startAnimation(animation: ValueAnimation) {
+    console.log(animation)
+    animation.setTarget(this);
+    animation.start();
+  }
 
   get className() {
     return 'Object3d';

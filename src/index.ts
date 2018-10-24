@@ -19,5 +19,6 @@ export * from './ui/UIShaderSource';
 export * from './ui/UIRender';
 export * from './event/CanvasEvent';
 export * from './animation/Animation';
+export * from './animation/ValueAnimation';
 
 
