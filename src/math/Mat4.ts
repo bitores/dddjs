@@ -327,10 +327,17 @@ export class Mat4 extends Base {
     let mat = new Mat4();
     let n = near,
       f = far;
+    // mat.elements = [
+    //   2 / (right - left), 0, 0, -(right + left) / (right - left),
+    //   0, 2 / (top - bottom), 0, -(top + bottom) / (top - bottom),
+    //   0, 0, 1 / (f - n), -n / (f - n),
+    //   0, 0, 0, 1
+    // ]
+
     mat.elements = [
       2 / (right - left), 0, 0, -(right + left) / (right - left),
       0, 2 / (top - bottom), 0, -(top + bottom) / (top - bottom),
-      0, 0, 1 / (f - n), -n / (f - n),
+      0, 0, -2 / (f - n), -(f + n) / (f - n),
       0, 0, 0, 1
     ]
 
@@ -351,21 +358,74 @@ export class Mat4 extends Base {
       0, 0, 0, 1
     ]
 
+    // mat.elements = [
+    //   2 / w, 0, 0, 0,
+    //   0, 2 / h, 0, 0,
+    //   0, 0, -2 / (f - n), -(f + n) / (f - n),
+    //   0, 0, 0, 1
+    // ]
+
+    return mat;
+  }
+
+  static perspective3(left, right, top, bottom, near, far) {
+    let mat = new Mat4();
+    var te = mat.elements;
+    var x = 2 * near / (right - left);
+    var y = 2 * near / (top - bottom);
+
+    var a = (right + left) / (right - left);
+    var b = (top + bottom) / (top - bottom);
+    var c = - (far + near) / (far - near);
+    var d = - 2 * far * near / (far - near);
+
+    te[0] = x; te[4] = 0; te[8] = a; te[12] = 0;
+    te[1] = 0; te[5] = y; te[9] = b; te[13] = 0;
+    te[2] = 0; te[6] = 0; te[10] = c; te[14] = d;
+    te[3] = 0; te[7] = 0; te[11] = - 1; te[15] = 0;
+
+    return mat;
+  }
+
+  static perspective2(width: number = 1, height: number = 1, near: number = 1, far: number = 1000) {
+    // https://www.cnblogs.com/hisiqi/p/3155813.html
+    // let f = 1.0 / Math.tan(DEG2RAD(fovy / 2.0));
+    let mat = new Mat4();
+    mat.elements = [
+      2 * near / width, 0, 0, 0,
+      0, 2 * near / height, 0, 0,
+      0, 0, -(far + near) / far - near, -(2 * far * near) / far - near,
+      0, 0, -1, 0
+    ]
+
     return mat;
   }
 
   // 透视变换 矩阵
   // perspective projection
   static perspective(fovy: number = 45, aspect: number = 1, near: number = 0.1, far: number = 1000) {
-    let f = 1.0 / Math.tan(DEG2RAD(fovy / 2.0)),
-      nf = 1.0 / (near - far);
+    let f = 1.0 / Math.tan(DEG2RAD(fovy / 2.0));
     let mat = new Mat4();
+
+    // mat.elements = [
+    //   f / aspect, 0, 0, 0,
+    //   0, f, 0, 0,
+    //   0, 0, (far + near) * nf, -1,
+    //   0, 0, (2 * far * near) * nf, 0
+    // ]
+
+    // mat.elements = [
+    //   f / aspect, 0, 0, 0,
+    //   0, f, 0, 0,
+    //   0, 0, -(far + near) / far - near, -(2 * far * near) / far - near,
+    //   0, 0, -1, 0
+    // ]
 
     mat.elements = [
       f / aspect, 0, 0, 0,
       0, f, 0, 0,
-      0, 0, (far + near) * nf, -1,
-      0, 0, (2 * far * near) * nf, 0
+      0, 0, -(far + near) / far - near, -(2 * far * near) / far - near,
+      0, 0, -1, 0
     ]
 
     return mat;

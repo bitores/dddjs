@@ -31,6 +31,8 @@ export * from './animation/interpolator/OvershootInterpolator';
 export * from './animation/interpolator/AnticipateInterpolator';
 export * from './animation/interpolator/AnticipateOvershootInterpolator';
 
+export * from './ui/materials/UIMaterial';
+
 
 
 

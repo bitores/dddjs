@@ -12,7 +12,7 @@ export class Object3d extends Base {
   public _scale: Vec3 = new Vec3(1, 1, 1);
   public _quaternion: Quaternion = new Quaternion();
   public _euler: Euler = new Euler();
-  protected _modelMatrix: Mat4 = Mat4.E;
+  public _modelMatrix: Mat4 = Mat4.E;
   protected isRightHand: boolean = true;
   constructor(public _name: string, _pos: Vec3 = new Vec3(0, 0, 0)) {
     super()

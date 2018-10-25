@@ -40,15 +40,55 @@ export class UIRender extends Base {
     return bo;
   }
 
-  addRenderObject(obj: UIObject, shader: UIShader) {
+  createTexture(image: HTMLImageElement) {
+    if (this.ctx === null) return null;
+    let gl = this.ctx;
+    var texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    // Set up texture so we can render any size image and so we are
+    // working with pixels.
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);// 纹理水平填充方式
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);// 纹理垂直填充方式
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);// 纹理缩小方式
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);// 纹理放大方式
+
+
+
+    // make the texture the same size as the image
+    // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, image.width, image.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    return texture;
+  }
+
+  addRenderObject(obj: UIObject, shader: UIShader, image: HTMLImageElement | null = null) {
     if (this.ctx) shader.init(this.ctx);
     let vbo = this.createBO(obj.vertices, false, true);
     let ibo = this.createBO(obj.indices, true, true);
 
+    var textureCoord = [
+
+
+
+      1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0,
+    ];
+
+
+    let texture, tbo;
+    if (image) {
+      tbo = this.createBO(new Float32Array(textureCoord), false, true);
+      texture = this.createTexture(image);
+    }
+
     this.pool.push({
       obj,
       vbo,
+      tbo,
       ibo,
+      texture,
       shader
     });
   }
@@ -66,9 +106,35 @@ export class UIRender extends Base {
     shader.uploadItem('Vmatrix', view_matrix)
     shader.uploadItem('Mmatrix', mov_matrix)
 
+    // shader.upload(this.camera, obj);
+
+    // if (item.texture) {
+    //   //1.对纹理图像进行Y轴反转
+    //   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    //   //2.开启0号纹理单元
+    //   gl.activeTexture(gl.TEXTURE0);
+    //   //3.向target绑定纹理对象
+    //   gl.bindTexture(gl.TEXTURE_2D, item.texture);
+
+    //   // //4.配置纹理参数
+    //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    //   // //5.配置纹理图像
+    //   // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+
+    //   //6.将0号纹理图像传递给着色器
+    //   gl.uniform1i(shader.location('u_Sampler'), 0);
+    // }
+
     gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
     gl.vertexAttribPointer(shader.location('position'), 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(shader.location('position'));
+    // if (tbo) {
+    //   gl.bindBuffer(gl.ARRAY_BUFFER, tbo);
+    //   gl.vertexAttribPointer(shader.location('a_TextCoord'), 2, gl.FLOAT, false, 0, 0);
+    //   gl.enableVertexAttribArray(shader.location('a_TextCoord'));
+    // }
+
+    // console.log('..')
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
     gl.drawElements(gl.TRIANGLES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
   }

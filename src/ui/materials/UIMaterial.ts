@@ -1,31 +1,45 @@
-import Base from "../Base";
-import { ShaderCache } from "./ShaderCache";
+import { ShaderChunk } from "./chunks/ShaderChunk";
 
-export class UIShader extends Base {
-  vertShader: WebGLShader | null;
-  fragShader: WebGLShader | null;
-  program: WebGLProgram | null;
-  locations: Object = Object.create(null);
-  cache: ShaderCache = new ShaderCache();
-  private shaderTypeReg = /(attribute|uniform)\s\S+\s\S+;/g;
+export class UIMaterial {
+  // color
+  public config: Object = {};
+  public shader: ShaderChunk | null = null;
+
   public ctx: WebGLRenderingContext;
-  // public vertSource: string; 
-  // public fragSource: string;
-  constructor(public vertSource: string, public fragSource: string, conifg: Object = {}) {
-    super()
-    this.cache.config = conifg;
+  public vertShader: WebGLShader | null;
+  public fragShader: WebGLShader | null;
+  public program: WebGLProgram | null;
+  public locations: Object = {};
+
+  private shaderTypeReg = /(attribute|uniform)\s\S+\s\S+;/g;
+  constructor(config: Object = {}) {
+    this.config = {
+      color: [1, 0, 1, 1],
+      ...config
+    }
+
+    let vert = `
+      uniform vec4 color;
+      varying vec4 vColor;`,
+      vertMain = "vColor = color;",
+      frag = "varying vec4 vColor;",
+      fragMain = "gl_FragColor = vColor;";
+
+    this.shader = new ShaderChunk(vert, vertMain, frag, fragMain)
+
   }
+
 
   init(ctx: WebGLRenderingContext) {
     this.ctx = ctx;
-    this.vertShader = this.compileShader(this.vertSource, ctx.VERTEX_SHADER);
-    this.fragShader = this.compileShader(this.fragSource, ctx.FRAGMENT_SHADER);
+    if (!this.shader) return;
+    this.vertShader = this.compileShader(this.shader.vertSource, ctx.VERTEX_SHADER);
+    this.fragShader = this.compileShader(this.shader.fragSource, ctx.FRAGMENT_SHADER);
     if (this.vertShader && this.fragShader) {
       this.program = this.linkProgram(this.vertShader, this.fragShader)
     }
-    this.analySource(this.vertSource);
-    this.analySource(this.fragSource);
-    // console.log(this.vars)
+    this.analySource(this.shader.vertSource);
+    this.analySource(this.shader.fragSource);
   }
 
   analySource(source: string) {
@@ -44,10 +58,8 @@ export class UIShader extends Base {
       let value: WebGLUniformLocation | null = null;
       if (ret[0] === "uniform") {
         value = this.getUniformLocation(ret[2]);
-        // this.vars[ret[0]][ret[2]] = { type: ret[1], value };
       } else if (ret[0] === "attribute") {
         value = this.getAttribLocation(ret[2]);
-        // this.vars[ret[0]][ret[2]] = { type: ret[1], value };
       }
       if (value !== null) {
         this.locations[ret[2]] = {
@@ -55,11 +67,6 @@ export class UIShader extends Base {
           type: ret[1],
           value: value
         }
-
-        // this.cache[ret[0]].push({
-        //   location: value,
-        //   type: ret[1]
-        // })
       } else {
         throw new Error()
       }
@@ -108,6 +115,37 @@ export class UIShader extends Base {
 
   location(name: string) {
     return this.locations[name].value;
+  }
+
+  upload(camera, obj) {
+    for (const item in this.locations) {
+      if (this.locations.hasOwnProperty(item)) {
+        // const location = this.locations[item];
+        switch (item) {
+
+          case 'color': {
+            this.uploadItem(item, this.config[item])
+          }
+          case 'Pmatrix': {
+            this.uploadItem(item, camera._projectMatrix.elements)
+          }
+            break;
+          case 'Vmatrix': {
+            this.uploadItem(item, camera._viewMatrix.elements)
+          }
+            break;
+          case 'Mmatrix': {
+            this.uploadItem(item, obj._modelMatrix.elements)
+          }
+            break;
+          // default: {
+          //   this.uploadItem(location, this.config[name])
+          // }
+        }
+
+      }
+    }
+    // console.log('...')
   }
 
   // 限制 gl.-----fv
@@ -204,21 +242,4 @@ export class UIShader extends Base {
     }
   }
 
-  // upload() {
-  //   for(let o in this.locations){
-  //     this.uploadItem(o)
-  //   }
-  // }
-
-  get className() {
-    return 'UIShader';
-  }
-
-  clone() {
-    // return new UIShader(this.vertSource, this.fragSource, this.name);
-  }
-
-  toString() {
-    return '()';
-  }
 }
