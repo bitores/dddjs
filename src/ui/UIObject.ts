@@ -36,10 +36,10 @@ export class UIObject extends Object3d {
     // 以 世界【0，0，0】为原点 计算坐标
     // 物体 坐标 与 世界原点 重合， 顶点不包括位置信息
     this._vertices = new Float32Array([
-      this.width / 2.0, this.height / 2.0, 0,
-      this.width / 2.0, -this.height / 2.0, 0,
-      -this.width / 2.0, -this.height / 2.0, 0,
-      -this.width / 2.0, this.height / 2.0, 0
+      this.width / 2.0, this.height / 2.0, 1.0,
+      this.width / 2.0, -this.height / 2.0, 1.0,
+      -this.width / 2.0, -this.height / 2.0, 1.0,
+      -this.width / 2.0, this.height / 2.0, 1.0
     ])
 
     this._indices = new Uint16Array([

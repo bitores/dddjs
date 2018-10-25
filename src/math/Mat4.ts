@@ -368,34 +368,43 @@ export class Mat4 extends Base {
     return mat;
   }
 
-  static perspective3(left, right, top, bottom, near, far) {
+  static perspectiveLRTBNF(left, right, top, bottom, near, far) {
     let mat = new Mat4();
-    var te = mat.elements;
-    var x = 2 * near / (right - left);
-    var y = 2 * near / (top - bottom);
+    var w = right - left;
+    var h = top - bottom;
+    var x = 2 * near / w;
+    var y = 2 * near / h;
 
-    var a = (right + left) / (right - left);
-    var b = (top + bottom) / (top - bottom);
+    var a = (right + left) / w;
+    var b = (top + bottom) / h;
     var c = - (far + near) / (far - near);
     var d = - 2 * far * near / (far - near);
 
-    te[0] = x; te[4] = 0; te[8] = a; te[12] = 0;
-    te[1] = 0; te[5] = y; te[9] = b; te[13] = 0;
-    te[2] = 0; te[6] = 0; te[10] = c; te[14] = d;
-    te[3] = 0; te[7] = 0; te[11] = - 1; te[15] = 0;
+    mat.elements = [
+      x, 0, 0, 0,
+      0, y, 0, 0,
+      a, b, c, -1,
+      0, 0, d, 0
+    ];
 
     return mat;
   }
 
-  static perspective2(width: number = 1, height: number = 1, near: number = 1, far: number = 1000) {
+  static perspectiveWHNF(w: number = 1, h: number = 1, near: number = 1, far: number = 1000) {
     // https://www.cnblogs.com/hisiqi/p/3155813.html
-    // let f = 1.0 / Math.tan(DEG2RAD(fovy / 2.0));
     let mat = new Mat4();
+
+    var x = 2 * near / w;
+    var y = 2 * near / h;
+
+    var c = - (far + near) / (far - near);
+    var d = - 2 * far * near / (far - near);
+
     mat.elements = [
-      2 * near / width, 0, 0, 0,
-      0, 2 * near / height, 0, 0,
-      0, 0, -(far + near) / far - near, -(2 * far * near) / far - near,
-      0, 0, -1, 0
+      x, 0, 0, 0,
+      0, y, 0, 0,
+      0, 0, c, -1,
+      0, 0, d, 0
     ]
 
     return mat;
@@ -404,27 +413,19 @@ export class Mat4 extends Base {
   // 透视变换 矩阵
   // perspective projection
   static perspective(fovy: number = 45, aspect: number = 1, near: number = 0.1, far: number = 1000) {
-    let f = 1.0 / Math.tan(DEG2RAD(fovy / 2.0));
     let mat = new Mat4();
+    let f = 1.0 / Math.tan(DEG2RAD(fovy / 2.0));
 
-    // mat.elements = [
-    //   f / aspect, 0, 0, 0,
-    //   0, f, 0, 0,
-    //   0, 0, (far + near) * nf, -1,
-    //   0, 0, (2 * far * near) * nf, 0
-    // ]
+    // tan(fov/2) = 2N/w 
+    // fov = 2*cot(w/2N) * 180 / pi
 
-    // mat.elements = [
-    //   f / aspect, 0, 0, 0,
-    //   0, f, 0, 0,
-    //   0, 0, -(far + near) / far - near, -(2 * far * near) / far - near,
-    //   0, 0, -1, 0
-    // ]
+    var c = - (far + near) / (far - near);
+    var d = - 2 * far * near / (far - near);
 
     mat.elements = [
       f / aspect, 0, 0, 0,
       0, f, 0, 0,
-      0, 0, -(far + near) / far - near, -(2 * far * near) / far - near,
+      0, 0, c, d,
       0, 0, -1, 0
     ]
 

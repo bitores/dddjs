@@ -48,14 +48,11 @@ export class GLTools {
     for (var i = 0; i < images.length; i++) {// images[i]
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 512, 512, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
     }
+
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
     return cubeTexID;
   }
-
-
-
-
 
   static createTexture(gl: WebGLRenderingContext, image: HTMLImageElement, option: {
     wrapS?: number,
@@ -64,7 +61,7 @@ export class GLTools {
     filterMag?: number,
     unit?: number,
     pixel?: number,
-    flip?: boolean
+    flip?: number
   }) {
     let wrapS = option.wrapS || gl.CLAMP_TO_EDGE,
       wrapT = option.wrapT || gl.CLAMP_TO_EDGE,
@@ -78,7 +75,6 @@ export class GLTools {
     gl.pixelStorei(pixel, flip);
     // 开启0号纹理单元
     gl.activeTexture(gl.TEXTURE0 + unit);
-
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
     // Set up texture so we can render any size image and so we are
