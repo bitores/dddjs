@@ -26,7 +26,7 @@ export class GLTools {
     return bo;
   }
 
-  static useBuffer(gl: WebGLRenderingContext, bo: WebGLBuffer, location: number, size: number) {
+  static useVBO(gl: WebGLRenderingContext, bo: WebGLBuffer, location: number, size: number) {
     gl.bindBuffer(gl.ARRAY_BUFFER, bo);
     gl.vertexAttribPointer(location, size, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(location);
@@ -34,9 +34,9 @@ export class GLTools {
   }
 
   static createFBO(gl: WebGLRenderingContext, images: HTMLImageElement[]) {
+    // https://github.com/StringKun/WebGL-FBO
     // WebGLFramebuffer
     let fboBuffer = gl.createFramebuffer();
-    gl.bindFramebuffer(gl.FRAMEBUFFER, fboBuffer);
 
     let texture = gl.createTexture();
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 256, 256, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
@@ -66,7 +66,16 @@ export class GLTools {
     gl.bindTexture(gl.TEXTURE_2D, null);
     gl.bindRenderbuffer(gl.RENDERBUFFER, null);
 
-    return texture;
+    return { fboBuffer, texture };
+  }
+
+  useFBO(gl: WebGLRenderingContext, fbo: WebGLFramebuffer, texture: WebGLTexture, callback: Function) {
+    // 在帧缓冲区的颜色关联对象即纹理对象中绘制立方体，纹理使用图片
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);// 绑定帧缓冲区对象后绘制就会在绑定帧缓冲区中进行绘制
+    callback()
+    // 在canvas上绘制矩形，纹理使用上一步在纹理对象中绘制的图像
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);// 接触绑定之后，会在默认的颜色缓冲区中绘制
+    gl.bindTexture(gl.TEXTURE_2D, texture);
   }
 
   static createTexture(gl: WebGLRenderingContext, image: HTMLImageElement | null = null, option: {
