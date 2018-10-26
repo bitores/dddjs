@@ -38,20 +38,35 @@ export class GLTools {
     let fboBuffer = gl.createFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, fboBuffer);
 
-    let cubeTexID = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubeTexID);
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    let texture = gl.createTexture();
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 256, 256, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-    for (var i = 0; i < images.length; i++) {// images[i]
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 512, 512, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+    // 新建渲染缓冲区对象作为帧缓冲区的深度缓冲区对象
+    var depthBuffer = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, 256, 256);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fboBuffer);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
+
+    // 检测帧缓冲区对象的配置状态是否成功
+    var e = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+    if (gl.FRAMEBUFFER_COMPLETE !== e) {
+      console.log('Frame buffer object is incomplete: ' + e.toString());
+      return;
     }
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
 
-    return cubeTexID;
+    return texture;
   }
 
   static createTexture(gl: WebGLRenderingContext, image: HTMLImageElement | null = null, option: {
