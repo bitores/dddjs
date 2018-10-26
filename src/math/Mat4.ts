@@ -320,16 +320,37 @@ export class Mat4 extends Base {
   // https://blog.csdn.net/gggg_ggg/article/details/45969499
   // 左手坐标系统 正交投影
   // Orthographic projection
-  static orthographicLRTBNF(left: number, right: number, top: number, bottom: number, near: number, far: number) {
+  static orthographicLRTBNF(left: number, right: number, top: number, bottom: number, near: number, far: number, isRightHand: boolean = false) {
     // x [left, right] 映射 [-1,1]
     // y [bottom, top] 映射 [-1,1]
     // z [near, far] 映射 [ 0,1] 
     let mat = new Mat4();
+    var x = 2 / (right - left);
+    var y = 2 / (top - bottom);
+
+    var a = -(right + left) / (right - left);
+    var b = -(top + bottom) / (top - bottom);
+
+
+
+    if (isRightHand) {
+      // https://www.cnblogs.com/mazhenyu/p/6401683.html
+      // 右手坐标系统 正交投影
+      var c = -2 / (far - near);
+      var d = - (far + near) / (far - near);
+
+    } else {
+      // https://blog.csdn.net/gggg_ggg/article/details/45969499
+      // 左手坐标系统 正交投影
+      var c = -1 / (far - near);
+      var d = - near / (far - near);
+
+    }
 
     mat.elements = [
-      2 / (right - left), 0, 0, -(right + left) / (right - left),
-      0, 2 / (top - bottom), 0, -(top + bottom) / (top - bottom),
-      0, 0, -1 / (far - near), - near / (far - near),
+      x, 0, 0, a,
+      0, y, 0, b,
+      0, 0, c, d,
       0, 0, 0, 1
     ]
 
@@ -357,7 +378,7 @@ export class Mat4 extends Base {
 
   // https://blog.csdn.net/gggg_ggg/article/details/45969499
   // 左手坐标系统 透视投影
-  static perspectiveLRTBNF(left, right, top, bottom, near, far) {
+  static perspectiveLRTBNF(left, right, top, bottom, near, far, isRightHand: boolean = false) {
     let mat = new Mat4();
     var w = right - left;
     var h = top - bottom;
@@ -367,14 +388,25 @@ export class Mat4 extends Base {
     var a = (right + left) / w;
     var b = (top + bottom) / h;
 
-    var c = far / (far - near);
-    var d = - far * near / (far - near);
+    if (isRightHand) {
+      // https://www.cnblogs.com/mazhenyu/p/6401683.html
+      // 右手坐标系统 透视投影
+      var c = -(far + near) / (far - near);
+      var d = - 2 * far * near / (far - near);
+      var e = -1;
+    } else {
+      // https://blog.csdn.net/gggg_ggg/article/details/45969499
+      // 左手坐标系统 透视投影
+      var c = far / (far - near);
+      var d = - far * near / (far - near);
+      var e = 1;
+    }
 
     mat.elements = [
       x, 0, a, 0,
       0, y, b, 0,
       0, 0, c, d,
-      0, 0, 1, 0
+      0, 0, e, 0
     ];
     return mat;
   }

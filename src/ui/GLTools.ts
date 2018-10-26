@@ -33,49 +33,71 @@ export class GLTools {
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
   }
 
-  static createFBO(gl: WebGLRenderingContext, images: HTMLImageElement[]) {
-    // https://github.com/StringKun/WebGL-FBO
+  static createFBO(gl: WebGLRenderingContext, option: {
+    wrapS?: number,
+    wrapT?: number,
+    filterMin?: number,
+    filterMag?: number,
+    width?: number,
+    height?: number,
+    format?: number,
+    type?: number
+  }) {
+    // https://wgld.org/d/webgl/w040.html
     // WebGLFramebuffer
+    let wrapS = option.wrapS || gl.CLAMP_TO_EDGE,
+      wrapT = option.wrapT || gl.CLAMP_TO_EDGE,
+      filterMin = option.filterMin || gl.LINEAR,
+      filterMag = option.filterMag || gl.LINEAR,
+      width = option.width || 512,
+      height = option.height || 512,
+      format = option.format || gl.RGB,
+      type = option.type || gl.UNSIGNED_BYTE;
+
     let fboBuffer = gl.createFramebuffer();
-
-    let texture = gl.createTexture();
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 256, 256, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fboBuffer);
 
     // 新建渲染缓冲区对象作为帧缓冲区的深度缓冲区对象
     var depthBuffer = gl.createRenderbuffer();
     gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
-    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, 256, 256);
 
-    gl.bindFramebuffer(gl.FRAMEBUFFER, fboBuffer);
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
     gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
+
+    let fTexture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, fTexture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, format, width, height, 0, format, type, null);
+
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filterMag);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filterMin);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrapS);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrapT);
+
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, fTexture, 0);
+
 
     // 检测帧缓冲区对象的配置状态是否成功
     var e = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
     if (gl.FRAMEBUFFER_COMPLETE !== e) {
       console.log('Frame buffer object is incomplete: ' + e.toString());
-      return;
+      return null;
     }
 
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
     gl.bindTexture(gl.TEXTURE_2D, null);
     gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
-    return { fboBuffer, texture };
+    return { f: fboBuffer, d: depthBuffer, t: fTexture };
   }
 
-  useFBO(gl: WebGLRenderingContext, fbo: WebGLFramebuffer, texture: WebGLTexture, callback: Function) {
-    // 在帧缓冲区的颜色关联对象即纹理对象中绘制立方体，纹理使用图片
-    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);// 绑定帧缓冲区对象后绘制就会在绑定帧缓冲区中进行绘制
-    callback()
-    // 在canvas上绘制矩形，纹理使用上一步在纹理对象中绘制的图像
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);// 接触绑定之后，会在默认的颜色缓冲区中绘制
-    gl.bindTexture(gl.TEXTURE_2D, texture);
+  static createFBTexture(gl: WebGLRenderingContext, width: number, height: number, renderImage: Function) {
+    let fb = GLTools.createFBO(gl, { width, height });
+    if (fb === null) return null;
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb.f);
+    renderImage && renderImage()
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    return fb.t;
   }
 
   static createTexture(gl: WebGLRenderingContext, image: HTMLImageElement | null = null, option: {
@@ -242,6 +264,13 @@ export class GLTools {
     if (shader) {
       gl.shaderSource(shader, source);
       gl.compileShader(shader);
+      if (gl.getShaderParameter(shader, gl.COMPILE_STATUS) === false) {
+        console.error('WebGLShader: Shader couldn\'t compile.');
+      }
+
+      if (gl.getShaderInfoLog(shader) !== '') {
+        console.warn('WebGLShader: gl.getShaderInfoLog()', gl.getShaderInfoLog(shader));
+      }
     }
 
     return shader;
@@ -253,6 +282,9 @@ export class GLTools {
       gl.attachShader(shaderProgram, vertShader);
       gl.attachShader(shaderProgram, fragShader);
       gl.linkProgram(shaderProgram);
+      if (gl.getProgramParameter(shaderProgram, gl.LINK_STATUS) === false) {
+        console.warn('WebGLProgram: gl.getProgramParameter()', gl.getError());
+      }
     }
 
     return shaderProgram;

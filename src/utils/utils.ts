@@ -44,3 +44,5 @@ export function fovy(height: number, near: number) {
   return 2 * 180.0 / (Math.PI * Math.atan((2 * near) / height));
 }
 
+
+

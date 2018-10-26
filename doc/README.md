@@ -21,3 +21,19 @@ canvas:viewport = 1: *
 ```
 1、
 ```
+
+
+
+####
+
+
+- canvas *
+- viewport *
+- scene *
+- camera *
+- object3d *
+
+- shaderLib 1
+- render 1
+
+- cacheLib

@@ -1,4 +1,3 @@
-import Base from '../Base';
 import TimeInterpolator from './interpolator/TimeInterpolator';
 import TypeEvaluator from './evaluator/TypeEvaluator';
 import { AnimationListener } from './AnimationListener';
@@ -8,7 +7,7 @@ import { Object3d } from '../core/Object3d';
 /**
  * 动画基本属性及生命周期管理
  */
-export class Animation extends Base {
+export class Animation {
   // 基本属性 - 外设置 - setter
   protected _duration: number = 0; // 动画的一次执行时间等于 startOffset + duration；
   protected _startOffset: number = 0;
@@ -46,7 +45,7 @@ export class Animation extends Base {
   static REVERSE: string = 'reverse';
 
   constructor(public _target: Object3d, public _canStop: boolean = true) {
-    super()
+
   }
 
   setTarget(target: Object3d) {
@@ -308,17 +307,5 @@ export class Animation extends Base {
    */
   restrictDuration(durationMillis: number) {
 
-  }
-
-  get className() {
-    return 'Animation';
-  }
-
-  clone() {
-    // return new UIShaderSource();
-  }
-
-  toString() {
-    return '()';
   }
 }
