@@ -37,8 +37,11 @@ export class Animation extends Base {
   protected _startTime: number = -1;
   protected _started: boolean = false;
   protected _ended: boolean = false;
-  protected _more: boolean = true;
-  protected _oneMoreTime: boolean = true;
+  protected _more: boolean = false;
+  protected _oneMoreTime: boolean = false;
+
+  protected _pauseTime: number = 0;
+  protected _isPausing: boolean = false;
 
   static REVERSE: string = 'reverse';
 
@@ -52,7 +55,10 @@ export class Animation extends Base {
 
   updateAnimation() {
     // 动画 外部更新 方法
+    if (!this._oneMoreTime || this._isPausing) return;
+
     let currentTime = this.__getCurrentTime();
+
     let isRunning = this.getTransformation(currentTime);
     // console.log(isRunning)
 
@@ -211,22 +217,15 @@ export class Animation extends Base {
     this._listeners.onAnimationProgress(this, progress)
   }
 
+  fireAnimationPause() {
+    this._listeners.onAnimationPause(this);
+  }
+
 
   // prototype setter
   setInterpolator(interplator: TimeInterpolator) {
     this._interpolator = interplator;
   }
-
-  // ...
-
-  setAnimationListener(listener: AnimationListener) {
-
-  }
-
-  setAnimationTarget() {
-
-  }
-
 
   __getCurrentTime() {
     return new Date().getTime()
@@ -236,48 +235,65 @@ export class Animation extends Base {
   start() {
     // 第一次调用getTransformation时开始执行动画
     this._startTime = -1;
+    this._more = true;
+    this._oneMoreTime = true;
   }
 
   startNow() {
     // 在当前时间开始执行动画；
     this._startTime = this.__getCurrentTime();
+    this._more = true;
+    this._oneMoreTime = true;
   }
 
   pause() {
-
+    if (this._started && !this._ended && !this._isPausing) {
+      // pause
+      this._isPausing = true;
+      this._pauseTime = this.__getCurrentTime()
+      this.fireAnimationPause()
+    }
   }
 
   resume() {
-
+    if (this._isPausing) {
+      this._isPausing = false;
+      this._startTime += this.__getCurrentTime() - this._pauseTime;
+      this._pauseTime = 0;
+    }
   }
 
-  stop() {
-
+  cancel() {
+    if (this._started && !this._ended) {
+      this.fireAnimationEnd();
+      this._ended = true;
+      this._pauseTime = 0;
+      this._isPausing = false;
+    }
+    this._startTime = -1;
+    this._more = false;
+    this._oneMoreTime = false;
   }
 
   reset() {
 
   }
 
-  repeate() {
-
-  }
-
   // 基本状态
   isInitialized() {
-
+    return this._initialized;
   }
 
   hasStarted() {
-
+    return this._started;
   }
 
   isRunning() {
-
+    return this._started && !this._ended;
   }
 
   hasEnded() {
-
+    return this._ended;
   }
 
   isFillEnabled() {

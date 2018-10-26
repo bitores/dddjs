@@ -6,6 +6,7 @@ export class AnimationListener {
   endListeners: Function[] = [];
   repeatListeners: Function[] = [];
   progressListeners: Function[] = [];
+  pauseListeners: Function[] = [];
 
   constructor() {
 
@@ -58,6 +59,14 @@ export class AnimationListener {
     for (let i = 0; i < len; i++) {
       let listener = listeners[i];
       listener && listener(animation, progress);
+    }
+  }
+
+  onAnimationPause(animation: Animation) {
+    let listeners = this.pauseListeners, len = listeners.length;
+    for (let i = 0; i < len; i++) {
+      let listener = listeners[i];
+      listener && listener(animation);
     }
   }
 }

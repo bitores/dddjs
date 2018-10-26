@@ -93,8 +93,8 @@
 
     var animation = new DDD.Animation(true)
     animation._duration = 2000;
-    animation._repeatCount = 100;
-    // animation._startOffset = 1000;
+    animation._repeatCount = 4;
+    animation._startOffset = 1000;
     animation._repeatMode = 'reverse'
     // animation._fillBefore = false;
     // animation._fillAfter = true;
@@ -109,7 +109,7 @@
     })
 
     animation.registerAnimationEndListener((ani) => {
-      // console.log('end...', ani._oneMoreTime, ani._started, ani._ended, ani._more)
+      console.log('end...', ani._oneMoreTime, ani._started, ani._ended, ani._more)
     })
 
     animation.registerAnimationRepeatListener((ani) => {
@@ -147,7 +147,7 @@
       // camera.rotateX(0.1, true)
       // camera.rotateY(0.1)
       // camera.translateY(-0.01)
-      // animation.updateAnimation();
+      animation.updateAnimation();
       // ani.updateAnimation()
       a += 0.1
       // camera.rotateZ(-a)
