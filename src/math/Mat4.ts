@@ -318,32 +318,26 @@ export class Mat4 extends Base {
   }
 
   // https://blog.csdn.net/gggg_ggg/article/details/45969499
-  // 正交投影
+  // 左手坐标系统 正交投影
   // Orthographic projection
   static orthographicLRTBNF(left: number, right: number, top: number, bottom: number, near: number, far: number) {
     // x [left, right] 映射 [-1,1]
     // y [bottom, top] 映射 [-1,1]
-    // z [near, far] 映射 [ 0,1] -- near < far右手坐标系统
+    // z [near, far] 映射 [ 0,1] 
     let mat = new Mat4();
-    let n = near,
-      f = far;
-    // mat.elements = [
-    //   2 / (right - left), 0, 0, -(right + left) / (right - left),
-    //   0, 2 / (top - bottom), 0, -(top + bottom) / (top - bottom),
-    //   0, 0, 1 / (f - n), -n / (f - n),
-    //   0, 0, 0, 1
-    // ]
 
     mat.elements = [
       2 / (right - left), 0, 0, -(right + left) / (right - left),
       0, 2 / (top - bottom), 0, -(top + bottom) / (top - bottom),
-      0, 0, -2 / (f - n), -(f + n) / (f - n),
+      0, 0, -1 / (far - near), - near / (far - near),
       0, 0, 0, 1
     ]
 
     return mat;
   }
 
+  // https://blog.csdn.net/gggg_ggg/article/details/45969499
+  // 左手坐标系统 正交投影
   static orthographicWHNF(w: number, h: number, near: number, far: number) {
     // x [left, right] 映射 [-1,1]
     // y [bottom, top] 映射 [-1,1]
@@ -358,16 +352,11 @@ export class Mat4 extends Base {
       0, 0, 0, 1
     ]
 
-    // mat.elements = [
-    //   2 / w, 0, 0, 0,
-    //   0, 2 / h, 0, 0,
-    //   0, 0, -2 / (f - n), -(f + n) / (f - n),
-    //   0, 0, 0, 1
-    // ]
-
     return mat;
   }
 
+  // https://blog.csdn.net/gggg_ggg/article/details/45969499
+  // 左手坐标系统 透视投影
   static perspectiveLRTBNF(left, right, top, bottom, near, far) {
     let mat = new Mat4();
     var w = right - left;
@@ -377,56 +366,59 @@ export class Mat4 extends Base {
 
     var a = (right + left) / w;
     var b = (top + bottom) / h;
-    var c = - (far + near) / (far - near);
-    var d = - 2 * far * near / (far - near);
+
+    var c = far / (far - near);
+    var d = - far * near / (far - near);
 
     mat.elements = [
-      x, 0, 0, 0,
-      0, y, 0, 0,
-      a, b, c, -1,
-      0, 0, d, 0
+      x, 0, a, 0,
+      0, y, b, 0,
+      0, 0, c, d,
+      0, 0, 1, 0
     ];
-
     return mat;
   }
 
+  // https://blog.csdn.net/gggg_ggg/article/details/45969499
+  // 左手坐标系统 透视投影
   static perspectiveWHNF(w: number = 1, h: number = 1, near: number = 1, far: number = 1000) {
-    // https://www.cnblogs.com/hisiqi/p/3155813.html
     let mat = new Mat4();
 
     var x = 2 * near / w;
     var y = 2 * near / h;
 
-    var c = - (far + near) / (far - near);
-    var d = - 2 * far * near / (far - near);
+    var c = far / (far - near);
+    var d = -  far * near / (far - near);
 
     mat.elements = [
       x, 0, 0, 0,
       0, y, 0, 0,
-      0, 0, c, -1,
-      0, 0, d, 0
+      0, 0, c, d,
+      0, 0, 1, 0
     ]
 
     return mat;
   }
 
-  // 透视变换 矩阵
-  // perspective projection
+  // https://blog.csdn.net/gggg_ggg/article/details/45969499
+  // 左手坐标系统 透视投影
   static perspective(fovy: number = 45, aspect: number = 1, near: number = 0.1, far: number = 1000) {
     let mat = new Mat4();
-    let f = 1.0 / Math.tan(DEG2RAD(fovy / 2.0));
+    let f = Math.tan(2.0 / DEG2RAD(fovy));
 
-    // tan(fov/2) = 2N/w 
-    // fov = 2*cot(w/2N) * 180 / pi
+    // cot(fov/2)/aspect = 2N/w = 2N/(h*aspect)
+    // tan(2/fov) = 2N/h
+    // fov = 2/atan(2n/h)
+    // fov = 360/(pi*atan(2N/(h)))
 
-    var c = - (far + near) / (far - near);
-    var d = - 2 * far * near / (far - near);
+    var c = far / (far - near);
+    var d = -  far * near / (far - near);
 
     mat.elements = [
       f / aspect, 0, 0, 0,
       0, f, 0, 0,
       0, 0, c, d,
-      0, 0, -1, 0
+      0, 0, 1, 0
     ]
 
     return mat;
