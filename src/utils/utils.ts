@@ -39,3 +39,7 @@ export function point2Webgl(pos_x: number, pos_y: number) {
   }
 }
 
+export function fovy(width: number, near: number) {
+  return Math.atan(width / (4 * near)) * 360 / Math.PI;
+}
+
