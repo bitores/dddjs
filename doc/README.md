@@ -12,3 +12,12 @@ canvas:viewport = 1: *
 - shadersource: shader source lib
 - event: webgl event....
 - fix....
+
+
+#### 矩阵验证
+- 投影矩阵 已验证
+- 物体自转，平移，缩放 已验证
+- 
+```
+1、
+```
