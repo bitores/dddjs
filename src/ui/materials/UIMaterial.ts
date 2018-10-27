@@ -1,4 +1,5 @@
 import { ShaderChunk } from "./chunks/ShaderChunk";
+import { GLTools } from "../GLTools";
 
 export class UIMaterial {
   // color
@@ -14,7 +15,7 @@ export class UIMaterial {
   private shaderTypeReg = /(attribute|uniform)\s\S+\s\S+;/g;
   constructor(config: Object = {}) {
     this.config = {
-      color: [1, 0, 1, 1],
+      color: new Float32Array([1.0, 0.0, 1.0, 1.0,]),
       ...config
     }
   }
@@ -31,17 +32,19 @@ export class UIMaterial {
   }
 
   handle() {
+    // let tbo = GLTools.createVBO(this.ctx, this.config["color"], false)
 
+    // this.config["color"] = tbo;
   }
 
   init(ctx: WebGLRenderingContext) {
     this.ctx = ctx;
     this.shaderSource()
     if (!this.shader) return;
-    this.vertShader = this.compileShader(this.shader.vertSource, ctx.VERTEX_SHADER);
-    this.fragShader = this.compileShader(this.shader.fragSource, ctx.FRAGMENT_SHADER);
+    this.vertShader = GLTools.createShader(ctx, this.shader.vertSource, ctx.VERTEX_SHADER);
+    this.fragShader = GLTools.createShader(ctx, this.shader.fragSource, ctx.FRAGMENT_SHADER);
     if (this.vertShader && this.fragShader) {
-      this.program = this.linkProgram(this.vertShader, this.fragShader)
+      this.program = GLTools.createProgram(ctx, this.vertShader, this.fragShader)
     }
     this.analySource(this.shader.vertSource);
     this.analySource(this.shader.fragSource);
@@ -79,28 +82,6 @@ export class UIMaterial {
     })
   }
 
-
-  private compileShader(source: string, shaderType: number) {
-    var shader = this.ctx.createShader(shaderType);
-    if (shader) {
-      this.ctx.shaderSource(shader, source);
-      this.ctx.compileShader(shader);
-    }
-
-    return shader;
-  }
-
-  private linkProgram(vertShader: WebGLShader, fragShader: WebGLShader) {
-    var shaderProgram = this.ctx.createProgram();
-    if (shaderProgram) {
-      this.ctx.attachShader(shaderProgram, vertShader);
-      this.ctx.attachShader(shaderProgram, fragShader);
-      this.ctx.linkProgram(shaderProgram);
-    }
-
-    return shaderProgram;
-  }
-
   getUniformLocation(name: string) {
     if (this.program) {
       return this.ctx.getUniformLocation(this.program, name);
@@ -135,7 +116,6 @@ export class UIMaterial {
       if (this.locations.hasOwnProperty(item)) {
         // const location = this.locations[item];
         switch (item) {
-
           case "u_Sampler":
           case "a_TextCoord":
           case 'color': {
@@ -154,14 +134,9 @@ export class UIMaterial {
             this.uploadItem(item, this.getTargetMatrix(obj).elements)
           }
             break;
-          // default: {
-          //   this.uploadItem(location, this.config[name])
-          // }
         }
-
       }
     }
-    // console.log('...')
   }
 
   // 限制 gl.-----fv
@@ -231,22 +206,8 @@ export class UIMaterial {
         gl.uniform1i(location.value, 0);
         ; break;
       case 'samplerCube':
-        //1.对纹理图像进行Y轴反转
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-        //2.开启0号纹理单元
-        gl.activeTexture(gl.TEXTURE0);
-
-        // gl.bindTexture(gl.TEXTURE_CUBE_MAP, textureObject);
-        //立方图纹理需要设置六个方位上的纹理，为了方便区分，我设置了六个不同的纹理图像
-        // gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, document.getElementById('myTexture1'));
-        // gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, document.getElementById('myTexture2'));
-        // gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, document.getElementById('myTexture3'));
-        // gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, document.getElementById('myTexture4'));
-        // gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, document.getElementById('myTexture5'));
-        // gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, document.getElementById('myTexture6'));
-
-        //.....
-        gl.uniform1i(location.value, v);
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, v);
+        gl.uniform1i(location.value, 0);
         ; break;
       default:
         throw new TypeError('')
