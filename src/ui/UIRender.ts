@@ -1,6 +1,5 @@
 import Base from "../Base";
 import { UIObject } from "./UIObject";
-import { UIShader } from "./UIShader";
 import { UICamera } from "./UICamera";
 import { UICanvas } from "./UICanvas";
 
@@ -64,8 +63,9 @@ export class UIRender extends Base {
     return texture;
   }
 
-  addRenderObject(obj: UIObject, shader: UIShader, image: HTMLImageElement | null = null) {
-    if (this.ctx) shader.init(this.ctx);
+  addRenderObject(obj: UIObject, image: HTMLImageElement | null = null) {
+    let shader = obj._material;
+    if (this.ctx && shader) shader.init(this.ctx);
     let vbo = this.createBO(obj.vertices, false, true);
     let ibo = this.createBO(obj.indices, true, true);
 
@@ -89,9 +89,22 @@ export class UIRender extends Base {
       tbo,
       ibo,
       texture,
-      shader
+      shader,
+      name: obj.name,
     });
+
+    obj._children.forEach(item => {
+      this.addRenderObject(item, image);
+    })
   }
+
+  getTargetMatrix(obj) {
+    if (obj._parent) {
+      return obj._modelMatrix.clone().dot(this.getTargetMatrix(obj._parent))
+    }
+    return obj._modelMatrix;
+  }
+
 
   renderItem(item: any) {
     if (this.ctx === null) return;
@@ -99,14 +112,17 @@ export class UIRender extends Base {
     shader.use();
 
 
-    let proj_matrix = this.camera._projectMatrix.elements;
-    let view_matrix = this.camera._viewMatrix.elements;
-    let mov_matrix = obj._modelMatrix.elements;
-    shader.uploadItem('Pmatrix', proj_matrix)
-    shader.uploadItem('Vmatrix', view_matrix)
-    shader.uploadItem('Mmatrix', mov_matrix)
+    // let proj_matrix = this.camera._projectMatrix.elements;
+    // let view_matrix = this.camera._viewMatrix.elements;
 
-    // shader.upload(this.camera, obj);
+    // let mov_matrix = this.getTargetMatrix(obj).elements;
+    // shader.uploadItem('Pmatrix', proj_matrix)
+    // shader.uploadItem('Vmatrix', view_matrix)
+    // shader.uploadItem('Mmatrix', mov_matrix)
+    shader.upload(this.camera, obj);
+
+
+
 
     // if (item.texture) {
     //   //1.对纹理图像进行Y轴反转
@@ -155,6 +171,7 @@ export class UIRender extends Base {
     this.clean()
     this.pool.forEach(item => {
       this.renderItem(item);
+      // console.log(item.name)
     })
   }
 

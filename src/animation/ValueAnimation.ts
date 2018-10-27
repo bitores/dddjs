@@ -20,16 +20,4 @@ export class ValueAnimation extends Animation {
   getValue() {
     return this.value;
   }
-
-  get className() {
-    return 'ValueAnimation';
-  }
-
-  clone() {
-    // return new UIShaderSource();
-  }
-
-  toString() {
-    return '()';
-  }
 }

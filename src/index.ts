@@ -32,6 +32,7 @@ export * from './animation/interpolator/AnticipateInterpolator';
 export * from './animation/interpolator/AnticipateOvershootInterpolator';
 
 export * from './ui/materials/UIMaterial';
+export * from './ui/materials/UITextureMaterial';
 
 
 

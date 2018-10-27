@@ -143,7 +143,7 @@ export class Animation {
     }
 
     if (expired) {
-      if (this._repeatCount === this._repeated) {
+      if (this._repeatCount === this._repeated || this.isCanceled()) {
         //动画执行次数已经全部执行完成，则通知动画结束
         if (!this._ended) {
           this._ended = true;
@@ -200,6 +200,10 @@ export class Animation {
     this._listeners.registerProgressListener(listener)
   }
 
+  registerAnimationPauseListener(listener: Function) {
+    this._listeners.registerPauseListener(listener)
+  }
+
   fireAnimationStart() {
     this._listeners.onAnimationStart(this)
   }
@@ -233,16 +237,12 @@ export class Animation {
   // 基本操作
   start() {
     // 第一次调用getTransformation时开始执行动画
-    this._startTime = -1;
-    this._more = true;
-    this._oneMoreTime = true;
+    this.setStartTime(-1);
   }
 
   startNow() {
     // 在当前时间开始执行动画；
-    this._startTime = this.__getCurrentTime();
-    this._more = true;
-    this._oneMoreTime = true;
+    this.setStartTime(this.__getCurrentTime());
   }
 
   pause() {
@@ -275,7 +275,20 @@ export class Animation {
   }
 
   reset() {
+    this._initialized = false;
+    this._cycleFlip = false;
+    this._repeated = 0;
+    this._isPausing = false;
+    this._pauseTime = 0;
+    this._more = true;
+    this._oneMoreTime = true;
+  }
 
+  detach() {
+    if (this._started && !this._ended) {
+      this._ended = true;
+      this.fireAnimationEnd()
+    }
   }
 
   // 基本状态
@@ -296,7 +309,11 @@ export class Animation {
   }
 
   isFillEnabled() {
+    return this._fillEnabled;
+  }
 
+  isCanceled() {
+    return this._startTime == -1;
   }
 
   /**
@@ -306,6 +323,49 @@ export class Animation {
    * 通过减少duration和repeatCount的值来保证动画总执行时间不超过durationMillis
    */
   restrictDuration(durationMillis: number) {
+    // If we start after the duration, then we just won't run.
+    if (this._startOffset > durationMillis) {
+      this._startOffset = durationMillis;
+      this._duration = 0;
+      this._repeatCount = 0;
+      return;
+    }
+
+    let dur = this._duration + this._startOffset;
+    if (dur > durationMillis) {
+      this._duration = durationMillis - this._startOffset;
+      dur = durationMillis;
+    }
+    // If the duration is 0 or less, then we won't run.
+    if (this._duration <= 0) {
+      this._duration = 0;
+      this._repeatCount = 0;
+      return;
+    }
+    // Reduce the number of repeats to keep below the maximum duration.
+    // The comparison between mRepeatCount and duration is to catch
+    // overflows after multiplying them.
+    if (this._repeatCount < 0 || this._repeatCount > durationMillis
+      || (dur * this._repeatCount) > durationMillis) {
+      // Figure out how many times to do the animation.  Subtract 1 since
+      // repeat count is the number of times to repeat so 0 runs once.
+      this._repeatCount = ((durationMillis / dur) - 1) | 0;
+      if (this._repeatCount < 0) {
+        this._repeatCount = 0;
+      }
+    }
+  }
+
+  setStartTime(startTimeMillis: number) {
+    this._startTime = startTimeMillis;
+    this._started = this._ended = false;
+    this._cycleFlip = false;
+    this._repeated = 0;
+    this._isPausing = false;
+    this._pauseTime = 0;
+    this._more = true;
+    this._oneMoreTime = true;
 
   }
 }
+

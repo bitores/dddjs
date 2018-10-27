@@ -3,39 +3,68 @@ import { Vec3 } from "../math/Vec3";
 import { Mat4 } from "../math/Mat4";
 import { Quaternion } from "../math/Quaternion";
 import { Euler } from "../math/Euler";
-import { ValueAnimation } from "../animation/ValueAnimation";
+import { UIObject } from "../ui/UIObject";
+import { UIMaterial } from "ui/materials/UIMaterial";
 
 export class Object3d extends Base {
-  protected _children: Node[];
-  protected _parent: Node | null = null;
+  public _children: UIObject[] = [];
+  public _parent: UIObject | null = null;
   public _position: Vec3 = new Vec3();
   public _scale: Vec3 = new Vec3(1, 1, 1);
   public _quaternion: Quaternion = new Quaternion();
   public _euler: Euler = new Euler();
   public _modelMatrix: Mat4 = Mat4.E;
+
+
+  public _material: UIMaterial | null = null;
+
   protected isRightHand: boolean = true;
+  public _transformOnWorld: boolean = false;// true 公转， false 自转
   constructor(public _name: string, _pos: Vec3 = new Vec3(0, 0, 0)) {
     super()
     this._position = _pos;
     this.isRightHand = true;
 
     this._position.onChange(() => {
-      this._modelMatrix.compose(this._position, this._quaternion, this._scale).trigger()
+      this._modelMatrix.compose(this._position, this._quaternion, this._scale, this._transformOnWorld).trigger()
     })
 
     this._scale.onChange(() => {
-      this._modelMatrix.compose(this._position, this._quaternion, this._scale).trigger()
+      this._modelMatrix.compose(this._position, this._quaternion, this._scale, this._transformOnWorld).trigger()
     })
 
     this._quaternion.onChange(() => {
-      this._modelMatrix.compose(this._position, this._quaternion, this._scale).trigger()
+      this._modelMatrix.compose(this._position, this._quaternion, this._scale, this._transformOnWorld).trigger()
     })
 
     this._euler.onChange(() => {
       let q = this._euler.quaternion();
       this._quaternion.mul(q.x, q.y, q.z, q.w).trigger()
     });
+
   }
+
+  test = function () {
+    var l = new Vec3()
+    var n = '';
+    return function (val) {
+      l.x++;
+      console.log(n)
+      n = val;
+      console.log(val, l, n)
+    }
+  }()
+
+  test2 = (() => {
+    var l = new Vec3()
+    var n = '';
+    return function (val) {
+      l.x++;
+      console.log(n)
+      n = val;
+      console.log(val, l, n)
+    }
+  })()
 
   get name() {
     return this._name;
@@ -91,6 +120,7 @@ export class Object3d extends Base {
   }
 
   rotate(axix: Vec3, angle_in_rad: number, onWorld: boolean = false) {
+    this._transformOnWorld = onWorld;
     // assumes axis is normalized
     let q = new Quaternion();
     q.fromAxisAngle(axix, angle_in_rad);
@@ -141,11 +171,7 @@ export class Object3d extends Base {
 
   }
 
-  startAnimation(animation: ValueAnimation) {
-    console.log(animation)
-    animation.setTarget(this);
-    animation.start();
-  }
+
 
   get className() {
     return 'Object3d';

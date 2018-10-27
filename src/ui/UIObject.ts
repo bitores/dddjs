@@ -2,7 +2,7 @@ import { Object3d } from '../core/Object3d';
 import { point2Webgl } from '../utils/utils';
 
 export class UIObject extends Object3d {
-  _data: number[];
+  // private _data: number[];
   private _vertices: Float32Array;
   private _indices: Uint16Array;
   // _colors: number[];
@@ -48,5 +48,11 @@ export class UIObject extends Object3d {
     ])
 
     this.calcPostion()
+  }
+
+  add(obj: UIObject) {
+
+    obj._parent = this;
+    this._children.push(obj)
   }
 }

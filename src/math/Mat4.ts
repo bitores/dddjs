@@ -23,6 +23,34 @@ export class Mat4 extends Base {
     return 'Mat4';
   }
 
+  copy(mat) {
+    let _ele = this.elements,
+      ele = mat.elements;
+    let n1 = ele[0], n2 = ele[1], n3 = ele[2], n4 = ele[3],
+      n5 = ele[4], n6 = ele[5], n7 = ele[6], n8 = ele[7],
+      n9 = ele[8], n10 = ele[9], n11 = ele[10], n12 = ele[11],
+      n13 = ele[12], n14 = ele[13], n15 = ele[14], n16 = ele[15];
+
+    _ele[0] = n1;
+    _ele[1] = n2;
+    _ele[2] = n3;
+    _ele[3] = n4;
+    _ele[4] = n5;
+    _ele[5] = n6;
+    _ele[6] = n7;
+    _ele[7] = n8;
+    _ele[8] = n9;
+    _ele[9] = n10;
+    _ele[10] = n11;
+    _ele[11] = n12;
+    _ele[12] = n13;
+    _ele[13] = n14;
+    _ele[14] = n15;
+    _ele[15] = n16;
+
+    return this;
+  }
+
   add(mat: Mat4) {
     let ele = this.elements,
       _ele = mat.elements;
@@ -619,7 +647,50 @@ export class Mat4 extends Base {
     return mat;
   }
 
-  compose(position: Vec3 = new Vec3(), quaternion: Quaternion = new Quaternion(), scale: Vec3 = new Vec3()) {
+  compose(position: Vec3 = new Vec3(), quaternion: Quaternion = new Quaternion(), scale: Vec3 = new Vec3(), onWorld: boolean = false) {
+    var x = quaternion.x, y = quaternion.y, z = quaternion.z, w = quaternion.w;
+    var x2 = x + x, y2 = y + y, z2 = z + z;
+    var xx = x * x2, xy = x * y2, xz = x * z2;
+    var yy = y * y2, yz = y * z2, zz = z * z2;
+    var wx = w * x2, wy = w * y2, wz = w * z2;
+
+    var sx = scale.x, sy = scale.y, sz = scale.z;
+
+    let rot = new Mat4(
+      1 - (yy + zz), xy + wz, xz - wy, 0,
+      xy - wz, 1 - (xx + zz), yz + wx, 0,
+      xz + wy, yz - wx, 1 - (xx + yy), 0,
+      0, 0, 0, 1
+    )
+
+    let scal = new Mat4(
+      sx, 0, 0, 0,
+      0, sy, 0, 0,
+      0, 0, sz, 0,
+      0, 0, 0, 1
+    )
+
+    let trans = new Mat4(
+      1, 0, 0, 0,
+      0, 1, 0, 0,
+      0, 0, 1, 0,
+      position.x, position.y, position.z, 1
+    )
+
+    if (onWorld) {
+      //  公转
+      scal.leftDot(rot).leftDot(trans)
+    } else {
+      //  自转
+      scal.leftDot(trans).leftDot(rot)
+    }
+
+    this.copy(scal);
+
+    return this;
+  }
+
+  compose2(position: Vec3 = new Vec3(), quaternion: Quaternion = new Quaternion(), scale: Vec3 = new Vec3()) {
     var te = this.elements;
 
     var x = quaternion.x, y = quaternion.y, z = quaternion.z, w = quaternion.w;

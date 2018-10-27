@@ -17,21 +17,26 @@ export class UIMaterial {
       color: [1, 0, 1, 1],
       ...config
     }
+  }
 
+  shaderSource() {
     let vert = `
-      uniform vec4 color;
-      varying vec4 vColor;`,
+    uniform vec4 color;
+    varying vec4 vColor;`,
       vertMain = "vColor = color;",
       frag = "varying vec4 vColor;",
       fragMain = "gl_FragColor = vColor;";
 
     this.shader = new ShaderChunk(vert, vertMain, frag, fragMain)
+  }
+
+  handle() {
 
   }
 
-
   init(ctx: WebGLRenderingContext) {
     this.ctx = ctx;
+    this.shaderSource()
     if (!this.shader) return;
     this.vertShader = this.compileShader(this.shader.vertSource, ctx.VERTEX_SHADER);
     this.fragShader = this.compileShader(this.shader.fragSource, ctx.FRAGMENT_SHADER);
@@ -40,6 +45,7 @@ export class UIMaterial {
     }
     this.analySource(this.shader.vertSource);
     this.analySource(this.shader.fragSource);
+    this.handle()
   }
 
   analySource(source: string) {
@@ -117,15 +123,25 @@ export class UIMaterial {
     return this.locations[name].value;
   }
 
+  getTargetMatrix(obj) {
+    if (obj._parent) {
+      return obj._modelMatrix.clone().dot(this.getTargetMatrix(obj._parent))
+    }
+    return obj._modelMatrix;
+  }
+
   upload(camera, obj) {
     for (const item in this.locations) {
       if (this.locations.hasOwnProperty(item)) {
         // const location = this.locations[item];
         switch (item) {
 
+          case "u_Sampler":
+          case "a_TextCoord":
           case 'color': {
             this.uploadItem(item, this.config[item])
           }
+            break;
           case 'Pmatrix': {
             this.uploadItem(item, camera._projectMatrix.elements)
           }
@@ -135,7 +151,7 @@ export class UIMaterial {
           }
             break;
           case 'Mmatrix': {
-            this.uploadItem(item, obj._modelMatrix.elements)
+            this.uploadItem(item, this.getTargetMatrix(obj).elements)
           }
             break;
           // default: {
@@ -160,7 +176,9 @@ export class UIMaterial {
       case 'int':
       case 'float': {
         if (prefix == 'attribute') {
-          gl.vertexAttrib1fv(location.value, v);
+          gl.bindBuffer(gl.ARRAY_BUFFER, v);
+          gl.vertexAttribPointer(location.value, 1, gl.FLOAT, false, 0, 0);
+          gl.enableVertexAttribArray(location.value);
         } else {
           gl.uniform1fv(location.value, v);
         }
@@ -169,7 +187,9 @@ export class UIMaterial {
       case 'bvec2':
       case 'ivec2': {
         if (prefix == 'attribute') {
-          gl.vertexAttrib2fv(location.value, v);
+          gl.bindBuffer(gl.ARRAY_BUFFER, v);
+          gl.vertexAttribPointer(location.value, 2, gl.FLOAT, false, 0, 0);
+          gl.enableVertexAttribArray(location.value);
         } else {
           gl.uniform2fv(location.value, v);
         }
@@ -179,7 +199,9 @@ export class UIMaterial {
       case 'bvec3':
       case 'ivec3': {
         if (prefix == 'attribute') {
-          gl.vertexAttrib3fv(location.value, v);
+          gl.bindBuffer(gl.ARRAY_BUFFER, v);
+          gl.vertexAttribPointer(location.value, 3, gl.FLOAT, false, 0, 0);
+          gl.enableVertexAttribArray(location.value);
         } else {
           gl.uniform3fv(location.value, v);
         }
@@ -188,7 +210,9 @@ export class UIMaterial {
       case 'bvec4':
       case 'ivec4': {
         if (prefix == 'attribute') {
-          gl.vertexAttrib4fv(location.value, v);
+          gl.bindBuffer(gl.ARRAY_BUFFER, v);
+          gl.vertexAttribPointer(location.value, 4, gl.FLOAT, false, 0, 0);
+          gl.enableVertexAttribArray(location.value);
         } else {
           gl.uniform4fv(location.value, v);
         }
@@ -203,20 +227,8 @@ export class UIMaterial {
         gl.uniformMatrix4fv(location.value, false, v)
       } break;
       case 'sampler2D':
-        //1.对纹理图像进行Y轴反转
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-        //2.开启0号纹理单元
-        gl.activeTexture(gl.TEXTURE0);
-        //3.向target绑定纹理对象
-        // gl.bindTexture(gl.TEXTURE_2D, texture);
-
-        //4.配置纹理参数
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        //5.配置纹理图像
-        // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-
-        //.....
-        gl.uniform1i(location.value, v);
+        gl.bindTexture(gl.TEXTURE_2D, v);
+        gl.uniform1i(location.value, 0);
         ; break;
       case 'samplerCube':
         //1.对纹理图像进行Y轴反转

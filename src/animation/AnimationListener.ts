@@ -32,6 +32,11 @@ export class AnimationListener {
       this.progressListeners.push(listener)
   }
 
+  registerPauseListener(listener: Function) {
+    if (typeof (listener) === 'function')
+      this.pauseListeners.push(listener)
+  }
+
   onAnimationStart(animation: Animation) {
     let listeners = this.startListeners, len = listeners.length;
     for (let i = 0; i < len; i++) {

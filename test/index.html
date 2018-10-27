@@ -16,14 +16,15 @@
       display: inline-block;
       /* width: 100%;
       height: 100%; */
-      /* width: 200px;
-      height: 200px;
-      position: absolute;
+      width: 400px;
+      height: 400px;
+      /* position: absolute;
       left: 100px;
       top: 100px; */
     }
   </style>
   <script src="../dist/ddd.js"></script>
+  <img hidden id="ss" src="texture.png" alt="">
 </head>
 
 <body>
@@ -37,57 +38,37 @@
 
     /*============ Defining and storing the geometry =========*/
 
-    var obj = new DDD.UIObject(0, 0, .5, .5, "__");
+    var center = new DDD.UIObject(1, 1, .1, .1, "_cener_");
+    var obj = new DDD.UIObject(0.5, 0.5, .2, .5, "_obj");
+    var obj2 = new DDD.UIObject(0.8, 0.8, .5, .5, "obj2");
+
+    obj.add(obj2)
+    center.add(obj);
 
     var camera = new DDD.UICamera();
     // var camera = new DDD.PerspectiveCamera(35, 1, 1, 1000);
     // var camera = new DDD.OrthographicCamera(2, 2, 0.1, 1000);
-    // translating z
-    // obj.translateZ(0.01)
 
-    //顶点着色器程序
-    var VSHADER_SOURCE =
-      "attribute vec3 position;" +
-      "attribute vec2 a_TextCoord;" + // 接受纹理坐标
-      "varying vec2 v_TexCoord;" + // 传递纹理坐标
-      "uniform mat4 Pmatrix;" +
-      "uniform mat4 Vmatrix;" +
-      "uniform mat4 Mmatrix;" +
-      "void main() {" +
-      //设置坐标
-      "gl_Position = Pmatrix*Vmatrix*Mmatrix*vec4(position, 1.); " + // 设置坐标
-      //设置纹素
-      "v_TexCoord = a_TextCoord; " + // 设置纹理坐标
-      "} ";
-
-    //片元着色器
-    var FSHADER_SOURCE =
-      "precision mediump float;" + //需要声明浮点数精度，否则报错No precision specified for (float)
-      "uniform sampler2D u_Sampler;" + // 取样器
-      "varying vec2 v_TexCoord;" + // 接受纹理坐标
-      "void main() {" +
-      //设置颜色
-      "gl_FragColor = texture2D(u_Sampler, v_TexCoord);" + // 设置颜色
-      "}";
 
     var render = new DDD.UIRender(client, camera);
-
-    var source = new DDD.UIShaderSource();
-    // var shader = new DDD.UIShader(VSHADER_SOURCE, FSHADER_SOURCE);
-    var shader = new DDD.UIShader(source.vertSource, source.fragSource);
-
     var material = new DDD.UIMaterial({
       color: [1, 1, 0, 1]
     });
 
-    // var image = new Image();
-    // image.onload = () => {
-    //   render.addRenderObject(obj, shader, image);
-    // }
-    // image.src = "texture.png"
+    center._material = new DDD.UIMaterial({
+      color: [1, 0, 0, 1]
+    });
+    obj._material = new DDD.UIMaterial({
+      color: [1, 1, 0, 1]
+    });
+    obj2._material = new DDD.UITextureMaterial({
+      u_Sampler: ss,
+      textureCoord: new Float32Array([
+        0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0,
+      ])
+    });
 
-    render.addRenderObject(obj, shader);
-
+    render.addRenderObject(obj);
 
 
 
@@ -141,16 +122,16 @@
       pointer.setPosition(progress * 2 - 1.0, ani.getValue() * 2.0 / 52.0 - 1, 0)
     })
 
-    let a = 0;
     var animate = function (time) {
       render.render();
+      obj.rotateZ(-0.01)
+      // center.rotateZ(-0.1)
       // camera.rotateX(0.1, true)
       // camera.rotateY(0.1)
       // camera.translateY(-0.01)
       animation.updateAnimation();
       // ani.updateAnimation()
-      a += 0.1
-      // camera.rotateZ(-a)
+
       window.requestAnimationFrame(animate);
     }
     animate(0);
@@ -163,9 +144,12 @@
         var pointer = new DDD.UIObject(0.5, 0.5, 0.1, 0.1, "__");
         pointer._modelMatrix.elements[12] = e.webglX;
         pointer._modelMatrix.elements[13] = e.webglY;
-        render.addRenderObject(pointer, shader);
+        pointer._material = new DDD.UIMaterial({
+          color: [0, 0, 1, 1]
+        });
+        render.addRenderObject(pointer);
 
-        console.log(e.webglX, e.webglY)
+        // console.log(e.webglX, e.webglY)
       }
     })
   </script>
