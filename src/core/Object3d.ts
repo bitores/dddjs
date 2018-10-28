@@ -99,9 +99,9 @@ export class Object3d extends Base {
   }
 
   scaling(x: number, y: number, z: number) {
-    this._scale.x * x;
-    this._scale.y * y;
-    this._scale.z * z;
+    this._scale.x *= x;
+    this._scale.y *= y;
+    this._scale.z *= z;
     this._scale.trigger()
     return this;
   }

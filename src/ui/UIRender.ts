@@ -69,26 +69,10 @@ export class UIRender extends Base {
     let vbo = this.createBO(obj.vertices, false, true);
     let ibo = this.createBO(obj.indices, true, true);
 
-    var textureCoord = [
-
-
-
-      1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0,
-    ];
-
-
-    let texture, tbo;
-    if (image) {
-      tbo = this.createBO(new Float32Array(textureCoord), false, true);
-      texture = this.createTexture(image);
-    }
-
     this.pool.push({
       obj,
       vbo,
-      tbo,
       ibo,
-      texture,
       shader,
       name: obj.name,
     });
@@ -111,46 +95,12 @@ export class UIRender extends Base {
     let gl = this.ctx, shader = item.shader, vbo = item.vbo, ibo = item.ibo, obj = item.obj;
     shader.use();
 
-
-    // let proj_matrix = this.camera._projectMatrix.elements;
-    // let view_matrix = this.camera._viewMatrix.elements;
-
-    // let mov_matrix = this.getTargetMatrix(obj).elements;
-    // shader.uploadItem('Pmatrix', proj_matrix)
-    // shader.uploadItem('Vmatrix', view_matrix)
-    // shader.uploadItem('Mmatrix', mov_matrix)
     shader.upload(this.camera, obj);
-
-
-
-
-    // if (item.texture) {
-    //   //1.对纹理图像进行Y轴反转
-    //   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-    //   //2.开启0号纹理单元
-    //   gl.activeTexture(gl.TEXTURE0);
-    //   //3.向target绑定纹理对象
-    //   gl.bindTexture(gl.TEXTURE_2D, item.texture);
-
-    //   // //4.配置纹理参数
-    //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    //   // //5.配置纹理图像
-    //   // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-
-    //   //6.将0号纹理图像传递给着色器
-    //   gl.uniform1i(shader.location('u_Sampler'), 0);
-    // }
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
     gl.vertexAttribPointer(shader.location('position'), 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(shader.location('position'));
-    // if (tbo) {
-    //   gl.bindBuffer(gl.ARRAY_BUFFER, tbo);
-    //   gl.vertexAttribPointer(shader.location('a_TextCoord'), 2, gl.FLOAT, false, 0, 0);
-    //   gl.enableVertexAttribArray(shader.location('a_TextCoord'));
-    // }
 
-    // console.log('..')
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
     gl.drawElements(gl.TRIANGLES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
   }

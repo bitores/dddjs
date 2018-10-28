@@ -15,14 +15,19 @@ export class UIMaterial {
   private shaderTypeReg = /(attribute|uniform)\s\S+\s\S+;/g;
   constructor(config: Object = {}) {
     this.config = {
-      color: new Float32Array([1.0, 0.0, 1.0, 1.0,]),
+      color: new Float32Array([
+        0, 0, 1, 1,
+        1, 0, 0, 1,
+        0, 1, 0, 1,
+        1, 0, 1, 1
+      ]),
       ...config
     }
   }
 
   shaderSource() {
     let vert = `
-    uniform vec4 color;
+    attribute vec4 color;
     varying vec4 vColor;`,
       vertMain = "vColor = color;",
       frag = "varying vec4 vColor;",
@@ -32,9 +37,9 @@ export class UIMaterial {
   }
 
   handle() {
-    // let tbo = GLTools.createVBO(this.ctx, this.config["color"], false)
+    let tbo = GLTools.createVBO(this.ctx, this.config["color"], false)
 
-    // this.config["color"] = tbo;
+    this.config["color"] = tbo;
   }
 
   init(ctx: WebGLRenderingContext) {
