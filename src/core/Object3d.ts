@@ -64,14 +64,14 @@ export class Object3d extends Base {
     return this;
   }
 
-  translate(x: number = 0, y: number = 0, z: number = 0) {
-    let qx = this._quaternion.x, qy = this._quaternion.y, qz = this._quaternion.z, qw = this._quaternion.w;
-    let Vx = new Vec3(1, 0, 0).fromQuaternion(qx, qy, qz, qw).mul(x);
-    let Vy = new Vec3(0, 1, 0).fromQuaternion(qx, qy, qz, qw).mul(y);
-    let Vz = new Vec3(0, 0, 1).fromQuaternion(qx, qy, qz, qw).mul(z);
-    this._position.add(Vx.x, Vx.y, Vx.z).add(Vy.x, Vy.y, Vy.z).add(Vz.x, Vz.y, Vz.z).trigger();
-    return this;
-  }
+  // translate(x: number = 0, y: number = 0, z: number = 0) {
+  //   let qx = this._quaternion.x, qy = this._quaternion.y, qz = this._quaternion.z, qw = this._quaternion.w;
+  //   let Vx = new Vec3(1, 0, 0).fromQuaternion(qx, qy, qz, qw).mul(x);
+  //   let Vy = new Vec3(0, 1, 0).fromQuaternion(qx, qy, qz, qw).mul(y);
+  //   let Vz = new Vec3(0, 0, 1).fromQuaternion(qx, qy, qz, qw).mul(z);
+  //   this._position.add(Vx.x, Vx.y, Vx.z).add(Vy.x, Vy.y, Vy.z).add(Vz.x, Vz.y, Vz.z).trigger();
+  //   return this;
+  // }
 
   // 平移只在自己的轴上
   translateX(val: number) {

@@ -126,6 +126,7 @@ export class GLTools {
       type = option.type || gl.UNSIGNED_BYTE;
 
     var texture = gl.createTexture();
+    if (texture) texture["unit"] = unit;
     gl.pixelStorei(pixel, flip);
     // 开启0号纹理单元
     gl.activeTexture(gl.TEXTURE0 + unit);
@@ -189,8 +190,8 @@ export class GLTools {
   }) {
     let wrapS = option.wrapS || gl.CLAMP_TO_EDGE,
       wrapT = option.wrapT || gl.CLAMP_TO_EDGE,
-      filterMin = option.filterMin || gl.LINEAR,
-      filterMag = option.filterMag || gl.LINEAR,
+      filterMin = option.filterMin || gl.NEAREST,
+      filterMag = option.filterMag || gl.NEAREST,
       unit = option.unit || 0,
       pixel = option.pixel || gl.UNPACK_FLIP_Y_WEBGL,
       flip = option.flip || 1,
@@ -200,6 +201,7 @@ export class GLTools {
       type = option.type || gl.UNSIGNED_BYTE;
 
     var texture = gl.createTexture();
+    if (texture) texture["unit"] = unit;
     gl.pixelStorei(pixel, flip);
     // 开启0号纹理单元
     gl.activeTexture(gl.TEXTURE0 + unit);
@@ -226,6 +228,8 @@ export class GLTools {
     // image:包含纹理图像的Image对象，可为null
 
     if (images === null) {
+      // 自定义 图像 data
+
       // make the texture the same size as the image
       gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, format, width, height, 0, format, type, null);
       gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, format, width, height, 0, format, type, null);
@@ -246,7 +250,7 @@ export class GLTools {
       gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, format, format, type, images[5]);
     }
 
-    gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+    // gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
     return texture;
   }
 

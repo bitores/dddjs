@@ -205,12 +205,14 @@ export class UIMaterial {
         gl.uniformMatrix4fv(location.value, false, v)
       } break;
       case 'sampler2D':
+        gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, v);
-        gl.uniform1i(location.value, 0);
+        gl.uniform1i(location.value, v.unit);
         ; break;
       case 'samplerCube':
+        gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_CUBE_MAP, v);
-        gl.uniform1i(location.value, 0);
+        gl.uniform1i(location.value, v.unit);
         ; break;
       default:
         throw new TypeError('')

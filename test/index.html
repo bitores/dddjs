@@ -54,7 +54,7 @@
 
       var colorMaterial = new DDD.UIMaterial({});
       var mapMaterial = new DDD.UITextureMaterial({
-        image: images[0],
+        image: images[2],
       });
 
       var obj = new DDD.Plane();
@@ -90,7 +90,7 @@
       box2._material = new DDD.UICubeTextureMaterial({
         u_Sampler: images, //[ss, ss1, ss, ss, ss, ss],
       });
-      render.addRenderObject(box2);
+      // render.addRenderObject(box2);
 
       var box3 = new DDD.Box();
       box3.scaling(0.2, 0.2, 0.2);
@@ -120,7 +120,7 @@
       animation.registerAnimationStartListener((ani) => {
         // console.log('start...')
       }).registerAnimationEndListener((ani) => {
-        console.log('end...', ani._oneMoreTime, ani._started, ani._ended, ani._more)
+        // console.log('end...', ani._oneMoreTime, ani._started, ani._ended, ani._more)
       }).registerAnimationRepeatListener((ani) => {
         // console.log('repeat...', ani._repeated)
       }).registerAnimationProgressListener((ani, progress) => {
@@ -141,7 +141,7 @@
         .registerAnimationStartListener((ani) => {
           // console.log('start...')
         }).registerAnimationProgressListener((ani, progress) => {
-          console.log('value animation', progress * 2 - 1.0, ani.getValue() * 2.0 / 52.0 - 1, 0)
+          // console.log('value animation', progress * 2 - 1.0, ani.getValue() * 2.0 / 52.0 - 1, 0)
         });
       ani.start()
 
