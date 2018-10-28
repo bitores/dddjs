@@ -103,10 +103,11 @@ export class UIMaterial {
 
   use() {
     this.ctx.useProgram(this.program);
+    if (this.config['dynamic'] === true) this.handle()
   }
 
   location(name: string) {
-    return this.locations[name].value;
+    return this.locations[name] && this.locations[name].value;
   }
 
   getTargetMatrix(obj) {
@@ -119,13 +120,11 @@ export class UIMaterial {
   upload(camera, obj) {
     for (const item in this.locations) {
       if (this.locations.hasOwnProperty(item)) {
-        // const location = this.locations[item];
         switch (item) {
           case "u_Sampler":
-          case "a_TextCoord":
-          case 'color': {
-            this.uploadItem(item, this.config[item])
-          }
+            {
+              this.uploadItem(item, this.config[item])
+            }
             break;
           case 'Pmatrix': {
             this.uploadItem(item, camera._projectMatrix.elements)
@@ -144,7 +143,6 @@ export class UIMaterial {
     }
   }
 
-  // 限制 gl.-----fv
   uploadItem(name: string, v) {
     let gl = this.ctx;
     let location = this.locations[name],
@@ -216,7 +214,7 @@ export class UIMaterial {
         ; break;
       default:
         throw new TypeError('')
-        ; break;
+        ;
     }
   }
 

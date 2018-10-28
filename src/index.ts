@@ -12,7 +12,7 @@ export * from './core/DataObject';
 export * from './core/Raycaster';
 export * from './ui/UICanvas';
 export * from './ui/UICamera';
-export * from './ui/UIObject';
+// export * from './ui/UIObject';
 export * from './core/Object3d';
 export * from './ui/UIShader';
 export * from './ui/UIShaderSource';
@@ -34,6 +34,12 @@ export * from './animation/interpolator/AnticipateOvershootInterpolator';
 export * from './ui/materials/UIMaterial';
 export * from './ui/materials/UITextureMaterial';
 export * from './ui/materials/UICubeTextureMaterial';
+
+export * from './ui/shape/Shape';
+export * from './ui/shape/Plane';
+export * from './ui/shape/Box';
+export * from './ui/shape/Ball';
+export * from './utils/ImagesLoaded';
 
 
 

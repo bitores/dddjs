@@ -6,14 +6,17 @@ import { GLTools } from "../GLTools";
 export class UITextureMaterial extends UIMaterial {
   // image map
 
-  constructor(config: Object = {}) {
+  constructor(config: {
+    dynamic?: boolean
+  }) {
     super()
 
     this.config = {
+      image: null,
       u_Sampler: null,
-      textureCoord: new Float32Array([
-        1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0,
-      ]),
+      // textureCoord: new Float32Array([
+      //   1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0,
+      // ]),
       ...config
     }
   }
@@ -32,10 +35,10 @@ export class UITextureMaterial extends UIMaterial {
   }
 
   handle() {
-    let tbo = GLTools.createVBO(this.ctx, this.config["textureCoord"], false)
-    let texture = GLTools.createTexture(this.ctx, this.config['u_Sampler'], {});
+    // let tbo = GLTools.createVBO(this.ctx, this.config["textureCoord"], false)
+    let texture = GLTools.createTexture(this.ctx, this.config['image'], {});
 
-    this.config["a_TextCoord"] = tbo;
+    // this.config["a_TextCoord"] = tbo;
     this.config['u_Sampler'] = texture;
   }
 }

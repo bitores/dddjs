@@ -1,7 +1,8 @@
 import Base from "../Base";
-import { UIObject } from "./UIObject";
 import { UICamera } from "./UICamera";
 import { UICanvas } from "./UICanvas";
+import { GLTools } from "./GLTools";
+import { Shape } from "./shape/Shape";
 
 export class UIRender extends Base {
   public ctx: WebGLRenderingContext | null;
@@ -11,67 +12,20 @@ export class UIRender extends Base {
     this.ctx = canvas.ctx;
   }
 
-  // create buffer object
-  createBO(data: Float32Array, is_index: boolean = false, buffer_static: any = true) {
-    if (this.ctx === null) return null;
-    let gl = this.ctx;
-    let usage: number | null = null;
-    let target = is_index ? gl.ELEMENT_ARRAY_BUFFER : gl.ARRAY_BUFFER;
-    switch (buffer_static) {
-      case false:
-      case "dynamic": {
-        usage = gl.DYNAMIC_DRAW;
-      } break;
-      case "stream": {
-        usage = gl.STREAM_DRAW;
-      } break;
-      case true:
-      case 'static':
-      default: {
-        usage = gl.STATIC_DRAW;
-      } break;
-    }
-    var bo = gl.createBuffer();
-    gl.bindBuffer(target, bo);
-    gl.bufferData(target, data, usage);
-    gl.bindBuffer(target, null);
-
-    return bo;
-  }
-
-  createTexture(image: HTMLImageElement) {
-    if (this.ctx === null) return null;
-    let gl = this.ctx;
-    var texture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-
-    // Set up texture so we can render any size image and so we are
-    // working with pixels.
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);// 纹理水平填充方式
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);// 纹理垂直填充方式
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);// 纹理缩小方式
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);// 纹理放大方式
-
-
-
-    // make the texture the same size as the image
-    // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, image.width, image.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-
-    gl.bindTexture(gl.TEXTURE_2D, null);
-    return texture;
-  }
-
-  addRenderObject(obj: UIObject, image: HTMLImageElement | null = null) {
+  addRenderObject(obj: Shape, image: HTMLImageElement | null = null) {
     let shader = obj._material;
-    if (this.ctx && shader) shader.init(this.ctx);
-    let vbo = this.createBO(obj.vertices, false, true);
-    let ibo = this.createBO(obj.indices, true, true);
+    if (!this.ctx || !shader) return;
+    shader.init(this.ctx);
+    let vbo = GLTools.createVBO(this.ctx, obj.vertices, false, true);
+    let cbo = GLTools.createVBO(this.ctx, obj.colors, false, true);
+    let tbo = GLTools.createVBO(this.ctx, obj.textCoords, false, true);
+    let ibo = GLTools.createVBO(this.ctx, obj.indices, true, true);
 
     this.pool.push({
       obj,
       vbo,
+      cbo,
+      tbo,
       ibo,
       shader,
       name: obj.name,
@@ -92,14 +46,33 @@ export class UIRender extends Base {
 
   renderItem(item: any) {
     if (this.ctx === null) return;
-    let gl = this.ctx, shader = item.shader, vbo = item.vbo, ibo = item.ibo, obj = item.obj;
-    shader.use();
+    let gl = this.ctx,
+      shader = item.shader,
+      vbo = item.vbo,
+      cbo = item.cbo,
+      tbo = item.tbo,
+      ibo = item.ibo,
+      obj = item.obj;
 
+    shader.use();
     shader.upload(this.camera, obj);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
     gl.vertexAttribPointer(shader.location('position'), 3, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(shader.location('position'));
+
+    if (shader.location('color')) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, cbo);
+      gl.vertexAttribPointer(shader.location('color'), 4, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(shader.location('color'));
+    }
+
+    if (shader.location('a_TextCoord')) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, tbo);
+      gl.vertexAttribPointer(shader.location('a_TextCoord'), 2, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(shader.location('a_TextCoord'));
+    }
+
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
     gl.drawElements(gl.TRIANGLES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
@@ -121,7 +94,6 @@ export class UIRender extends Base {
     this.clean()
     this.pool.forEach(item => {
       this.renderItem(item);
-      // console.log(item.name)
     })
   }
 

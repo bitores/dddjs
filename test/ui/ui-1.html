@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    canvas {
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+  <script src="../dist/ddd.js"></script>
+</head>
+
+<body>
+  <canvas id="my_Canvas"></canvas>
+
+  <script>
+    /*============= Creating a canvas =================*/
+    var mycanvas = document.getElementById('my_Canvas');
+    var client = new DDD.UICanvas(mycanvas)
+    gl = client.gl;
+
+    /*============ Defining and storing the geometry =========*/
+
+    var obj = new DDD.UIObject(0, 0, 0.5, 0.5, "__");
+    var obj2 = new DDD.UIObject(0.5, 0.5, 0.5, 0.5, "__");
+    var camera = new DDD.UICamera();
+    // var camera = new DDD.PerspectiveCamera(45, 1, 0.1, 1000);
+    // var camera = new DDD.OrthographicCamera(2, 2, 0.1, 1000);
+
+
+    var render = new DDD.UIRender(client, camera);
+
+    /*=================== Shaders =========================*/
+
+    var vertSource = 'attribute vec3 position;' +
+      'uniform mat4 Pmatrix;' +
+      'uniform mat4 Vmatrix;' +
+      'uniform mat4 Mmatrix;' +
+
+      'void main(void) { ' + //pre-built function
+      'gl_Position = Pmatrix*Vmatrix*Mmatrix*vec4(position, 1.);' +
+      '}';
+
+    var fragSource = 'precision mediump float;' +
+      'void main(void) {' +
+      'gl_FragColor = vec4(1., 0., 1., 1.);' +
+      '}';
+
+    // 
+    var source = new DDD.UIShaderSource();
+
+    var shader = new DDD.UIShader(gl, source.vertSource, source.fragSource);
+
+    render.addRenderObject(obj, shader);
+    render.addRenderObject(obj2, shader)
+
+    // translating z
+    camera.translateZ(-1)
+
+    var animate = function (time) {
+      render.render();
+      window.requestAnimationFrame(animate);
+    }
+    animate(0);
+  </script>
+
+</body>
+
+</html>

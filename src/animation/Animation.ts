@@ -186,22 +186,27 @@ export class Animation {
   // register listener 
   registerAnimationStartListener(listener: Function) {
     this._listeners.registerStartListener(listener)
+    return this;
   }
 
   registerAnimationEndListener(listener: Function) {
     this._listeners.registerEndListener(listener)
+    return this;
   }
 
   registerAnimationRepeatListener(listener: Function) {
     this._listeners.registerRepeatListener(listener)
+    return this;
   }
 
   registerAnimationProgressListener(listener: Function) {
     this._listeners.registerProgressListener(listener)
+    return this;
   }
 
   registerAnimationPauseListener(listener: Function) {
     this._listeners.registerPauseListener(listener)
+    return this;
   }
 
   fireAnimationStart() {

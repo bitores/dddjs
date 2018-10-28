@@ -51,7 +51,7 @@ export class GLTools {
       filterMag = option.filterMag || gl.LINEAR,
       width = option.width || 512,
       height = option.height || 512,
-      format = option.format || gl.RGB,
+      format = option.format || gl.RGBA,
       type = option.type || gl.UNSIGNED_BYTE;
 
     let fboBuffer = gl.createFramebuffer();
@@ -100,7 +100,7 @@ export class GLTools {
     return fb.t;
   }
 
-  static createTexture(gl: WebGLRenderingContext, image: HTMLImageElement | null = null, option: {
+  static createTexture(gl: WebGLRenderingContext, image: HTMLImageElement | HTMLVideoElement | null = null, option: {
     wrapS?: number,
     wrapT?: number,
     filterMin?: number,
@@ -122,7 +122,7 @@ export class GLTools {
       flip = option.flip || 1,
       width = option.width || 512,
       height = option.height || 512,
-      format = option.format || gl.RGB,
+      format = option.format || gl.RGBA,
       type = option.type || gl.UNSIGNED_BYTE;
 
     var texture = gl.createTexture();
@@ -196,7 +196,7 @@ export class GLTools {
       flip = option.flip || 1,
       width = option.width || 512,
       height = option.height || 512,
-      format = option.format || gl.RGB,
+      format = option.format || gl.RGBA,
       type = option.type || gl.UNSIGNED_BYTE;
 
     var texture = gl.createTexture();
@@ -226,14 +226,6 @@ export class GLTools {
     // image:包含纹理图像的Image对象，可为null
 
     if (images === null) {
-      // 绘制32*32的数据 一三象限白色，二四象限黑色，用作平铺国际象棋棋盘
-      // dat=[];
-      // for(i=0;i<32;i++)for(j=0;j<32;j++)
-      //   k=i<16^j<16?255:0,dat.push(k,k,k);
-      // 把数组转换成内存指针作为texImage2d的参数
-      // webgl.texImage2D( webgl.TEXTURE_2D,0,webgl.RGB,32,32,0,webgl.RGB, webgl.UNSIGNED_BYTE,new Uint8Array(dat));
-
-
       // make the texture the same size as the image
       gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, format, width, height, 0, format, type, null);
       gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, format, width, height, 0, format, type, null);
