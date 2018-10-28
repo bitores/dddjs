@@ -17,16 +17,21 @@ export class ImagesLoaded {
         tasks--;
         this.progress(image);
         this.loadedImages.push(image)
-        if (tasks == 0) {
-          this.onAlways && this.onAlways(this.loadedImages)
-        }
+        this.check(tasks)
       }
       image.onerror = (e) => {
         tasks--;
         this.error(e)
+        this.check(tasks)
       }
       image.src = url;
     })
+  }
+
+  check(tasks) {
+    if (tasks == 0) {
+      this.onAlways && this.onAlways(this.loadedImages)
+    }
   }
 
   onProgress(callback) {

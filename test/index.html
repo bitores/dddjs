@@ -63,8 +63,8 @@
         dynamic: true,
         image: ss,
       });
-      // obj.scaling(0.2, 0.2, 1.0);
-      // obj.setPosition(-1, 1, 0)
+      obj.scaling(0.2, 0.2, 1.0);
+      obj.setPosition(-1, 1, 0)
       render.addRenderObject(obj);
 
 
@@ -80,7 +80,7 @@
       box.rotateY(0.25)
       box.setPosition(1, 1, 0)
       box._material = colorMaterial;
-      // render.addRenderObject(box);
+      render.addRenderObject(box);
 
       var box2 = new DDD.Box();
       box2.scaling(0.2, 0.2, 0.2);
@@ -90,20 +90,20 @@
       box2._material = new DDD.UICubeTextureMaterial({
         u_Sampler: images, //[ss, ss1, ss, ss, ss, ss],
       });
-      // render.addRenderObject(box2);
+      render.addRenderObject(box2);
 
       var box3 = new DDD.Box();
       box3.scaling(0.2, 0.2, 0.2);
       box3.rotateX(0.25);
       box3.rotateY(0.25);
       box3._material = mapMaterial;
-      // render.addRenderObject(box3);
+      render.addRenderObject(box3);
 
       var ball = new DDD.Ball();
       ball.scaling(0.2, 0.2, 0.2)
       ball.setPosition(2, -2, 0)
       ball._material = colorMaterial;
-      // render.addRenderObject(ball);
+      render.addRenderObject(ball);
 
       var animation = new DDD.Animation(true)
       animation._duration = 2000;
@@ -154,8 +154,6 @@
         window.requestAnimationFrame(animate);
       }
       animate(0);
-
-      let ray = new DDD.RayCaster(camera);
 
       mycanvas.addEventListener('webgl', (e) => {
         // console.log(e.webglX, e.webglY, e.webgldrag)

@@ -43,30 +43,7 @@ export class Object3d extends Base {
       let q = this._euler.quaternion();
       this._quaternion.mul(q.x, q.y, q.z, q.w).trigger()
     });
-
   }
-
-  test = function () {
-    var l = new Vec3()
-    var n = '';
-    return function (val) {
-      l.x++;
-      console.log(n)
-      n = val;
-      console.log(val, l, n)
-    }
-  }()
-
-  test2 = (() => {
-    var l = new Vec3()
-    var n = '';
-    return function (val) {
-      l.x++;
-      console.log(n)
-      n = val;
-      console.log(val, l, n)
-    }
-  })()
 
   get name() {
     return this._name;
