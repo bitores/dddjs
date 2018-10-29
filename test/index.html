@@ -185,7 +185,7 @@
       box.rotateZ(-0.01)
       box2.rotateZ(-0.01)
       box5.rotateZ(-0.01)
-      ball.rotateZ(-0.01)
+      // ball.rotateZ(-0.01)
       // center.rotateZ(-0.1)
       animation.updateAnimation();
       ani.updateAnimation();
@@ -196,6 +196,37 @@
     mycanvas.addEventListener('webgl', (e) => {
       // console.log(e.webglX, e.webglY, e.webgldrag)
       if (e.webgldrag) {}
+      // if(e.webglke)
+      if (e.webglkeydown) {
+        // console.log(e.webglkeyCode, e.webglkey)
+        switch (e.webglkey.toLocaleLowerCase()) {
+          case 'arrowleft':
+          case 'a':
+            {
+              ball.translateX(-0.1)
+            }
+            break;
+          case 'arrowdown':
+          case 's':
+            {
+              ball.translateY(-0.1)
+            }
+            break;
+          case 'arrowright':
+          case 'd':
+            {
+              ball.translateX(0.1)
+            }
+            break;
+          case 'arrowup':
+          case 'w':
+            {
+              ball.translateY(0.1)
+            }
+            break;
+        }
+      }
+
     })
     // }
   </script>

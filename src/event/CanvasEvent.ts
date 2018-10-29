@@ -81,8 +81,29 @@ export class CanvasEvent {
         _event['webgldrag'] = CanvasEvent._drag;
         canvas.dispatchEvent(_event)
       }, false);
-
     })
+
+    document.addEventListener('keydown', (e) => {
+      if (_event === null) return;
+      _event['name'] = 'keydown';
+      _event['webglkeydown'] = true;
+      _event['webglkey'] = e.key;
+      _event['webglkeyCode'] = e.keyCode || e.which || e.charCode;
+      canvas.dispatchEvent(_event)
+      _event['webglkeydown'] = false;
+    })
+
+    document.addEventListener('keyup', (e) => {
+      if (_event === null) return;
+      _event['name'] = 'keyup';
+      _event['webglkeyup'] = true;
+      _event['webglkey'] = e.key;
+      _event['webglkeyCode'] = e.keyCode || e.which || e.charCode;
+      canvas.dispatchEvent(_event)
+      _event['webglkeyup'] = false;
+    })
+
+
   }
 
 
