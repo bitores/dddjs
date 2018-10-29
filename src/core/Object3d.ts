@@ -7,6 +7,7 @@ import { UIMaterial } from "../materials/UIMaterial";
 import { Gemotry } from "./Gemotry";
 
 export class Object3d extends Base {
+  public uuid: Symbol = Symbol('uuid');
   public _children: any = [];
   public _parent: any = null;
   public _position: Vec3 = new Vec3();

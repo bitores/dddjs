@@ -4,9 +4,7 @@ export class Vec2 extends Base {
     super()
   }
 
-  get className() {
-    return 'Vec2';
-  }
+
 
   add(x: number, y: number) {
     this.x += x;
@@ -117,6 +115,10 @@ export class Vec2 extends Base {
   }
 
   //--------  end
+
+  get className() {
+    return 'Vec2';
+  }
 
   clone() {
     return new Vec2(this.x, this.y);

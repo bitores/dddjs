@@ -26,6 +26,7 @@
   <script src="../dist/ddd.js"></script>
   <video id='ss' src="assets/vedio.mp4" hidden -autoplay></video>
   <img hidden id="ss1" src="assets/texture.png" alt="">
+  <img hidden id="ss2" src="assets/back.jpg" alt="">
 </head>
 
 <body>
@@ -38,6 +39,7 @@
     var client = new DDD.UICanvas(mycanvas)
     var camera = new DDD.UICamera();
     var render = new DDD.UIRender(client, camera);
+    var scene = new DDD.UIScene();
 
     var colorMaterial = new DDD.UIMaterial({});
     var mapMaterial = new DDD.UITextureMaterial({
@@ -78,33 +80,31 @@
     box5.setPosition(-.8, -.8, 0)
 
     new DDD.ImagesLoaded([
-      'assets/back.jpg',
-      'assets/back.jpg',
-      'assets/bottom.jpg',
-      'assets/front.jpg',
-      'assets/left.jpg',
-      'assets/right.jpg',
+      'assets/xneg.png',
+      'assets/xneg.jpg',
+      'assets/xpos.jpg',
+      'assets/ypos.jpg',
+      'assets/zneg.jpg',
+      'assets/zpos.jpg',
     ]).onLoad((images) => {
-      console.log('--++++', images, box5.name)
-
       cubeMap.config['u_Sampler'] = DDD.GLTools.createCubeTexture(client.gl, images, {});
-
+      render.addRenderObject(box5);
     })
-    render.addRenderObject(box5);
+
 
     var box2 = new DDD.Box();
-    box2.scaling(0.2, 0.2, 0.2);
-    box2.rotateX(0.25);
-    box2.rotateY(0.25);
-    box2.setPosition(-.8, 0, 0)
+    // box2.scaling(0.2, 0.2, 0.2);
+    // box2.rotateX(0.25);
+    // box2.rotateY(0.25);
+    // box2.setPosition(-.8, 0, 0)
     box2._material = new DDD.UICubeTextureMaterial({
       images: [
-        'assets/xneg.png',
-        'assets/xneg.jpg',
-        'assets/xpos.jpg',
-        'assets/ypos.jpg',
-        'assets/zneg.jpg',
-        'assets/zpos.jpg',
+        'assets/right.jpg',
+        'assets/left.jpg',
+        'assets/top.jpg',
+        'assets/bottom.jpg',
+        'assets/back.jpg',
+        'assets/front.jpg',
       ],
       // u_Sampler: images, //[ss, ss1, ss, ss, ss, ss],
     });
@@ -127,7 +127,7 @@
 
     var obj1 = new DDD.Plane();
     obj1._material = new DDD.UIMultiTexturesMaterial({
-      texture0: ss1,
+      texture0: ss2,
       texture1: ss1,
     });
     obj1.scaling(0.5, 0.5, 1.0);
@@ -183,7 +183,7 @@
       render.render();
       obj.rotateZ(-0.01)
       box.rotateZ(-0.01)
-      box2.rotateZ(-0.01)
+      // box2.rotateZ(-0.01)
       box5.rotateZ(-0.01)
       // ball.rotateZ(-0.01)
       // center.rotateZ(-0.1)
@@ -203,25 +203,25 @@
           case 'arrowleft':
           case 'a':
             {
-              ball.translateX(-0.1)
+              box2.translateX(-0.1)
             }
             break;
           case 'arrowdown':
           case 's':
             {
-              ball.translateY(-0.1)
+              box2.translateZ(-0.1)
             }
             break;
           case 'arrowright':
           case 'd':
             {
-              ball.translateX(0.1)
+              box2.translateX(0.1)
             }
             break;
           case 'arrowup':
           case 'w':
             {
-              ball.translateY(0.1)
+              box2.translateZ(0.1)
             }
             break;
         }

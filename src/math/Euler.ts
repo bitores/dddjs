@@ -15,10 +15,6 @@ export class Euler extends Base {
     super()
   }
 
-  get className() {
-    return 'Euler';
-  }
-
 
   quaternion() {
     let halfToRad = 0.5 * Math.PI / 180.0;
@@ -51,7 +47,9 @@ export class Euler extends Base {
 
   }
   // ---------- end
-
+  get className() {
+    return 'Euler';
+  }
 
   clone() {
     return new Euler(this.pitch, this.yaw, this.roll);

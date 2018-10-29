@@ -250,7 +250,7 @@ export class GLTools {
       gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, format, format, type, images[5]);
     }
 
-    // gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
     return texture;
   }
 

@@ -10,7 +10,7 @@
 // export * from './math/Mat4';
 // export * from './math/Quaternion';
 // export * from './math/Euler';
-
+// export * from './math/Color';
 
 export * from './core/PerspectiveCamera';
 export * from './core/OrthographicCamera';
@@ -29,6 +29,8 @@ export * from './ui/UICamera';
 export * from './ui/UIRender';
 export * from './ui/GLTools';
 
+export * from './utils/ImagesLoaded';
+
 export * from './materials/UIMaterial';
 export * from './materials/UITextureMaterial';
 export * from './materials/UICubeTextureMaterial';
@@ -41,8 +43,8 @@ export * from './ui/shape/Shape';
 export * from './ui/shape/Plane';
 export * from './ui/shape/Box';
 export * from './ui/shape/Ball';
+export * from './ui/UIScene';
 
-export * from './utils/ImagesLoaded';
 
 
 

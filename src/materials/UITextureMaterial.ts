@@ -32,10 +32,7 @@ export class UITextureMaterial extends UIMaterial {
   }
 
   handle() {
-    // let tbo = GLTools.createVBO(this.ctx, this.config["textureCoord"], false)
     let texture = GLTools.createTexture(this.ctx, this.config['image'], {});
-
-    // this.config["a_TextCoord"] = tbo;
     this.config['u_Sampler'] = texture;
   }
 }

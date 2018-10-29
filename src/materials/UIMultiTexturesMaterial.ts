@@ -7,7 +7,6 @@ export class UIMultiTexturesMaterial extends UIMaterial {
   // image map
 
   constructor(config: {
-    dynamic?: boolean
   }) {
     super()
 
@@ -44,12 +43,9 @@ export class UIMultiTexturesMaterial extends UIMaterial {
   }
 
   handle() {
-    // let tbo = GLTools.createVBO(this.ctx, this.config["textureCoord"], false)
-    console.log(this.config)
     let texture0 = GLTools.createTexture(this.ctx, this.config['texture0'], {});
     let texture1 = GLTools.createTexture(this.ctx, this.config['texture1'], {});
 
-    // this.config["a_TextCoord"] = tbo;
     this.config['texture0'] = texture0;
     this.config['texture1'] = texture1;
   }

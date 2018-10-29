@@ -20,23 +20,20 @@ export class UICubeTextureMaterial extends UIMaterial {
   shaderSource() {
     let vert = `
     attribute vec2 a_TextCoord;
-    varying vec2 v_TexCoord;`,
-      vertMain = "v_TexCoord = a_TextCoord; ",
+    varying vec3 v_TexCoord;`,
+      vertMain = "v_TexCoord = position; ",
       frag = `
     uniform samplerCube u_Sampler;
-    varying vec2 v_TexCoord;`,
-      fragMain = "gl_FragColor = textureCube(u_Sampler, vec3(v_TexCoord.xy,1));";
+    varying vec3 v_TexCoord;`,
+      fragMain = "gl_FragColor = textureCube(u_Sampler, v_TexCoord);";
 
     this.shader = new ShaderChunk(vert, vertMain, frag, fragMain)
   }
 
   handle() {
     new ImagesLoaded(this.config['images']).onLoad((images) => {
-      console.log('--', images)
       let texture = GLTools.createCubeTexture(this.ctx, images, {});
-      // this.config["a_TextCoord"] = tbo;
-      if (texture)
-        texture['images'] = images;
+      if (texture) texture['images'] = images;
       this.config['u_Sampler'] = texture;
     });
 

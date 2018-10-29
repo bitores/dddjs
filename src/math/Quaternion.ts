@@ -16,9 +16,6 @@ export class Quaternion extends Base {
     super()
   }
 
-  get className() {
-    return 'Quaternion';
-  }
 
   add() {
 
@@ -341,6 +338,10 @@ export class Quaternion extends Base {
 
   }
   // ---------- end
+
+  get className() {
+    return 'Quaternion';
+  }
 
   clone() {
     return new Quaternion(this.x, this.y, this.z, this.w);
