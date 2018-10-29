@@ -1,5 +1,5 @@
 import { ShaderChunk } from "./chunks/ShaderChunk";
-import { GLTools } from "../GLTools";
+import { GLTools } from "../ui/GLTools";
 
 export class UIMaterial {
   // color

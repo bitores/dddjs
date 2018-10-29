@@ -1,7 +1,7 @@
 import { UIMaterial } from "./UIMaterial";
 import { ShaderChunk } from "./chunks/ShaderChunk";
-import { GLTools } from "../GLTools";
-import { ImagesLoaded } from "../../utils/ImagesLoaded";
+import { GLTools } from "../ui/GLTools";
+import { ImagesLoaded } from "../utils/ImagesLoaded";
 
 
 export class UICubeTextureMaterial extends UIMaterial {

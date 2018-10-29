@@ -1,6 +1,6 @@
 import { UIMaterial } from "./UIMaterial";
 import { ShaderChunk } from "./chunks/ShaderChunk";
-import { GLTools } from "../GLTools";
+import { GLTools } from "../ui/GLTools";
 
 
 export class UIMultiTexturesMaterial extends UIMaterial {

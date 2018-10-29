@@ -29,13 +29,13 @@ export * from './ui/UICamera';
 export * from './ui/UIRender';
 export * from './ui/GLTools';
 
-export * from './ui/materials/UIMaterial';
-export * from './ui/materials/UITextureMaterial';
-export * from './ui/materials/UICubeTextureMaterial';
-export * from './ui/materials/UIMultiTexturesMaterial';
-export * from './ui/materials/UIShaderMaterial';
+export * from './materials/UIMaterial';
+export * from './materials/UITextureMaterial';
+export * from './materials/UICubeTextureMaterial';
+export * from './materials/UIMultiTexturesMaterial';
+export * from './materials/UIShaderMaterial';
 
-export * from './ui/Gemotry';
+export * from './core/Gemotry';
 export * from './core/Object3d';
 export * from './ui/shape/Shape';
 export * from './ui/shape/Plane';

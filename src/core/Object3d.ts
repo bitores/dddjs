@@ -3,8 +3,8 @@ import { Vec3 } from "../math/Vec3";
 import { Mat4 } from "../math/Mat4";
 import { Quaternion } from "../math/Quaternion";
 import { Euler } from "../math/Euler";
-import { UIMaterial } from "ui/materials/UIMaterial";
-import { Gemotry } from "../ui/Gemotry";
+import { UIMaterial } from "../materials/UIMaterial";
+import { Gemotry } from "./Gemotry";
 
 export class Object3d extends Base {
   public _children: any = [];
