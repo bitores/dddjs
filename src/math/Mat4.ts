@@ -647,7 +647,7 @@ export class Mat4 extends Base {
     return mat;
   }
 
-  compose(position: Vec3 = new Vec3(), quaternion: Quaternion = new Quaternion(), scale: Vec3 = new Vec3(), onWorld: boolean = false) {
+  compose2(position: Vec3 = new Vec3(), quaternion: Quaternion = new Quaternion(), scale: Vec3 = new Vec3(), onWorld: boolean = false) {
     var x = quaternion.x, y = quaternion.y, z = quaternion.z, w = quaternion.w;
     var x2 = x + x, y2 = y + y, z2 = z + z;
     var xx = x * x2, xy = x * y2, xz = x * z2;
@@ -690,7 +690,7 @@ export class Mat4 extends Base {
     return this;
   }
 
-  compose2(position: Vec3 = new Vec3(), quaternion: Quaternion = new Quaternion(), scale: Vec3 = new Vec3()) {
+  compose(position: Vec3 = new Vec3(), quaternion: Quaternion = new Quaternion(), scale: Vec3 = new Vec3()) {
     var te = this.elements;
 
     var x = quaternion.x, y = quaternion.y, z = quaternion.z, w = quaternion.w;

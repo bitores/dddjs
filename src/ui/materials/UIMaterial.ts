@@ -121,11 +121,13 @@ export class UIMaterial {
     for (const item in this.locations) {
       if (this.locations.hasOwnProperty(item)) {
         switch (item) {
-          case "u_Sampler":
-            {
-              this.uploadItem(item, this.config[item])
-            }
-            break;
+          // case "texture0":
+          // case "texture1":
+          // case "u_Sampler":
+          //   {
+          //     this.uploadItem(item, this.config[item])
+          //   }
+          //   break;
           case 'Pmatrix': {
             this.uploadItem(item, camera._projectMatrix.elements)
           }
@@ -138,6 +140,9 @@ export class UIMaterial {
             this.uploadItem(item, this.getTargetMatrix(obj).elements)
           }
             break;
+          default: {
+            this.uploadItem(item, this.config[item])
+          }
         }
       }
     }
@@ -206,13 +211,17 @@ export class UIMaterial {
       } break;
       case 'sampler2D':
         gl.activeTexture(gl.TEXTURE0);
+        // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
         gl.bindTexture(gl.TEXTURE_2D, v);
         gl.uniform1i(location.value, v.unit);
         ; break;
       case 'samplerCube':
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_CUBE_MAP, v);
-        gl.uniform1i(location.value, v.unit);
+        if (v) {
+          gl.activeTexture(gl.TEXTURE0);
+          gl.bindTexture(gl.TEXTURE_CUBE_MAP, v);
+          gl.uniform1i(location.value, v.unit);
+        }
+
         ; break;
       default:
         throw new TypeError('')

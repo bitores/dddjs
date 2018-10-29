@@ -28,15 +28,15 @@ export class Object3d extends Base {
     this.isRightHand = true;
 
     this._position.onChange(() => {
-      this._modelMatrix.compose(this._position, this._quaternion, this._scale, this._transformOnWorld).trigger()
+      this._modelMatrix.compose(this._position, this._quaternion, this._scale).trigger()
     })
 
     this._scale.onChange(() => {
-      this._modelMatrix.compose(this._position, this._quaternion, this._scale, this._transformOnWorld).trigger()
+      this._modelMatrix.compose(this._position, this._quaternion, this._scale).trigger()
     })
 
     this._quaternion.onChange(() => {
-      this._modelMatrix.compose(this._position, this._quaternion, this._scale, this._transformOnWorld).trigger()
+      this._modelMatrix.compose(this._position, this._quaternion, this._scale).trigger()
     })
 
     this._euler.onChange(() => {
@@ -57,7 +57,7 @@ export class Object3d extends Base {
     this._position.set(x, y, z).trigger()
   }
 
-  translateOnAxix(axis: Vec3, distance) {
+  translateOnAxis(axis: Vec3, distance) {
     let qx = this._quaternion.x, qy = this._quaternion.y, qz = this._quaternion.z, qw = this._quaternion.w;
     let dis = axis.clone().fromQuaternion(qx, qy, qz, qw).mul(distance);
     this._position.add(dis.x, dis.y, dis.z).trigger();
@@ -75,15 +75,15 @@ export class Object3d extends Base {
 
   // 平移只在自己的轴上
   translateX(val: number) {
-    return this.translateOnAxix(new Vec3(1, 0, 0), val);
+    return this.translateOnAxis(new Vec3(1, 0, 0), val);
   }
 
   translateY(val: number) {
-    return this.translateOnAxix(new Vec3(0, 1, 0), val);
+    return this.translateOnAxis(new Vec3(0, 1, 0), val);
   }
 
   translateZ(val: number) {
-    return this.translateOnAxix(new Vec3(0, 0, 1), val);
+    return this.translateOnAxis(new Vec3(0, 0, 1), val);
   }
 
   scaling(x: number, y: number, z: number) {

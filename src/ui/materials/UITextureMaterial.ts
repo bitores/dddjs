@@ -14,9 +14,6 @@ export class UITextureMaterial extends UIMaterial {
     this.config = {
       image: null,
       u_Sampler: null,
-      // textureCoord: new Float32Array([
-      //   1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0,
-      // ]),
       ...config
     }
   }

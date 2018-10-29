@@ -1,0 +1,374 @@
+<!doctype html>
+<html>
+
+<script></script>
+
+<body>
+    <canvas width="570" height="570" id="my_Canvas"></canvas>
+    <img id="ss1" src="../assets/xneg.jpg" alt="" srcset="">
+    <img id="ss2" src="../assets/xpos.jpg" alt="" srcset="">
+    <img id="ss3" src="../assets/ypos.jpg" alt="" srcset="">
+    <img id="ss4" src="../assets/zneg.jpg" alt="" srcset="">
+    <img id="ss5" src="../assets/zpos.jpg" alt="" srcset="">
+    <img id="ss6" src="../assets/zneg.jpg" alt="" srcset="">
+
+    <!-- <img id="ss1" src="../assets/texture.png" alt="">
+    <img id="ss2" src="../assets/texture.png" alt="">
+    <img id="ss3" src="../assets/texture.png" alt="">
+    <img id="ss4" src="../assets/texture.png" alt="">
+    <img id="ss5" src="../assets/texture.png" alt="">
+    <img id="ss6" src="../assets/texture.png" alt=""> -->
+
+    <script>
+        // function isPowerOfTwo(x) {
+        //     return (x & (x - 1)) == 0;
+        // }
+
+        // console.log(isPowerOfTwo(ss1.width), isPowerOfTwo(ss1.height))
+
+        // https://blog.csdn.net/opengl_es/article/details/36353579
+        function isPowerOfTwo(x) {
+            return (x & (x - 1)) == 0;
+        }
+
+        // https://blog.csdn.net/opengl_es/article/details/36353579
+        function nextHighestPowerOfTwo(x) {
+            --x;
+            for (var i = 1; i < 32; i <<= 1) {
+                x = x | x >> i;
+            }
+            return x + 1;
+        }
+
+        function c(image) {
+            if (!isPowerOfTwo(image.width) || !isPowerOfTwo(image.height)) {
+                // Scale up the texture to the next highest power of two dimensions.
+                var canvas = document.createElement("canvas");
+                canvas.width = nextHighestPowerOfTwo(image.width);
+                canvas.height = nextHighestPowerOfTwo(image.height);
+                var ctx = canvas.getContext("2d");
+                if (ctx === null) return;
+                ctx.drawImage(image, 0, 0, image.width, image.height);
+                image = canvas;
+            }
+
+            return image;
+        }
+    </script>
+
+    <script>
+        var ss1 = document.getElementById('ss1')
+        var ss2 = document.getElementById('ss2')
+        var ss3 = document.getElementById('ss3')
+        var ss4 = document.getElementById('ss4')
+        var ss5 = document.getElementById('ss5')
+        var ss6 = document.getElementById('ss6')
+
+        var f = 0;
+        ss1.onload = () => {
+            f++;
+
+        }
+        ss2.onload = () => {
+            f++;
+        }
+        ss3.onload = () => {
+            f++;
+        }
+        ss4.onload = () => {
+            f++;
+        }
+        ss5.onload = () => {
+            f++;
+        }
+        ss6.onload = () => {
+            f++;
+        }
+        var timer = null;
+
+
+        /*============= Creating a canvas =================*/
+        var canvas = document.getElementById('my_Canvas');
+        gl = canvas.getContext('experimental-webgl');
+
+        /*============ Defining and storing the geometry =========*/
+
+        var vertices = [
+            -1, -1, -1, 1, -1, -1, 1, 1, -1, -1, 1, -1,
+            -1, -1, 1, 1, -1, 1, 1, 1, 1, -1, 1, 1,
+            -1, -1, -1, -1, 1, -1, -1, 1, 1, -1, -1, 1,
+            1, -1, -1, 1, 1, -1, 1, 1, 1, 1, -1, 1,
+            -1, -1, -1, -1, -1, 1, 1, -1, 1, 1, -1, -1,
+            -1, 1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1,
+        ];
+
+        // var colors = [
+        //     5, 3, 7, 5, 3, 7, 5, 3, 7, 5, 3, 7,
+        //     1, 1, 3, 1, 1, 3, 1, 1, 3, 1, 1, 3,
+        //     0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
+        //     1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
+        //     1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0,
+        //     0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0
+        // ];
+
+        var colors = [
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
+            1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
+            1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0,
+            0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0
+        ];
+
+        var indices = [
+            0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7,
+            8, 9, 10, 8, 10, 11, 12, 13, 14, 12, 14, 15,
+            16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23
+        ];
+
+        var texture = null;
+
+        // var image = new Image();
+        // image.onload = () => {
+        //     console.log("88888&&&&&&&&")
+        //     texture = gl.createTexture();
+        //     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+        //     // 开启0号纹理单元
+        //     gl.activeTexture(gl.TEXTURE0);
+        //     gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+        //     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); // 纹理水平填充方式
+        //     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); // 纹理垂直填充方式
+        //     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR); // 纹理缩小方式
+        //     gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR); // 纹理放大方式
+        //     gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+        // }
+
+        // image.src = "../assets/small.png"
+
+        // // Create and store data into vertex buffer
+        var vertex_buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+        // Create and store data into color buffer
+        var color_buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+
+        // Create and store data into index buffer
+        var index_buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index_buffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+
+
+        // timer = setInterval(() => {
+        //     console.log('--')
+        //     if (f !== 6) return;
+        texture = gl.createTexture();
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+        // 开启0号纹理单元
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+
+        // Set up texture so we can render any size image and so we are
+        // working with pixels.
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); // 纹理水平填充方式
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE); // 纹理垂直填充方式
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR); // 纹理缩小方式
+        gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR); // 纹理放大方式
+
+        // IMG对象包含的数据可不止图片的数据而已，还有图片的尺寸。所以我们直接使用图片对象作为参数就不用给这个函数传入尺寸
+        // 同样， DOM对象都有自带的图形数据和相应的尺寸数据，所以在使用DOM对象作为数据参数时不需要在参数中制定尺寸
+        // 推论： 如果 数据中没有携带对应的 尺寸信息 或者说 图像数据为null 时，我们就必须 设置 其尺寸大小
+        gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ss1);
+        gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ss2);
+        gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ss3);
+        gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ss4);
+        gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ss5);
+        gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ss6);
+        gl.bindTexture(gl.TEXTURE_CUBE_MAP, null)
+        //     clearInterval(timer)
+        //     console.log('8888888=====')
+        // }, 0)
+
+
+        // gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+
+        /*=================== Shaders =========================*/
+
+        var vertCode = 'attribute vec3 position;' +
+            'uniform mat4 Pmatrix;' +
+            'uniform mat4 Vmatrix;' +
+            'uniform mat4 Mmatrix;' +
+            'attribute vec3 a_TextCoord;' + //the color of the point
+            'varying vec3 v_TexCoord;' +
+
+            'void main(void) { ' + //pre-built function
+            'gl_Position = Pmatrix*Vmatrix*Mmatrix*vec4(position, 1.);' +
+            'v_TexCoord = a_TextCoord;' +
+            '}';
+
+        var fragCode = 'precision mediump float;uniform samplerCube u_Sampler;' +
+            'varying vec3 v_TexCoord;' +
+            'void main(void) {' +
+            'gl_FragColor = textureCube(u_Sampler, v_TexCoord);' +
+            '}';
+
+
+
+        var vertShader = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vertShader, vertCode);
+        gl.compileShader(vertShader);
+
+        var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+        gl.shaderSource(fragShader, fragCode);
+        gl.compileShader(fragShader);
+
+        var shaderProgram = gl.createProgram();
+        gl.attachShader(shaderProgram, vertShader);
+        gl.attachShader(shaderProgram, fragShader);
+        gl.linkProgram(shaderProgram);
+
+        /* ====== Associating attributes to vertex shader =====*/
+        var Pmatrix = gl.getUniformLocation(shaderProgram, "Pmatrix");
+        var Vmatrix = gl.getUniformLocation(shaderProgram, "Vmatrix");
+        var Mmatrix = gl.getUniformLocation(shaderProgram, "Mmatrix");
+        var u_Sampler = gl.getUniformLocation(shaderProgram, "u_Sampler");
+
+        // Position
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
+        var position = gl.getAttribLocation(shaderProgram, "position");
+        gl.vertexAttribPointer(position, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(position);
+
+        // Color
+        gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
+        var color = gl.getAttribLocation(shaderProgram, "a_TextCoord");
+        gl.vertexAttribPointer(color, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(color);
+
+
+        gl.useProgram(shaderProgram);
+
+        /*==================== MATRIX =====================*/
+
+        function get_projection(angle, a, zMin, zMax) {
+            var ang = Math.tan((angle * .5) * Math.PI / 180); //angle*.5
+            return [
+                0.5 / ang, 0, 0, 0,
+                0, 0.5 * a / ang, 0, 0,
+                0, 0, -(zMax + zMin) / (zMax - zMin), -1,
+                0, 0, (-2 * zMax * zMin) / (zMax - zMin), 0
+            ];
+        }
+
+        var proj_matrix = get_projection(40, canvas.width / canvas.height, 1, 100);
+
+        var mov_matrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+        var view_matrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+
+        // translating z
+        view_matrix[14] = view_matrix[14] - 6; //zoom
+
+        /*==================== Rotation ====================*/
+
+        function rotateZ(m, angle) {
+            var c = Math.cos(angle);
+            var s = Math.sin(angle);
+            var mv0 = m[0],
+                mv4 = m[4],
+                mv8 = m[8];
+
+            m[0] = c * m[0] - s * m[1];
+            m[4] = c * m[4] - s * m[5];
+            m[8] = c * m[8] - s * m[9];
+
+            m[1] = c * m[1] + s * mv0;
+            m[5] = c * m[5] + s * mv4;
+            m[9] = c * m[9] + s * mv8;
+        }
+
+        function rotateX(m, angle) {
+            var c = Math.cos(angle);
+            var s = Math.sin(angle);
+            var mv1 = m[1],
+                mv5 = m[5],
+                mv9 = m[9];
+
+            m[1] = m[1] * c - m[2] * s;
+            m[5] = m[5] * c - m[6] * s;
+            m[9] = m[9] * c - m[10] * s;
+
+            m[2] = m[2] * c + mv1 * s;
+            m[6] = m[6] * c + mv5 * s;
+            m[10] = m[10] * c + mv9 * s;
+        }
+
+        function rotateY(m, angle) {
+            var c = Math.cos(angle);
+            var s = Math.sin(angle);
+            var mv0 = m[0],
+                mv4 = m[4],
+                mv8 = m[8];
+
+            m[0] = c * m[0] + s * m[2];
+            m[4] = c * m[4] + s * m[6];
+            m[8] = c * m[8] + s * m[10];
+
+            m[2] = c * m[2] - s * mv0;
+            m[6] = c * m[6] - s * mv4;
+            m[10] = c * m[10] - s * mv8;
+        }
+
+        /*================= Drawing ===========================*/
+        var time_old = 0;
+
+        var animate = function (time) {
+
+            var dt = time - time_old;
+            rotateZ(mov_matrix, dt * 0.005); //time
+            rotateY(mov_matrix, dt * 0.002);
+            rotateX(mov_matrix, dt * 0.003);
+            time_old = time;
+
+            gl.enable(gl.DEPTH_TEST);
+            gl.depthFunc(gl.LEQUAL);
+            gl.clearColor(0.5, 0.5, 0.5, 0.9);
+            gl.clearDepth(1.0);
+
+            gl.viewport(0.0, 0.0, canvas.width, canvas.height);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            gl.uniformMatrix4fv(Pmatrix, false, proj_matrix);
+            gl.uniformMatrix4fv(Vmatrix, false, view_matrix);
+            gl.uniformMatrix4fv(Mmatrix, false, mov_matrix);
+
+            gl.activeTexture(gl.TEXTURE0)
+            // if (texture) {
+            gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture)
+
+            gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ss1);
+            gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ss2);
+            gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ss3);
+            gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ss4);
+            gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ss5);
+            gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ss6);
+
+            gl.uniform1i(u_Sampler, 0);
+            // }
+
+            // console.log(gl.getError())
+            // gl.generateMipmap(gl.TEXTURE_CUBE_MAP)
+
+
+
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, index_buffer);
+            gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+
+            window.requestAnimationFrame(animate);
+        }
+        animate(0);
+    </script>
+
+</body>
+
+</html>

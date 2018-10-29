@@ -1,9 +1,9 @@
 
 export class ImagesLoaded {
   public loadedImages: HTMLImageElement[] = [];
-  constructor(public images: string[] = [], public onAlways: Function) {
+  constructor(public images: string[] = []) {
     if (!(this instanceof ImagesLoaded)) {
-      return new ImagesLoaded(images, onAlways);
+      return new ImagesLoaded(images);
     }
 
     this.init()
@@ -13,12 +13,19 @@ export class ImagesLoaded {
     let tasks = this.images.length;
     this.images.forEach(url => {
       let image = new Image();
+      // if (image.complete) {
+      //   tasks--;
+      //   this.progress(image);
+      //   this.loadedImages.push(image)
+      //   this.check(tasks)
+      // } else {
       image.onload = () => {
         tasks--;
         this.progress(image);
         this.loadedImages.push(image)
         this.check(tasks)
       }
+      // }
       image.onerror = (e) => {
         tasks--;
         this.error(e)
@@ -47,6 +54,10 @@ export class ImagesLoaded {
   onLoad(callback) {
     this.onAlways = callback;
     return this;
+  }
+
+  onAlways(images: HTMLImageElement[]) {
+
   }
 
   progress(image: HTMLImageElement) {

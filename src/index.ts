@@ -27,11 +27,13 @@ export * from './animation/interpolator/AnticipateOvershootInterpolator';
 export * from './ui/UICanvas';
 export * from './ui/UICamera';
 export * from './ui/UIRender';
-
+export * from './ui/GLTools';
 
 export * from './ui/materials/UIMaterial';
 export * from './ui/materials/UITextureMaterial';
 export * from './ui/materials/UICubeTextureMaterial';
+export * from './ui/materials/UIMultiTexturesMaterial';
+export * from './ui/materials/UIShaderMaterial';
 
 export * from './ui/Gemotry';
 export * from './core/Object3d';

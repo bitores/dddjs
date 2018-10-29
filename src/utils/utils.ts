@@ -45,4 +45,32 @@ export function fovy(height: number, near: number) {
 }
 
 
+// https://blog.csdn.net/opengl_es/article/details/36353579
+export function isPowerOfTwo(x) {
+  return (x & (x - 1)) == 0;
+}
+
+// https://blog.csdn.net/opengl_es/article/details/36353579
+export function nextHighestPowerOfTwo(x) {
+  --x;
+  for (var i = 1; i < 32; i <<= 1) {
+    x = x | x >> i;
+  }
+  return x + 1;
+}
+
+export function Image2PowerOfTwo(image) {
+  if (!isPowerOfTwo(image.width) || !isPowerOfTwo(image.height)) {
+    // Scale up the texture to the next highest power of two dimensions.
+    var canvas = document.createElement("canvas");
+    canvas.width = nextHighestPowerOfTwo(image.width);
+    canvas.height = nextHighestPowerOfTwo(image.height);
+    var ctx = canvas.getContext("2d");
+    if (ctx === null) return;
+    ctx.drawImage(image, 0, 0, image.width, image.height);
+    image = canvas;
+  }
+
+  return image;
+}
 

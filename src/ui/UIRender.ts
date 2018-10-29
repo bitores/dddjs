@@ -21,11 +21,13 @@ export class UIRender extends Base {
     let tbo = GLTools.createVBO(this.ctx, obj.textCoords, false, true);
     let ibo = GLTools.createVBO(this.ctx, obj.indices, true, true);
 
+    shader.config['position'] = vbo;
+    shader.config['color'] = cbo;
+    shader.config['a_TextCoord'] = tbo;
+
+
     this.pool.push({
       obj,
-      vbo,
-      cbo,
-      tbo,
       ibo,
       shader,
       name: obj.name,
@@ -48,31 +50,11 @@ export class UIRender extends Base {
     if (this.ctx === null) return;
     let gl = this.ctx,
       shader = item.shader,
-      vbo = item.vbo,
-      cbo = item.cbo,
-      tbo = item.tbo,
       ibo = item.ibo,
       obj = item.obj;
 
     shader.use();
     shader.upload(this.camera, obj);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-    gl.vertexAttribPointer(shader.location('position'), 3, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(shader.location('position'));
-
-    if (shader.location('color')) {
-      gl.bindBuffer(gl.ARRAY_BUFFER, cbo);
-      gl.vertexAttribPointer(shader.location('color'), 4, gl.FLOAT, false, 0, 0);
-      gl.enableVertexAttribArray(shader.location('color'));
-    }
-
-    if (shader.location('a_TextCoord')) {
-      gl.bindBuffer(gl.ARRAY_BUFFER, tbo);
-      gl.vertexAttribPointer(shader.location('a_TextCoord'), 2, gl.FLOAT, false, 0, 0);
-      gl.enableVertexAttribArray(shader.location('a_TextCoord'));
-    }
-
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
     gl.drawElements(gl.TRIANGLES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
@@ -102,7 +84,6 @@ export class UIRender extends Base {
   }
 
   clone() {
-    // return new UIShader(this.ctx, this.vertSource, this.fragSource, this.name);
   }
 
   toString() {

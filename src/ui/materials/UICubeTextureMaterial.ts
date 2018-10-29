@@ -1,6 +1,7 @@
 import { UIMaterial } from "./UIMaterial";
 import { ShaderChunk } from "./chunks/ShaderChunk";
 import { GLTools } from "../GLTools";
+import { ImagesLoaded } from "../../utils/ImagesLoaded";
 
 
 export class UICubeTextureMaterial extends UIMaterial {
@@ -10,12 +11,8 @@ export class UICubeTextureMaterial extends UIMaterial {
     super()
 
     this.config = {
+      images: [],
       u_Sampler: null,
-      // textureCoord: new Float32Array([
-      //   0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0,
-      //   1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0,
-      //   0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0
-      // ]),
       ...config
     }
   }
@@ -34,11 +31,15 @@ export class UICubeTextureMaterial extends UIMaterial {
   }
 
   handle() {
-    // let tbo = GLTools.createVBO(this.ctx, this.config["textureCoord"], false)
-    // let texture = GLTools.createTexture(this.ctx, this.config['u_Sampler'], {});
-    let texture = GLTools.createCubeTexture(this.ctx, this.config['u_Sampler'], {});
+    new ImagesLoaded(this.config['images']).onLoad((images) => {
+      console.log('--', images)
+      let texture = GLTools.createCubeTexture(this.ctx, images, {});
+      // this.config["a_TextCoord"] = tbo;
+      if (texture)
+        texture['images'] = images;
+      this.config['u_Sampler'] = texture;
+    });
 
-    // this.config["a_TextCoord"] = tbo;
-    this.config['u_Sampler'] = texture;
+
   }
 }
