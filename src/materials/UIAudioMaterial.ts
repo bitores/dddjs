@@ -19,8 +19,7 @@ export class UIAudioMaterial extends UIMaterial {
 
     let that = this;
 
-    var audio = document.createElement("audio");
-    audio.src = this.config['audio'];
+    var audio = new Audio(this.config['audio']);
 
     audio.addEventListener("playing", function () {
       that._audioIsReady = true;

@@ -157,23 +157,29 @@ export class Object3d extends Base {
   }
 
   lookAt(x: number = 0, y: number = 0, z: number = 0) {
-    // target.transform.position = Vector3.zero;
-    // let target = new Vec3(x,y,z),
-    //   eye = this._position.clone(),
-    //   up = new Vec3(0,1,0),
-    //   forward = new Vec3(0,0,1),
-    //   dir = target.sub(eye.x, eye.y, eye.z);
+    let target = new Vec3(x, y, z),
+      eye = this._position.clone(),
+      up = new Vec3(0, 1, 0);
 
+    let zAxis = eye.clone().sub(target.x, target.y, target.z);
+    let NZ = zAxis.clone().normalize();
 
+    let xAxis = up.clone().cross(NZ.x, NZ.y, NZ.z);
+    let UX = xAxis.clone().normalize();
 
-    // let  q = new Quaternion().setFromUnitVectors(forward, dir);
+    let yAxis = NZ.clone().cross(UX.x, UX.y, UX.z);
+    let VY = yAxis.clone().normalize()
 
-    // let newUp = q.clone().mul(up.x,up.y,up.z, up.w);
-
-    // let  qNew = new Quaternion().setFromUnitVectors(newUp, up);
-    // transform.rotation = qNew * q;
-
-    // this._quaternion
+    let mat = new Mat4(
+      UX.x, UX.y, UX.z, 0,
+      VY.x, VY.y, VY.z, 0,
+      NZ.x, NZ.y, NZ.z, 0,
+      eye.x,
+      eye.y,
+      eye.z,
+      1,
+    );
+    this._modelMatrix.dot(mat).trigger()
   }
 
   /**

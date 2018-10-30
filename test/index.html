@@ -15,24 +15,38 @@
     canvas {
       display: inline-block;
       /* width: 100%;
-      height: 100%; */
-      width: 400px;
-      height: 400px;
+      height: 80%; */
+      width: 200px;
+      height: 200px;
       /* position: absolute;
-      left: 100px;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 100px; */
+      /* left: 100px;
       top: 100px; */
     }
   </style>
   <script src="../dist/ddd.js"></script>
-  <img hidden id="ss1" src="assets/dragon2.png" alt="">
-  <img hidden id="ss2" src="assets/texture.png" alt="">
+  <script>
+    // canvas-->image
+    function convertCanvasToImage(canvas) {
+      //新Image对象,可以理解为DOM;
+      var image = new Image();
+      //canvas.toDataURL返回的是一串Base64编码的URL,当然,浏览器自己肯定支持
+      //指定格式PNG
+      image.src = canvas.toDataURL("image/jpeg");
+      return image;
+    }
+  </script>
 </head>
 
 <body>
   <canvas id="my_Canvas"></canvas>
+  <br />
+  <button id="btn">Pause/Play</button><button id="pick">PICK</button>
+  <div id="convertedImg"></div>
   <script>
-    // function imagesLoaded(images) {
-
     /*============= Creating a canvas =================*/
     var mycanvas = document.getElementById('my_Canvas');
     var client = new DDD.UICanvas(mycanvas)
@@ -40,9 +54,16 @@
     var render = new DDD.UIRender(client, camera);
     var scene = new DDD.UIScene();
 
+    var pickBtn = document.getElementById('pick');
+    var continer = document.getElementById('convertedImg');
+    pickBtn.addEventListener('click', function () {
+      var img = convertCanvasToImage(mycanvas);
+      continer.appendChild(img)
+    })
+
     var colorMaterial = new DDD.UIMaterial({});
     var mapMaterial = new DDD.UITextureMaterial({
-      image: ss1,
+      image: "assets/miao256.jpg",
     });
 
     var obj = new DDD.Plane();
@@ -54,6 +75,15 @@
       video: "assets/vedio.mp4",
     });
     render.addRenderObject(obj);
+
+    var btn = document.getElementById('btn')
+    btn.addEventListener('click', function () {
+      if (obj._material._videoPausing) {
+        obj._material.play();
+      } else {
+        obj._material.pause();
+      }
+    })
 
     var center = new DDD.Shape(1, 1, .1, .1, "_cener_");
     center._material = colorMaterial;
@@ -127,10 +157,11 @@
 
     var obj1 = new DDD.Plane();
     obj1._material = new DDD.UIMultiTexturesMaterial({
-      texture0: ss2,
-      texture1: ss1,
+      texture0: "assets/miao256.jpg",
+      texture1: "assets/circle.gif",
     });
-    obj1.scaling(0.5, 0.5, 1.0);
+    obj1.scaling(0.2, 0.2, 1.0);
+    obj1.setPosition(0, .8, 0)
     render.addRenderObject(obj1);
 
     var animation = new DDD.Animation(true)
@@ -143,7 +174,6 @@
     animation.applyTransformation = (interpolatedTime) => {
       // console.log('...', interpolatedTime * 2 - 1, interpolatedTime * 2 - 1)
       obj.setPosition(interpolatedTime * 2 - 1, interpolatedTime * 2 - 1, 0)
-
     }
 
     animation.registerAnimationStartListener((ani) => {
@@ -175,7 +205,7 @@
         pointer.scaling(0.01, 0.01, 0.01)
         pointer._material = colorMaterial;
         pointer.setPosition(progress * 2 - 1.0, ani.getValue() * 2.0 / 52.0 - 1, 0)
-        // render.addRenderObject(pointer)
+        render.addRenderObject(pointer)
       });
     ani.start()
 

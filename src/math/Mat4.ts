@@ -645,49 +645,6 @@ export class Mat4 extends Base {
     return mat;
   }
 
-  compose2(position: Vec3 = new Vec3(), quaternion: Quaternion = new Quaternion(), scale: Vec3 = new Vec3(), onWorld: boolean = false) {
-    var x = quaternion.x, y = quaternion.y, z = quaternion.z, w = quaternion.w;
-    var x2 = x + x, y2 = y + y, z2 = z + z;
-    var xx = x * x2, xy = x * y2, xz = x * z2;
-    var yy = y * y2, yz = y * z2, zz = z * z2;
-    var wx = w * x2, wy = w * y2, wz = w * z2;
-
-    var sx = scale.x, sy = scale.y, sz = scale.z;
-
-    let rot = new Mat4(
-      1 - (yy + zz), xy + wz, xz - wy, 0,
-      xy - wz, 1 - (xx + zz), yz + wx, 0,
-      xz + wy, yz - wx, 1 - (xx + yy), 0,
-      0, 0, 0, 1
-    )
-
-    let scal = new Mat4(
-      sx, 0, 0, 0,
-      0, sy, 0, 0,
-      0, 0, sz, 0,
-      0, 0, 0, 1
-    )
-
-    let trans = new Mat4(
-      1, 0, 0, 0,
-      0, 1, 0, 0,
-      0, 0, 1, 0,
-      position.x, position.y, position.z, 1
-    )
-
-    if (onWorld) {
-      //  公转
-      scal.leftDot(rot).leftDot(trans)
-    } else {
-      //  自转
-      scal.leftDot(trans).leftDot(rot)
-    }
-
-    this.copy(scal);
-
-    return this;
-  }
-
   compose(position: Vec3 = new Vec3(), quaternion: Quaternion = new Quaternion(), scale: Vec3 = new Vec3()) {
     var te = this.elements;
 

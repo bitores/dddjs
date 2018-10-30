@@ -4,7 +4,9 @@ import { ShaderChunk } from "./chunks/ShaderChunk";
 
 export class UIVideoMaterial extends UIMaterial {
   // text map
+  _video: HTMLVideoElement | null = null;
   _videoIsReady: boolean = false;
+  _videoPausing: boolean = false;
   constructor(config: {}) {
     super()
 
@@ -18,6 +20,7 @@ export class UIVideoMaterial extends UIMaterial {
     let that = this;
 
     var video = document.createElement("video");
+    video.muted = true;
     video.src = this.config['video'];
 
     video.addEventListener("playing", function () {
@@ -35,6 +38,19 @@ export class UIVideoMaterial extends UIMaterial {
     });
 
     video.play();
+    this._video = video;
+  }
+
+  play() {
+    this._videoPausing = false;
+    this._video && this._video.play()
+    if (this._video)
+      this._video.muted = false;
+  }
+
+  pause() {
+    this._videoPausing = true;
+    this._video && this._video.pause()
   }
 
   shaderSource() {

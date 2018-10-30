@@ -1,6 +1,7 @@
 import { UIMaterial } from "./UIMaterial";
 import { ShaderChunk } from "./chunks/ShaderChunk";
 import { GLTools } from "../tools/GLTools";
+import { ImagesLoaded } from "../tools/ImagesLoaded";
 
 
 export class UITextureMaterial extends UIMaterial {
@@ -32,8 +33,11 @@ export class UITextureMaterial extends UIMaterial {
   }
 
   handle() {
-    let texture = GLTools.createTexture(this.ctx, this.config['image'], {});
-    this.config['u_Sampler'] = texture;
-    this.isReady = true;
+    let that = this;
+    new ImagesLoaded([this.config['image']]).onProgress((image) => {
+      let texture = GLTools.createTexture(that.ctx, image, {});
+      that.config['u_Sampler'] = texture;
+      that.isReady = true;
+    })
   }
 }
