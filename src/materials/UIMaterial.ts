@@ -1,9 +1,8 @@
 import { ShaderChunk } from "./chunks/ShaderChunk";
-import { GLTools } from "../ui/GLTools";
+import { GLTools } from "../tools/GLTools";
 
 export class UIMaterial {
   // color
-  public config: Object = {};
   public shader: ShaderChunk | null = null;
 
   public ctx: WebGLRenderingContext;
@@ -12,8 +11,9 @@ export class UIMaterial {
   public program: WebGLProgram | null;
   public locations: Object = {};
 
-  private shaderTypeReg = /(attribute|uniform)\s\S+\s\S+;/g;
-  constructor(config: Object = {}) {
+  public isReady: boolean = false;
+
+  constructor(public config: object = {}) {
     this.config = {
       color: new Float32Array([
         0, 0, 1, 1,
@@ -40,6 +40,7 @@ export class UIMaterial {
     let tbo = GLTools.createVBO(this.ctx, this.config["color"], false)
 
     this.config["color"] = tbo;
+    this.isReady = true;
   }
 
   init(ctx: WebGLRenderingContext) {
@@ -54,9 +55,11 @@ export class UIMaterial {
     this.analySource(this.shader.vertSource);
     this.analySource(this.shader.fragSource);
     this.handle()
+    // this.isReady = true;
   }
 
   analySource(source: string) {
+    let shaderTypeReg = /(attribute|uniform)\s\S+\s\S+;/g;
     // 标准化 shader
     let format = source.replace(/[\s]+/g, ' ');
     // 去 换行
@@ -65,7 +68,7 @@ export class UIMaterial {
     format = format.replace(/(^\s*)|(\s*$)/g, "")
     // 去 ; 左右空格
     format = format.replace(/\s*;\s*/g, ';');
-    let matchs = format.match(this.shaderTypeReg);
+    let matchs = format.match(shaderTypeReg);
     matchs && matchs.forEach(record => {
       record = record.replace(';', '');
       let ret = record.split(' ');
@@ -121,13 +124,6 @@ export class UIMaterial {
     for (const item in this.locations) {
       if (this.locations.hasOwnProperty(item)) {
         switch (item) {
-          // case "texture0":
-          // case "texture1":
-          // case "u_Sampler":
-          //   {
-          //     this.uploadItem(item, this.config[item])
-          //   }
-          //   break;
           case 'Pmatrix': {
             this.uploadItem(item, camera._projectMatrix.elements)
           }
@@ -210,22 +206,19 @@ export class UIMaterial {
         gl.uniformMatrix4fv(location.value, false, v)
       } break;
       case 'sampler2D':
-        gl.activeTexture(gl.TEXTURE0);
-        // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-        gl.bindTexture(gl.TEXTURE_2D, v);
-        gl.uniform1i(location.value, v.unit);
-        ; break;
+        if (v) {
+          gl.activeTexture(gl.TEXTURE0 + v.unit);
+          gl.bindTexture(gl.TEXTURE_2D, v);
+          gl.uniform1i(location.value, v.unit);
+        } break;
       case 'samplerCube':
         if (v) {
-          gl.activeTexture(gl.TEXTURE0);
+          gl.activeTexture(gl.TEXTURE0 + v.unit);
           gl.bindTexture(gl.TEXTURE_CUBE_MAP, v);
           gl.uniform1i(location.value, v.unit);
-        }
-
-        ; break;
+        } break;
       default:
         throw new TypeError('')
-        ;
     }
   }
 

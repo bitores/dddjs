@@ -1,6 +1,6 @@
 import { UIMaterial } from "./UIMaterial";
 import { ShaderChunk } from "./chunks/ShaderChunk";
-import { GLTools } from "../ui/GLTools";
+import { GLTools } from "../tools/GLTools";
 
 
 export class UITextureMaterial extends UIMaterial {
@@ -34,5 +34,6 @@ export class UITextureMaterial extends UIMaterial {
   handle() {
     let texture = GLTools.createTexture(this.ctx, this.config['image'], {});
     this.config['u_Sampler'] = texture;
+    this.isReady = true;
   }
 }

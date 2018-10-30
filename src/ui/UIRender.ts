@@ -1,12 +1,14 @@
+import { UIScene } from './UIScene';
 import Base from "../Base";
 import { UICamera } from "./UICamera";
 import { UICanvas } from "./UICanvas";
-import { GLTools } from "./GLTools";
+import { GLTools } from "../tools/GLTools";
 import { Shape } from "./shape/Shape";
 
 export class UIRender extends Base {
   public ctx: WebGLRenderingContext | null;
   private pool: Object[] = [];
+  public scenes: UIScene[] = [];
   constructor(public canvas: UICanvas, public camera: UICamera) {
     super()
     this.ctx = canvas.ctx;
@@ -46,23 +48,22 @@ export class UIRender extends Base {
   }
 
 
-  renderItem(item: any) {
-    if (this.ctx === null) return;
-    let gl = this.ctx,
-      shader = item.shader,
+  renderItem(gl: WebGLRenderingContext, item: any) {
+    let shader = item.shader,
       ibo = item.ibo,
       obj = item.obj;
-
     shader.use();
+    if (obj._material.isReady === false) return;
+    // console.log(obj._material.isReady)
     shader.upload(this.camera, obj);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
     gl.drawElements(gl.TRIANGLES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
   }
 
-  clean() {
-    if (this.ctx === null) return;
-    let gl = this.ctx;
+  clean(gl: WebGLRenderingContext) {
+    gl.enable(gl.CULL_FACE);
+    gl.frontFace(gl.CW)
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
     gl.clearColor(0.5, 0.5, 0.5, 0.9);
@@ -73,9 +74,11 @@ export class UIRender extends Base {
   }
 
   render() {
-    this.clean()
+    if (this.ctx === null) return;
+    let gl = this.ctx;
+    this.clean(gl)
     this.pool.forEach(item => {
-      this.renderItem(item);
+      this.renderItem(gl, item);
     })
   }
 

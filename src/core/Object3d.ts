@@ -156,8 +156,24 @@ export class Object3d extends Base {
     return this;
   }
 
-  lookAt(x: number, y: number, z: number) {
+  lookAt(x: number = 0, y: number = 0, z: number = 0) {
+    // target.transform.position = Vector3.zero;
+    // let target = new Vec3(x,y,z),
+    //   eye = this._position.clone(),
+    //   up = new Vec3(0,1,0),
+    //   forward = new Vec3(0,0,1),
+    //   dir = target.sub(eye.x, eye.y, eye.z);
 
+
+
+    // let  q = new Quaternion().setFromUnitVectors(forward, dir);
+
+    // let newUp = q.clone().mul(up.x,up.y,up.z, up.w);
+
+    // let  qNew = new Quaternion().setFromUnitVectors(newUp, up);
+    // transform.rotation = qNew * q;
+
+    // this._quaternion
   }
 
   /**

@@ -1,7 +1,7 @@
 import Base from '../Base';
 import { Vec3 } from './Vec3';
 import { Mat3 } from './Mat3';
-import { DEG2RAD } from '../utils/utils'
+import { DEG2RAD } from '../tools/util'
 import { Quaternion } from './Quaternion';
 
 export class Mat4 extends Base {

@@ -18,10 +18,10 @@ export class Plane extends Shape {
     ])
 
     this._gemotry.setTextCoords([
-      0.0, 1.0,
       1.0, 1.0,
       1.0, 0.0,
       0.0, 0.0,
+      0.0, 1.0,
     ])
 
     this._gemotry.setIndices([

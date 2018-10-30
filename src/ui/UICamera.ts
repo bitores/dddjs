@@ -1,6 +1,6 @@
 import { Camera } from "../core/Camera";
 import { Mat4 } from "../math/Mat4";
-import { fovy } from "../utils/utils";
+import { fovy } from "../tools/util";
 
 export class UICamera extends Camera {
   constructor() {
@@ -10,6 +10,6 @@ export class UICamera extends Camera {
     // this._projectMatrix = Mat4.perspectiveLRTBNF(-2, 2, 2, -2, 1, 1000); // 透视投影
     // this._projectMatrix = Mat4.orthographicWHNF(4, 4, 1, 1000) // 正交投影
     // this._projectMatrix = Mat4.orthographicLRTBNF(-2, 2, 2, -2, 1, 1000) // 正交投影
-    // this._projectMatrix = Mat4.orthographicWHNF(2, 2, 1, 1000) // 正交投影
+    this._projectMatrix = Mat4.orthographicWHNF(2, 2, 1, 1000) // 正交投影
   }
 }

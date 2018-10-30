@@ -1,7 +1,7 @@
 import { UIMaterial } from "./UIMaterial";
 import { ShaderChunk } from "./chunks/ShaderChunk";
-import { GLTools } from "../ui/GLTools";
-import { ImagesLoaded } from "../utils/ImagesLoaded";
+import { GLTools } from "../tools/GLTools";
+import { ImagesLoaded } from "../tools/ImagesLoaded";
 
 
 export class UICubeTextureMaterial extends UIMaterial {
@@ -19,7 +19,6 @@ export class UICubeTextureMaterial extends UIMaterial {
 
   shaderSource() {
     let vert = `
-    attribute vec2 a_TextCoord;
     varying vec3 v_TexCoord;`,
       vertMain = "v_TexCoord = position; ",
       frag = `
@@ -35,8 +34,7 @@ export class UICubeTextureMaterial extends UIMaterial {
       let texture = GLTools.createCubeTexture(this.ctx, images, {});
       if (texture) texture['images'] = images;
       this.config['u_Sampler'] = texture;
+      this.isReady = true;
     });
-
-
   }
 }

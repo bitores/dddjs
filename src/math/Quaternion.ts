@@ -259,6 +259,44 @@ export class Quaternion extends Base {
     // this.onChangeCallback();
   }
 
+  // for threejs
+  setFromUnitVectors(vFrom, vTo) {
+
+    var v1 = new Vec3();
+    var r;
+
+    var EPS = 0.000001;
+
+    r = vFrom.dot(vTo) + 1;
+
+    if (r < EPS) {
+
+      r = 0;
+
+      if (Math.abs(vFrom.x) > Math.abs(vFrom.z)) {
+
+        v1.set(- vFrom.y, vFrom.x, 0);
+
+      } else {
+
+        v1.set(0, - vFrom.z, vFrom.y);
+
+      }
+
+    } else {
+
+      v1 = vFrom.cross(vTo.x, vTo.y, vTo.z);
+
+    }
+
+    this.x = v1.x;
+    this.y = v1.y;
+    this.z = v1.z;
+    this.w = r;
+
+    return this.normalize();
+  }
+
   static E() {
     return new Quaternion(0, 0, 0, 1);
   }

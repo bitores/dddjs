@@ -119,7 +119,7 @@ export class GLTools {
       filterMag = option.filterMag || gl.LINEAR,
       unit = option.unit || 0,
       pixel = option.pixel || gl.UNPACK_FLIP_Y_WEBGL,
-      flip = option.flip || 1,
+      flip = option.flip === 0 ? 0 : 1,
       width = option.width || 512,
       height = option.height || 512,
       format = option.format || gl.RGBA,
@@ -194,7 +194,7 @@ export class GLTools {
       filterMag = option.filterMag || gl.NEAREST,
       unit = option.unit || 0,
       pixel = option.pixel || gl.UNPACK_FLIP_Y_WEBGL,
-      flip = option.flip || 1,
+      flip = option.flip === 0 ? 0 : 1,
       width = option.width || 512,
       height = option.height || 512,
       format = option.format || gl.RGBA,
@@ -288,6 +288,53 @@ export class GLTools {
 
   static useProgram(gl: WebGLRenderingContext, program: WebGLProgram) {
     gl.useProgram(program);
+  }
+
+
+  drawmirror(gl: WebGLRenderingContext, stash: Function = () => { }, drawmirror: Function = () => { }, pop: Function = () => { }) {
+    //清除模板缓存
+    gl.clear(gl.STENCIL_BUFFER_BIT);
+    //关闭深度检测
+    gl.disable(gl.DEPTH_TEST);
+    //允许模板测试
+    gl.enable(gl.STENCIL_TEST);
+
+    //设置模板测试参数
+    gl.stencilFunc(gl.ALWAYS, 1, 1);
+    //设置模板测试后的操作
+    gl.stencilOp(gl.KEEP, gl.KEEP, gl.REPLACE);
+
+    stash && stash()
+    // ms.pushMatrix();
+    // ms.scale(0.3, 0.3, 0.3);
+    // //绘制反射面地板
+    // rectdb.drawSelf(ms, texMap["db"]);
+    // ms.popMatrix();
+
+    //设置模板测试参数
+    gl.stencilFunc(gl.EQUAL, 1, 1);
+    //设置模板测试后的操作
+    gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
+    //绘制镜像体
+    drawmirror();
+    //禁用模板测试
+    gl.disable(gl.STENCIL_TEST);
+    //开启混合
+    gl.enable(gl.BLEND);
+    //设置混合因子
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+    pop && pop()
+    // ms.pushMatrix();
+    // ms.scale(0.3, 0.3, 0.3);
+    // //绘制半透明反射面地板
+    // rectdb.drawSelf(ms, texMap["tm"]);
+    // ms.popMatrix();
+
+    //开启深度检测
+    gl.enable(gl.DEPTH_TEST);
+    //关闭混合
+    gl.disable(gl.BLEND);
   }
 
 }

@@ -9,3 +9,7 @@ ArrayBuffer 使用：
 
 
 https://www.aliyun.com/jiaocheng/634865.html?spm=5176.100033.2.13.c1e55584cbgfif
+
+
+##### shader warning
+ material isReady field control

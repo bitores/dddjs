@@ -9,3 +9,7 @@
 - [WebGL 理论基础](https://webglfundamentals.org/webgl/lessons/zh_cn/)
 
 - [TWGL: A Tiny WebGL helper Library](https://twgljs.org/)
+
+- [Thing.js](http://www.thingjs.com/guide/?m=tutorial)
+
+- [WEBGL 高级技术](https://www.cnblogs.com/w-wanglei/p/6696290.html)

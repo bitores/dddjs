@@ -23,5 +23,6 @@ export class UIShaderMaterial extends UIMaterial {
   }
 
   handle() {
+    this.isReady = true;
   }
 }
