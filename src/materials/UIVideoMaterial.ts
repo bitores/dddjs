@@ -30,6 +30,10 @@ export class UIVideoMaterial extends UIMaterial {
       video.play();
     }, true);
 
+    video.addEventListener("error", function (e) {
+      console.error(e)
+    });
+
     video.play();
   }
 

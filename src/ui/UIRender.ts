@@ -9,6 +9,7 @@ export class UIRender extends Base {
   public ctx: WebGLRenderingContext | null;
   private pool: Object[] = [];
   public scenes: UIScene[] = [];
+  public isLineMode: boolean = false;
   constructor(public canvas: UICanvas, public camera: UICamera) {
     super()
     this.ctx = canvas.ctx;
@@ -53,17 +54,27 @@ export class UIRender extends Base {
       ibo = item.ibo,
       obj = item.obj;
     shader.use();
+    if (!!obj._material === false) {
+      console.warn(`${obj.name} needs the material`)
+      return;
+    }
     if (obj._material.isReady === false) return;
-    // console.log(obj._material.isReady)
     shader.upload(this.camera, obj);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
-    gl.drawElements(gl.TRIANGLES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
+
+    if (this.isLineMode || obj._material.isLineMode) {
+      gl.drawElements(gl.LINES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
+    } else {
+      gl.drawElements(gl.TRIANGLES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
+    }
+    // 
+
   }
 
   clean(gl: WebGLRenderingContext) {
-    gl.enable(gl.CULL_FACE);
-    gl.frontFace(gl.CW)
+    // gl.enable(gl.CULL_FACE);
+    // gl.frontFace(gl.CW)
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
     gl.clearColor(0.5, 0.5, 0.5, 0.9);

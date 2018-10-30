@@ -40,7 +40,6 @@ export class UIMultiTexturesMaterial extends UIMaterial {
       `;
 
     this.shader = new ShaderChunk(vert, vertMain, frag, fragMain)
-    console.log('')
   }
 
   handle() {

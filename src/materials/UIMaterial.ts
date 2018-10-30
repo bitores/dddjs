@@ -12,6 +12,7 @@ export class UIMaterial {
   public locations: Object = {};
 
   public isReady: boolean = false;
+  public isLineMode: boolean = false;// 绘制模式
 
   constructor(public config: object = {}) {
     this.config = {
@@ -55,7 +56,6 @@ export class UIMaterial {
     this.analySource(this.shader.vertSource);
     this.analySource(this.shader.fragSource);
     this.handle()
-    // this.isReady = true;
   }
 
   analySource(source: string) {

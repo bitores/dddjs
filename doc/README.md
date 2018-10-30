@@ -1,6 +1,6 @@
 html:canvas = 1: *
 canvas:viewport = 1: *
-
+canvas: scene = 1:*
 #### Todo list
 
 - math: Matrix(perspective、T、R、S) 
