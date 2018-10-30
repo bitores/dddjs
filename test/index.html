@@ -114,11 +114,11 @@
     box3.rotateY(0.25);
     box3.setPosition(0, -.8, 0)
     box3._material = mapMaterial;
-    // render.addRenderObject(box3);
+    render.addRenderObject(box3);
 
     var ball = new DDD.Ball();
-    // ball.scaling(0.2, 0.2, 0.2)
-    // ball.setPosition(.8, -.8, 0)
+    ball.scaling(0.2, 0.2, 0.2)
+    ball.setPosition(.8, -.8, 0)
     ball.rotateX(0.25);
     ball.rotateY(0.25);
     ball._material = colorMaterial;
@@ -131,7 +131,7 @@
       texture1: ss1,
     });
     obj1.scaling(0.5, 0.5, 1.0);
-    // render.addRenderObject(obj1);
+    render.addRenderObject(obj1);
 
     var animation = new DDD.Animation(true)
     animation._duration = 2000;
