@@ -60,3 +60,12 @@ gl.depthFunc(gl.LEQUAL);
 
 
 四元数和旋转矩阵+旋转向量相比究竟有何优势：：四元数可以平滑插值
+
+
+### 解决webgl使用canvas.toDataURL()没有内容的问题
+
+这个问题很好解决，就是在获取webgl对象的时候，多传入一个{preserveDrawingBuffer: true}，然后在使用canvas.toDataURL()获取就能够获取到了。 
+案例：
+
+    var canvas = document.getElementById("canvas");
+    gl = canvas.getContext("experimental-webgl", {preserveDrawingBuffer: true});

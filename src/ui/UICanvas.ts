@@ -11,13 +11,13 @@ export class UICanvas extends Base {
   bottom: number;
   width: number;
   height: number;
-  constructor(public canvas: HTMLCanvasElement) {
+  constructor(public canvas: HTMLCanvasElement, option: object = {}) {
     super()
     if (Object.prototype.toString.call(canvas) !== "[object HTMLCanvasElement]") {
       throw new TypeError('The first paramter is not the HTMLCanvasElement type.')
     }
     this.initEvent();
-    this.initCanvasCtx();
+    this.initCanvasCtx(option);
     this.boundingRect();
     this.resize();
   }
@@ -26,9 +26,9 @@ export class UICanvas extends Base {
     return new CanvasEvent(this.canvas);
   }
 
-  private initCanvasCtx() {
+  private initCanvasCtx(option) {
 
-    this.ctx = this.canvas.getContext('webgl') || this.canvas.getContext('experimental-webgl');
+    this.ctx = this.canvas.getContext('webgl', option) || this.canvas.getContext('experimental-webgl', option);
     if (this.ctx === null) {
       throw new Error('Your browser not support the webgl .')
     } else {

@@ -48,7 +48,9 @@
   <div id="convertedImg"></div>
   <script>
     var mycanvas = document.getElementById('my_Canvas');
-    var client = new DDD.UICanvas(mycanvas)
+    var client = new DDD.UICanvas(mycanvas, {
+      preserveDrawingBuffer: true
+    })
     var camera = new DDD.UICamera();
     var render = new DDD.UIRender(client, camera);
     var scene = new DDD.UIScene();
