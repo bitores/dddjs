@@ -243,9 +243,9 @@
         pointer._material = colorMaterial;
         pointer.setPosition(progress * 2 - 1.0, ani.getValue() * 2.0 / 52.0 - 1, 0)
 
-        // box5.lookAt(progress * 2 - 1.0, ani.getValue() * 2.0 / 52.0 - 1, -1)
-        box5.followAt(pointer)
-        // render.addRenderObject(pointer)
+        box5.lookAt(progress * 2 - 1.0, ani.getValue() * 2.0 / 52.0 - 1, 2)
+        // box5.followAt(pointer)
+        render.addRenderObject(pointer)
       });
     ani.start()
 
@@ -266,12 +266,12 @@
     mycanvas.addEventListener('webgl', (e) => {
       // console.log(e.webglX, e.webglY, e.webgldrag)
       if (e.webgldrag) {
-        obj.lookAt(e.webglX, e.webglY, -2)
-        obj1.lookAt(e.webglX, e.webglY, -2)
-        box.lookAt(e.webglX, e.webglY, -2)
-        box2.lookAt(e.webglX, e.webglY, -2)
-        box3.lookAt(e.webglX, e.webglY, -2)
-        box5.lookAt(e.webglX, e.webglY, -2)
+        obj.lookAt(e.webglX, e.webglY, 2)
+        obj1.lookAt(e.webglX, e.webglY, 2)
+        box.lookAt(e.webglX, e.webglY, 2)
+        box2.lookAt(e.webglX, e.webglY, 2)
+        box3.lookAt(e.webglX, e.webglY, 2)
+        box5.lookAt(e.webglX, e.webglY, 2)
       }
       // if(e.webglke)
       if (e.webglkeydown) {

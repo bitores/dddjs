@@ -26,7 +26,6 @@ export class Object3d extends Base {
   constructor(public _name: string, _pos: Vec3 = new Vec3(0, 0, 0)) {
     super()
     this._position = _pos;
-    this.isRightHand = true;
 
     this._position.onChange(() => {
       this._modelMatrix.compose(this._position, this._quaternion, this._scale).trigger()
@@ -161,7 +160,7 @@ export class Object3d extends Base {
       eye = this._position.clone(),
       up = new Vec3(0, 1, 0);
 
-    let zAxis = eye.clone().sub(target.x, target.y, target.z);
+    let zAxis = target.clone().sub(eye.x, eye.y, eye.z);
     let NZ = zAxis.clone().normalize();
 
     let xAxis = up.clone().cross(NZ.x, NZ.y, NZ.z);
@@ -178,8 +177,10 @@ export class Object3d extends Base {
       0,
       0,
       1,
-    ).transpose();
-
+    )
+    if (this.isRightHand === true) {
+      mat.transpose()
+    }
     this._quaternion.fromMat4(mat).trigger()
   }
 
