@@ -1,7 +1,7 @@
+import { Quaternion } from './../math/Quaternion';
 import Base from "../Base";
 import { Vec3 } from "../math/Vec3";
 import { Mat4 } from "../math/Mat4";
-import { Quaternion } from "../math/Quaternion";
 import { Euler } from "../math/Euler";
 import { UIMaterial } from "../materials/UIMaterial";
 import { Gemotry } from "./Gemotry";
@@ -174,12 +174,18 @@ export class Object3d extends Base {
       UX.x, UX.y, UX.z, 0,
       VY.x, VY.y, VY.z, 0,
       NZ.x, NZ.y, NZ.z, 0,
-      eye.x,
-      eye.y,
-      eye.z,
+      0,
+      0,
+      0,
       1,
-    );
-    this._modelMatrix.dot(mat).trigger()
+    ).transpose();
+
+    this._quaternion.fromMat4(mat).trigger()
+  }
+
+  followAt(obj: Object3d) {
+    let target = obj._position;
+    this.lookAt(target.x, target.y, target.z)
   }
 
   /**

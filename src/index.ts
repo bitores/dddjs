@@ -4,13 +4,13 @@
 // export * from './animation/AnimationListener';
 
 
-// export * from './math/Vec2';
-// export * from './math/Vec3';
-// export * from './math/Mat3';
-// export * from './math/Mat4';
-// export * from './math/Quaternion';
-// export * from './math/Euler';
-// export * from './math/Color';
+export * from './math/Vec2';
+export * from './math/Vec3';
+export * from './math/Mat3';
+export * from './math/Mat4';
+export * from './math/Quaternion';
+export * from './math/Euler';
+export * from './math/Color';
 
 export * from './core/PerspectiveCamera';
 export * from './core/OrthographicCamera';
@@ -44,6 +44,7 @@ export * from './ui/shape/Shape';
 export * from './ui/shape/Plane';
 export * from './ui/shape/Box';
 export * from './ui/shape/Ball';
+export * from './ui/shape/AxesHelper';
 export * from './ui/UIScene';
 
 

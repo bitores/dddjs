@@ -64,6 +64,7 @@ export class UIRender extends Base {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
 
     if (this.isLineMode || obj._material.isLineMode) {
+      gl.lineWidth(5);
       gl.drawElements(gl.LINES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
     } else {
       gl.drawElements(gl.TRIANGLES, obj.indices.length, gl.UNSIGNED_SHORT, 0);

@@ -17,3 +17,7 @@ Chrome 66为了避免标签产生随机噪音。
 
 ##### shader warning
  material isReady field control
+
+
+####
+不能在添加时初始化，因为后添加子节点时要处理。。。

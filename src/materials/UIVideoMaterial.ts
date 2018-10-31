@@ -6,7 +6,7 @@ export class UIVideoMaterial extends UIMaterial {
   // text map
   _video: HTMLVideoElement | null = null;
   _videoIsReady: boolean = false;
-  _videoPausing: boolean = false;
+  _videoPausing: boolean = true;
   constructor(config: {}) {
     super()
 
@@ -17,16 +17,19 @@ export class UIVideoMaterial extends UIMaterial {
       ...config
     }
 
+
+
     let that = this;
 
     var video = document.createElement("video");
+    this._video = video;
     video.muted = true;
     video.src = this.config['video'];
 
     video.addEventListener("playing", function () {
       that._videoIsReady = true;
       that.config['video'] = video;
-      if (that.config['autoPlay'] === false) video.pause()
+      // if (that.config['autoPlay'] === false) video.pause()
     }, true);
     video.addEventListener("ended", function () {
       video.currentTime = 0;
@@ -37,11 +40,17 @@ export class UIVideoMaterial extends UIMaterial {
       console.error(e)
     });
 
-    video.play();
-    this._video = video;
+    if (this.config['autoPlay'] === true) {
+
+      video.play();
+    }
+
+    // 
+
   }
 
   play() {
+    console.log('play')
     this._videoPausing = false;
     this._video && this._video.play()
     if (this._video)
@@ -49,6 +58,7 @@ export class UIVideoMaterial extends UIMaterial {
   }
 
   pause() {
+    console.log('pause')
     this._videoPausing = true;
     this._video && this._video.pause()
   }

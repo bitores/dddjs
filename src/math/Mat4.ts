@@ -385,20 +385,38 @@ export class Mat4 extends Base {
 
   // https://blog.csdn.net/gggg_ggg/article/details/45969499
   // 左手坐标系统 正交投影
-  static orthographicWHNF(w: number, h: number, near: number, far: number) {
+  static orthographicWHNF(w: number, h: number, near: number, far: number, isRightHand: boolean = false) {
     // x [left, right] 映射 [-1,1]
     // y [bottom, top] 映射 [-1,1]
     // z [near, far] 映射 [ 0,1] -- near < far右手坐标系统
+
     let mat = new Mat4();
-    let n = near,
-      f = far;
+    var x = 2 / w;
+    var y = 2 / h;
+
+    var a = 0;
+    var b = 0;
+
+    if (isRightHand) {
+      // https://www.cnblogs.com/mazhenyu/p/6401683.html
+      // 右手坐标系统 正交投影
+      var c = -2 / (far - near);
+      var d = - (far + near) / (far - near);
+
+    } else {
+      // https://blog.csdn.net/gggg_ggg/article/details/45969499
+      // 左手坐标系统 正交投影
+      var c = -1 / (far - near);
+      var d = - near / (far - near);
+
+    }
+
     mat.elements = [
-      2 / w, 0, 0, 0,
-      0, 2 / h, 0, 0,
-      0, 0, 1 / (f - n), -n / (f - n),
+      x, 0, 0, a,
+      0, y, 0, b,
+      0, 0, c, d,
       0, 0, 0, 1
     ]
-
     return mat;
   }
 

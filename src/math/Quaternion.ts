@@ -236,13 +236,46 @@ export class Quaternion extends Base {
   fromMat4(mat: Mat4) {
     // http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
     let ele = mat.elements;
-    let a00 = ele[0], a01 = ele[1], a02 = ele[2];
-    let a10 = ele[4], a11 = ele[5], a12 = ele[6];
-    let a20 = ele[8], a21 = ele[9], a22 = ele[10];
-    this.w = Math.sqrt(1 + a00 + a11 + a22) / 2.0;
-    this.x = (a21 - a12) / (4 * this.w);
-    this.y = (a02 - a20) / (4 * this.w);
-    this.z = (a10 - a01) / (4 * this.w);
+    let m00 = ele[0], m01 = ele[1], m02 = ele[2];
+    let m10 = ele[4], m11 = ele[5], m12 = ele[6];
+    let m20 = ele[8], m21 = ele[9], m22 = ele[10];
+    // this.w = Math.sqrt(1 + a00 + a11 + a22) / 2.0;
+    // this.x = (a21 - a12) / (4 * this.w);
+    // this.y = (a02 - a20) / (4 * this.w);
+    // this.z = (a10 - a01) / (4 * this.w);
+
+    let tr = m00 + m11 + m22
+    let qx, qy, qz, qw;
+    if (tr > 0) {
+      let S = Math.sqrt(tr + 1.0) * 2; // S=4*qw 
+      qw = 0.25 * S;
+      qx = (m21 - m12) / S;
+      qy = (m02 - m20) / S;
+      qz = (m10 - m01) / S;
+    } else if ((m00 > m11) && (m00 > m22)) {
+      let S = Math.sqrt(1.0 + m00 - m11 - m22) * 2; // S=4*qx 
+      qw = (m21 - m12) / S;
+      qx = 0.25 * S;
+      qy = (m01 + m10) / S;
+      qz = (m02 + m20) / S;
+    } else if (m11 > m22) {
+      let S = Math.sqrt(1.0 + m11 - m00 - m22) * 2; // S=4*qy
+      qw = (m02 - m20) / S;
+      qx = (m01 + m10) / S;
+      qy = 0.25 * S;
+      qz = (m12 + m21) / S;
+    } else {
+      let S = Math.sqrt(1.0 + m22 - m00 - m11) * 2; // S=4*qz
+      qw = (m10 - m01) / S;
+      qx = (m02 + m20) / S;
+      qy = (m12 + m21) / S;
+      qz = 0.25 * S;
+    }
+
+    this.x = qx;
+    this.y = qy;
+    this.z = qz;
+    this.w = qw;
 
     return this;
   }

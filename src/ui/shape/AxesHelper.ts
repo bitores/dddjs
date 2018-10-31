@@ -1,17 +1,17 @@
 import { Shape } from "./Shape";
 
-export class Plane extends Shape {
-  constructor(name: string = 'plan') {
+export class AxesHelper extends Shape {
+  constructor(name: string = 'AxesHelper') {
     super(name)
     this._gemotry.setVertices([
-      1.0, 1.0, 0.0,
-      1.0, -1.0, 0.0,
-      -1.0, -1.0, 0.0,
-      -1.0, 1.0, 0.0
+      0.0, 0.0, 0.0,
+      1.0, 0.0, 0.0,
+      0.0, 1.0, 0.0,
+      0.0, 0.0, 1.0
     ])
 
     this._gemotry.setColors([
-      0, 0, 1, 1,
+      1, 1, 1, 1,
       1, 0, 0, 1,
       0, 1, 0, 1,
       1, 0, 1, 1
@@ -25,8 +25,9 @@ export class Plane extends Shape {
     ])
 
     this._gemotry.setIndices([
-      0, 1, 2,
-      0, 2, 3
+      0, 1,
+      0, 2,
+      0, 3
     ])
   }
 }
