@@ -204,10 +204,6 @@ export class Object3d extends Base {
 
   // end
 
-  get className() {
-    return 'Object3d';
-  }
-
   clone() {
     return new Object3d('node');
   }

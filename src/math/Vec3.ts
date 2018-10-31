@@ -157,12 +157,6 @@ export class Vec3 extends Base {
   }
 
   //--------  end
-
-
-  get className() {
-    return 'Vec3';
-  }
-
   clone() {
     return new Vec3(this.x, this.y, this.z);
   }

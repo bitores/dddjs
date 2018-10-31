@@ -62,11 +62,6 @@ export class UICanvas extends Base {
     return this.ctx;
   }
 
-
-  get className() {
-    return 'Node';
-  }
-
   clone() {
     return new UICanvas(this.canvas);
   }

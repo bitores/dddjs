@@ -11,12 +11,6 @@ export class Color extends Base {
 
   //
 
-
-
-  get className() {
-    return 'Color';
-  }
-
   clone() {
     return new Color(this.r, this.g, this.b, this.a);
   }

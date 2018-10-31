@@ -409,11 +409,6 @@ export class Quaternion extends Base {
 
   }
   // ---------- end
-
-  get className() {
-    return 'Quaternion';
-  }
-
   clone() {
     return new Quaternion(this.x, this.y, this.z, this.w);
   }

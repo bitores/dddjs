@@ -47,10 +47,6 @@ export class Euler extends Base {
 
   }
   // ---------- end
-  get className() {
-    return 'Euler';
-  }
-
   clone() {
     return new Euler(this.pitch, this.yaw, this.roll);
   }

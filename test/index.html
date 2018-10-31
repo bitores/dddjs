@@ -14,31 +14,20 @@
 
     canvas {
       display: inline-block;
-      /* width: 100%;
-      height: 80%; */
-      width: 200px;
-      height: 200px;
-      /* position: absolute;
+      width: 100%;
+      height: 80%;
+      /* width: 200px;
+      height: 200px; */
+      position: absolute;
       left: 0;
       right: 0;
       top: 0;
-      bottom: 100px; */
+      bottom: 100px;
       /* left: 100px;
       top: 100px; */
     }
   </style>
   <script src="../dist/ddd.js"></script>
-  <script>
-    // canvas-->image
-    function convertCanvasToImage(canvas) {
-      //新Image对象,可以理解为DOM;
-      var image = new Image();
-      //canvas.toDataURL返回的是一串Base64编码的URL,当然,浏览器自己肯定支持
-      //指定格式PNG
-      image.src = canvas.toDataURL("image/jpeg");
-      return image;
-    }
-  </script>
 </head>
 
 <body>
@@ -68,8 +57,8 @@
     });
 
     var obj = new DDD.Plane();
-    obj.scaling(0.2, 0.2, 1.0);
-    obj.setPosition(-.8, .8, 0)
+    // obj.scaling(0.2, 0.2, 1.0);
+    // obj.setPosition(-.8, .8, 0)
     obj._material = new DDD.UIVideoMaterial({
       dynamic: true,
       autoPlay: false,
@@ -112,7 +101,7 @@
     // box5.lookAt(-.8, -.8, 1)
 
     new DDD.ImagesLoaded([
-      'assets/xneg.png',
+      'assets/xneg.jpg',
       'assets/xneg.jpg',
       'assets/xpos.jpg',
       'assets/ypos.jpg',
@@ -201,6 +190,15 @@
 
     render.addRenderObject(box2);
     render.addRenderObject(box3);
+
+    var obj3 = new DDD.Plane();
+    obj3._material = new DDD.UIAudioMaterial({
+      audio: 'assets/SuperMario.mp3'
+    });
+    obj3.scaling(0.2, 0.2, 1.0);
+    obj3.setPosition(0, .8, 0)
+    // obj1.lookAt(0, .8, 1)
+    render.addRenderObject(obj3);
 
 
     var animation = new DDD.Animation(true)

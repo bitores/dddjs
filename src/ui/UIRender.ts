@@ -94,10 +94,6 @@ export class UIRender extends Base {
     })
   }
 
-  get className() {
-    return 'UIRender';
-  }
-
   clone() {
   }
 

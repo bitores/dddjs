@@ -39,6 +39,16 @@ export function point2Webgl(pos_x: number, pos_y: number) {
   }
 }
 
+// webgl :canvas-->image, you need contex{preserveDrawingBuffer: true}
+export function convertCanvasToImage(canvas) {
+  //新Image对象,可以理解为DOM;
+  var image = new Image();
+  //canvas.toDataURL返回的是一串Base64编码的URL,当然,浏览器自己肯定支持
+  //指定格式PNG
+  image.src = canvas.toDataURL("image/jpeg");
+  return image;
+}
+
 export function fovy(height: number, near: number) {
   //fovy = 360/(pi*atan(2n/(h)))
   return 2 * 180.0 / (Math.PI * Math.atan((2 * near) / height));

@@ -208,11 +208,6 @@ export class Mat3 extends Base {
   }
 
   //--------  end
-
-  get className() {
-    return 'Mat3';
-  }
-
   clone() {
     let _ele = this.elements;
     return new Mat3(..._ele);

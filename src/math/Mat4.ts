@@ -361,14 +361,15 @@ export class Mat4 extends Base {
 
     if (isRightHand) {
       // https://www.cnblogs.com/mazhenyu/p/6401683.html
-      // 右手坐标系统 正交投影
+      // 右手坐标系统 正交投影 - open
       var c = -2 / (far - near);
       var d = - (far + near) / (far - near);
 
     } else {
       // https://blog.csdn.net/gggg_ggg/article/details/45969499
       // 左手坐标系统 正交投影
-      var c = -1 / (far - near);
+      // var c = -1 / (far - near);
+      var c = 1 / (far - near);
       var d = - near / (far - near);
 
     }
@@ -405,8 +406,9 @@ export class Mat4 extends Base {
 
     } else {
       // https://blog.csdn.net/gggg_ggg/article/details/45969499
-      // 左手坐标系统 正交投影
-      var c = -1 / (far - near);
+      // 左手坐标系统 正交投影 - LH
+      // var c = -1 / (far - near);
+      var c = 1 / (far - near);
       var d = - near / (far - near);
 
     }
@@ -441,6 +443,8 @@ export class Mat4 extends Base {
     } else {
       // https://blog.csdn.net/gggg_ggg/article/details/45969499
       // 左手坐标系统 透视投影
+      a = -(right + left) / w;
+      b = -(top + bottom) / h;
       var c = far / (far - near);
       var d = - far * near / (far - near);
       var e = 1;
@@ -457,20 +461,28 @@ export class Mat4 extends Base {
 
   // https://blog.csdn.net/gggg_ggg/article/details/45969499
   // 左手坐标系统 透视投影
-  static perspectiveWHNF(w: number = 1, h: number = 1, near: number = 1, far: number = 1000) {
+  static perspectiveWHNF(w: number = 1, h: number = 1, near: number = 1, far: number = 1000, isRightHand: boolean = false) {
     let mat = new Mat4();
 
     var x = 2 * near / w;
     var y = 2 * near / h;
 
-    var c = far / (far - near);
-    var d = -  far * near / (far - near);
+    if (isRightHand) {
+      var c = -(far + near) / (far - near);
+      var d = - 2 * far * near / (far - near);
+      var e = -1;
+    } else {
+      var c = far / (far - near);
+      var d = -  far * near / (far - near);
+      var e = 1;
+    }
+
 
     mat.elements = [
       x, 0, 0, 0,
       0, y, 0, 0,
       0, 0, c, d,
-      0, 0, 1, 0
+      0, 0, e, 0
     ]
 
     return mat;
@@ -478,7 +490,7 @@ export class Mat4 extends Base {
 
   // https://blog.csdn.net/gggg_ggg/article/details/45969499
   // 左手坐标系统 透视投影
-  static perspective(fovy: number = 45, aspect: number = 1, near: number = 0.1, far: number = 1000) {
+  static perspective(fovy: number = 45, aspect: number = 1, near: number = 0.1, far: number = 1000, isRightHand: boolean = false) {
     let mat = new Mat4();
     let f = Math.tan(2.0 / DEG2RAD(fovy));
 
@@ -487,14 +499,22 @@ export class Mat4 extends Base {
     // fov = 2/atan(2n/h)
     // fov = 360/(pi*atan(2N/(h)))
 
-    var c = far / (far - near);
-    var d = -  far * near / (far - near);
+    if (isRightHand) {
+      var c = -(far + near) / (far - near);
+      var d = - 2 * far * near / (far - near);
+      var e = -1;
+    } else {
+      var c = far / (far - near);
+      var d = -  far * near / (far - near);
+      var e = 1;
+    }
+
 
     mat.elements = [
       f / aspect, 0, 0, 0,
       0, f, 0, 0,
       0, 0, c, d,
-      0, 0, 1, 0
+      0, 0, e, 0
     ]
 
     return mat;
@@ -755,10 +775,6 @@ export class Mat4 extends Base {
 
   }
   // ---------- end
-  get className() {
-    return 'Mat4';
-  }
-
   clone() {
     let _ele = this.elements;
     return new Mat4(..._ele);
