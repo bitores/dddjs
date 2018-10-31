@@ -2,7 +2,7 @@ import Base from "../Base";
 import { CanvasEvent } from "../event/CanvasEvent";
 
 export class UICanvas extends Base {
-  ctx: WebGLRenderingContext | null;
+  ctx: WebGLRenderingContext | null; //| CanvasRenderingContext2D 
   x: number;
   y: number;
   left: number;
@@ -11,13 +11,27 @@ export class UICanvas extends Base {
   bottom: number;
   width: number;
   height: number;
+  _option: object = {}
   constructor(public canvas: HTMLCanvasElement, option: object = {}) {
     super()
     if (Object.prototype.toString.call(canvas) !== "[object HTMLCanvasElement]") {
       throw new TypeError('The first paramter is not the HTMLCanvasElement type.')
     }
+    this._option = {
+      // alpha: 0,//boolean值表明canvas包含一个alpha缓冲区。
+      // depth: 0,//boolean值表明绘制缓冲区包含一个深度至少为16位的缓冲区。
+      // stencil: 0,//boolean值表明绘制缓冲区包含一个深度至少为8位的模版缓冲区。
+      // antialias: 0,//boolean值表明是否抗锯齿。
+      // premultipliedAlpha: 0,//boolean值表明页面排版工人将在混合alpha通道前承担颜色缓冲区。
+      // preserveDrawingBuffer: 0,//如果这个值为true缓冲区将不会清除它，会保存下来，直到被清除或被使用者覆盖。
+      // failIfMajorPerformanceCaveat: 0,//boolean值表明在一个系统性能低的环境创建该上下文。
+      antialias: true,
+      depth: true,
+      alpha: true,
+      ...option
+    }
     this.initEvent();
-    this.initCanvasCtx(option);
+    this.initCanvasCtx(this._option);
     this.boundingRect();
     this.resize();
   }
@@ -28,7 +42,14 @@ export class UICanvas extends Base {
 
   private initCanvasCtx(option) {
 
-    this.ctx = this.canvas.getContext('webgl', option) || this.canvas.getContext('experimental-webgl', option);
+    try {
+      this.ctx = this.canvas.getContext('webgl', option) || this.canvas.getContext('experimental-webgl', option);
+    } catch (e) {
+      // this.ctx = this.canvas.getContext('webgl2', option) || this.canvas.getContext('experimental-webgl2', option);
+    } finally {
+
+    }
+
     if (this.ctx === null) {
       throw new Error('Your browser not support the webgl .')
     } else {
