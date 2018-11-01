@@ -18,20 +18,52 @@ export class UIScene {
     // BLEND: blendFunc
   }
 
+  getNodeById() {
+
+  }
+
+  getNodeByName() {
+
+  }
+
+  getNodeParent() {
+
+  }
+
+  getNodeParents() {
+
+  }
+
+  getNodeSiblings() {
+
+  }
+
+  render(callback: Function) {
+    this.nodes.forEach(node => {
+      this.iterator(node, callback)
+    });
+  }
+
+  iterator(node: Object3d, callback: Function) {
+    if (!node) return;
+    callback(node)
+    node._children.forEach(obj => {
+      this.iterator(obj, callback);
+    });
+  }
+
   find(node: Object3d) {
-    // this.nodes.forEach(node => {
+    let nodeIndex = this.nodes.indexOf(node);
 
-    // });
-
-    if (this.nodes.indexOf(node) === -1) {
-      this.nodes.push(node)
+    if (nodeIndex === -1) {
+      return false;
     } else {
-
+      return this.nodes[nodeIndex];
     }
   }
 
   add(node: Object3d) {
-    if (this.nodes.indexOf(node) === -1) {
+    if (this.find(node) === false) {
       this.nodes.push(node)
     } else {
       console.warn('has one same node here')
@@ -39,12 +71,12 @@ export class UIScene {
   }
 
   remove(node: Object3d) {
-    if (this.nodes.indexOf(node) === -1) {
+    if (this.find(node) === false) {
 
       console.warn('has one same node here')
     } else {
-      this.nodes.push(node)
 
+      // del the node
     }
   }
 }

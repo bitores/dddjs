@@ -9,36 +9,35 @@ export class UIRender extends Base {
   public ctx: WebGLRenderingContext | null;
   private pool: Object[] = [];
   public scenes: UIScene[] = [];
+
+  public glmode: string = 'triangle';
+  public drawArray: boolean = false;
   public isLineMode: boolean = false;
   constructor(public canvas: UICanvas, public camera: UICamera) {
     super()
     this.ctx = canvas.ctx;
   }
 
-  addRenderObject(obj: Shape, image: HTMLImageElement | null = null) {
-    let shader = obj._material;
-    if (!this.ctx || !shader) return;
-    shader.init(this.ctx);
-    let vbo = GLTools.createVBO(this.ctx, obj.vertices, false, true);
-    let cbo = GLTools.createVBO(this.ctx, obj.colors, false, true);
-    let tbo = GLTools.createVBO(this.ctx, obj.textCoords, false, true);
-    let ibo = GLTools.createVBO(this.ctx, obj.indices, true, true);
+  addRenderObject(obj: Shape) {
+    // let material = obj._material;
+    // if (!this.ctx || !material) return;
+    // material.init(this.ctx);
+    // material.config['initial'] = true;
+    // material.config['position'] = GLTools.createVBO(this.ctx, obj.vertices, false, true);
+    // material.config['color'] = GLTools.createVBO(this.ctx, obj.colors, false, true);
+    // material.config['a_TextCoord'] = GLTools.createVBO(this.ctx, obj.textCoords, false, true);
+    // let ibo = GLTools.createVBO(this.ctx, obj.indices, true, true);
 
-    shader.config['position'] = vbo;
-    shader.config['color'] = cbo;
-    shader.config['a_TextCoord'] = tbo;
+    // this.pool.push({
+    //   obj,
+    //   ibo,
+    //   material,
+    //   name: obj.name,
+    // });
 
-
-    this.pool.push({
-      obj,
-      ibo,
-      shader,
-      name: obj.name,
-    });
-
-    obj._children.forEach(item => {
-      this.addRenderObject(item, image);
-    })
+    // obj._children.forEach(item => {
+    //   this.addRenderObject(item);
+    // })
   }
 
   getTargetMatrix(obj) {
@@ -48,29 +47,68 @@ export class UIRender extends Base {
     return obj._modelMatrix;
   }
 
+  drawMode(mode: string, gl: WebGLRenderingContext) {
+    let glmode = -1;
+    switch (mode) {
+      case 'point':
+        glmode = gl.POINTS;
+        break;
+      case 'linestrip':
+        glmode = gl.LINE_STRIP;
+        break;
+      case 'lineloop':
+        glmode = gl.LINE_LOOP;
+        break;
+      case 'line':
+        glmode = gl.LINES;
+        break;
+      case 'strip':
+        glmode = gl.TRIANGLE_STRIP;
+        break;
+      case 'fan':
+        glmode = gl.TRIANGLE_FAN;
+        break;
+      case 'triangle':
+        glmode = gl.TRIANGLES;
+        break;
+      default:
+        glmode = gl.TRIANGLES;
+        break;
+    }
+
+    return glmode;
+  }
+
 
   renderItem(gl: WebGLRenderingContext, item: any) {
-    let shader = item.shader,
+    let material = item.material,
       ibo = item.ibo,
       obj = item.obj;
-    shader.use();
+    material.use();
     if (!!obj._material === false) {
       console.warn(`${obj.name} needs the material`)
       return;
     }
     if (obj._material.isReady === false) return;
-    shader.upload(this.camera, obj);
+    material.upload(this.camera, obj);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
 
-    if (this.isLineMode || obj._material.isLineMode) {
-      gl.lineWidth(5);
-      gl.drawElements(gl.LINES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
+    if (this.drawArray) {
+      if (this.isLineMode || obj._material.isLineMode) {
+        gl.lineWidth(5);
+        gl.drawArrays(gl.LINES, 0, 6);
+      } else {
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+      }
     } else {
-      gl.drawElements(gl.TRIANGLES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
+      if (this.isLineMode || obj._material.isLineMode) {
+        gl.lineWidth(5);
+        gl.drawElements(gl.LINES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
+      } else {
+        gl.drawElements(gl.TRIANGLES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
+      }
     }
-    // 
-
   }
 
   clean(gl: WebGLRenderingContext) {
@@ -83,6 +121,7 @@ export class UIRender extends Base {
 
     gl.viewport(0.0, 0.0, this.canvas.width, this.canvas.height);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    // void gl.colorMask(red, green, blue, alpha);
   }
 
   render() {
@@ -92,6 +131,38 @@ export class UIRender extends Base {
     this.pool.forEach(item => {
       this.renderItem(gl, item);
     })
+  }
+
+  renderScene(scene: UIScene) {
+    if (!this.ctx) return;
+    // scene.nodes.forEach(obj => {
+
+
+
+    //   obj._children.forEach(item => {
+    //     this.addRenderObject(item);
+    //   })
+    // })
+
+    scene.render((obj) => {
+      let material = obj._material;
+      if (!material || material.config['initial']) return;
+      material.init(this.ctx);
+      material.config['initial'] = true;
+      if (this.ctx) {
+        material.config['position'] = GLTools.createVBO(this.ctx, obj.vertices, false, true);
+        material.config['color'] = GLTools.createVBO(this.ctx, obj.colors, false, true);
+        material.config['a_TextCoord'] = GLTools.createVBO(this.ctx, obj.textCoords, false, true);
+        let ibo = GLTools.createVBO(this.ctx, obj.indices, true, true);
+        this.pool.push({
+          obj,
+          ibo,
+          material,
+          name: obj.name,
+        });
+      }
+    })
+
   }
 
   clone() {

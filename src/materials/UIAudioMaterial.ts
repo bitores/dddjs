@@ -34,7 +34,7 @@ export class UIAudioMaterial extends UIMaterial {
       console.error(e)
     });
 
-    audio.play();
+    // audio.play();
 
     var AudioContext = window["AudioContext"] || window["webkitAudioContext"] || window["mozAudioContext"] || window["msAudioContext"];
     var context = AudioContext ? new AudioContext() : '';

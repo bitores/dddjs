@@ -15,6 +15,8 @@ https://www.aliyun.com/jiaocheng/634865.html?spm=5176.100033.2.13.c1e55584cbgfif
 
 Chrome 66为了避免标签产生随机噪音。
 
+Uncaught (in promise) DOMException: play() failed because the user didn't interact with the document first
+
 ##### shader warning
  material isReady field control
 
