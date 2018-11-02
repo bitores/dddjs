@@ -3,7 +3,6 @@ import Base from "../Base";
 import { UICamera } from "./UICamera";
 import { UICanvas } from "./UICanvas";
 import { GLTools } from "../tools/GLTools";
-import { Shape } from "./shape/Shape";
 
 export class UIRender extends Base {
   public ctx: WebGLRenderingContext | null;
@@ -16,28 +15,6 @@ export class UIRender extends Base {
   constructor(public canvas: UICanvas, public camera: UICamera) {
     super()
     this.ctx = canvas.ctx;
-  }
-
-  addRenderObject(obj: Shape) {
-    // let material = obj._material;
-    // if (!this.ctx || !material) return;
-    // material.init(this.ctx);
-    // material.config['initial'] = true;
-    // material.config['position'] = GLTools.createVBO(this.ctx, obj.vertices, false, true);
-    // material.config['color'] = GLTools.createVBO(this.ctx, obj.colors, false, true);
-    // material.config['a_TextCoord'] = GLTools.createVBO(this.ctx, obj.textCoords, false, true);
-    // let ibo = GLTools.createVBO(this.ctx, obj.indices, true, true);
-
-    // this.pool.push({
-    //   obj,
-    //   ibo,
-    //   material,
-    //   name: obj.name,
-    // });
-
-    // obj._children.forEach(item => {
-    //   this.addRenderObject(item);
-    // })
   }
 
   getTargetMatrix(obj) {
@@ -135,34 +112,24 @@ export class UIRender extends Base {
 
   renderScene(scene: UIScene) {
     if (!this.ctx) return;
-    // scene.nodes.forEach(obj => {
-
-
-
-    //   obj._children.forEach(item => {
-    //     this.addRenderObject(item);
-    //   })
-    // })
-
+    let gl = this.ctx;
     scene.render((obj) => {
       let material = obj._material;
-      if (!material || material.config['initial']) return;
-      material.init(this.ctx);
-      material.config['initial'] = true;
-      if (this.ctx) {
-        material.config['position'] = GLTools.createVBO(this.ctx, obj.vertices, false, true);
-        material.config['color'] = GLTools.createVBO(this.ctx, obj.colors, false, true);
-        material.config['a_TextCoord'] = GLTools.createVBO(this.ctx, obj.textCoords, false, true);
-        let ibo = GLTools.createVBO(this.ctx, obj.indices, true, true);
-        this.pool.push({
-          obj,
-          ibo,
-          material,
-          name: obj.name,
-        });
-      }
+      if (!material || obj._renderInitial) return;
+      material.init(gl);
+      obj._renderInitial = true;
+      material.config['position'] = GLTools.createVBO(gl, obj.vertices, false, true);
+      material.config['color'] = GLTools.createVBO(gl, obj.colors, false, true);
+      material.config['a_TextCoord'] = GLTools.createVBO(gl, obj.textCoords, false, true);
+      let ibo = GLTools.createVBO(gl, obj.indices, true, true);
+      this.pool.push({
+        obj,
+        ibo,
+        material,
+        name: obj.name,
+      });
     })
-
+    this.render()
   }
 
   clone() {

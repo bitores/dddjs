@@ -19,6 +19,7 @@ export class Object3d extends Base {
 
   public _gemotry: Gemotry = new Gemotry();
   public _material: UIMaterial | null = null;
+  public _renderInitial: boolean = false;
 
 
   protected isRightHand: boolean = true;
@@ -178,6 +179,8 @@ export class Object3d extends Base {
       0,
       1,
     )
+    // console.log('x:', xAxis, 'y:', yAxis, 'z:', zAxis)
+    console.log(mat.elements)
     if (this.isRightHand === true) {
       mat.transpose()
     }
