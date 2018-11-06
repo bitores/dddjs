@@ -32,7 +32,7 @@ export class UICubeTextureMaterial extends UIMaterial {
   handle() {
     new ImagesLoaded(this.config['images']).onLoad((images) => {
       let texture = GLTools.createCubeTexture(this.ctx, images, {});
-      if (texture) texture['images'] = images;
+      // if (texture) texture['images'] = images;
       this.config['u_Sampler'] = texture;
       this.isReady = true;
     });

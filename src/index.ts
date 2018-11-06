@@ -39,6 +39,8 @@ export * from './materials/UIMultiTexturesMaterial';
 export * from './materials/UIShaderMaterial';
 export * from './materials/UIAudioMaterial';
 
+export * from './textures/UITexture';
+
 export * from './core/Gemotry';
 export * from './core/Object3d';
 export * from './ui/shape/Shape';

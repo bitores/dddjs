@@ -180,7 +180,7 @@ export class Object3d extends Base {
       1,
     )
     // console.log('x:', xAxis, 'y:', yAxis, 'z:', zAxis)
-    console.log(mat.elements)
+    // console.log(mat.elements)
     if (this.isRightHand === true) {
       mat.transpose()
     }

@@ -13,6 +13,7 @@ export class UIMaterial {
 
   public isReady: boolean = false;
   public isLineMode: boolean = false;// 绘制模式
+  public mode: String = 'triangle';
 
   constructor(public config: object = {}) {
     this.config = {

@@ -100,6 +100,69 @@ export class GLTools {
     return fb.t;
   }
 
+  static createDataTexture(gl: WebGLRenderingContext, option: {
+    wrapS?: number,
+    wrapT?: number,
+    filterMin?: number,
+    filterMag?: number,
+    unit?: number,
+    pixel?: number,
+    flip?: number
+  }) {
+    let wrapS = option.wrapS || gl.CLAMP_TO_EDGE,
+      wrapT = option.wrapT || gl.CLAMP_TO_EDGE,
+      filterMin = option.filterMin || gl.LINEAR,
+      filterMag = option.filterMag || gl.LINEAR,
+      unit = option.unit || 0,
+      pixel = option.pixel || gl.UNPACK_FLIP_Y_WEBGL,
+      flip = option.flip === 0 ? 0 : 1;
+
+    var texture = gl.createTexture();
+    if (texture) texture["unit"] = unit;
+    gl.pixelStorei(pixel, flip);
+    // 开启0号纹理单元
+    gl.activeTexture(gl.TEXTURE0 + unit);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    // Set up texture so we can render any size image and so we are
+    // working with pixels.
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrapS);// 纹理水平填充方式
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrapT);// 纹理垂直填充方式
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filterMin);// 纹理缩小方式
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filterMag);// 纹理放大方式
+
+    // 函数原型
+    // https://www.cnblogs.com/w-wanglei/p/6659809.html
+    // texImage2D(target, level, internalformat, width, height, border=0, format=interalformat, type, image·)
+    // 将image指定的图像分配给绑定到目标上的纹理对象。是WebGL2.0的函数，主要区分WebGL1.0的同名函数区别。参数：
+    // target:gl.TEXTURE_2D或gl.TEXTURE_CUBE
+    // level:传入0（实际上，该参数是为金字塔纹理准备的）
+    // internalformat:图像的内部格式
+    // width:文理绘制宽度
+    // height:纹理绘制高度
+    // format:纹理数据格式，必须使用与internalformat相同的值
+    // type:纹理数据的类型
+    // image:包含纹理图像的Image对象，可为null
+
+
+    // 绘制32*32的数据 一三象限白色，二四象限黑色，用作平铺国际象棋棋盘
+    let dat: number[] = [];
+    for (let i = 0; i < 32; i++)
+      for (let j = 0; j < 32; j++) {
+        let k = (i < 16 && j < 16) ? 255 : 0;
+        dat.push(k, k, k);
+      }
+
+    // 把数组转换成内存指针作为texImage2d的参数
+    // make the texture the same size as the image
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 32, 32, 0, gl.RGB, gl.UNSIGNED_BYTE, new Uint8Array(dat));
+
+
+
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    return texture;
+  }
+
   static createTexture(gl: WebGLRenderingContext, image: HTMLImageElement | HTMLVideoElement | null = null, option: {
     wrapS?: number,
     wrapT?: number,

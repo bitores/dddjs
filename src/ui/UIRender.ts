@@ -58,32 +58,34 @@ export class UIRender extends Base {
 
 
   renderItem(gl: WebGLRenderingContext, item: any) {
-    let material = item.material,
-      ibo = item.ibo,
-      obj = item.obj;
+    let ibo = item.ibo,
+      obj = item.obj,
+      material = obj._material;
     material.use();
-    if (!!obj._material === false) {
+    if (!!material === false) {
       console.warn(`${obj.name} needs the material`)
       return;
     }
-    if (obj._material.isReady === false) return;
+    if (material.isReady === false) return;
+
     material.upload(this.camera, obj);
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
 
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+    let drawMode = this.drawMode(material.mode, gl);
     if (this.drawArray) {
       if (this.isLineMode || obj._material.isLineMode) {
         gl.lineWidth(5);
         gl.drawArrays(gl.LINES, 0, 6);
       } else {
-        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        gl.drawArrays(drawMode, 0, 6);
       }
     } else {
       if (this.isLineMode || obj._material.isLineMode) {
         gl.lineWidth(5);
         gl.drawElements(gl.LINES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
       } else {
-        gl.drawElements(gl.TRIANGLES, obj.indices.length, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(drawMode, obj.indices.length, gl.UNSIGNED_SHORT, 0);
       }
     }
   }
@@ -125,7 +127,6 @@ export class UIRender extends Base {
       this.pool.push({
         obj,
         ibo,
-        material,
         name: obj.name,
       });
     })
