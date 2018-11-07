@@ -1,6 +1,6 @@
 import { Camera } from "../core/Camera";
 import { Mat4 } from "../math/Mat4";
-import { fovy } from "../tools/util";
+import { fovy } from "../tools/index";
 
 export class UICamera extends Camera {
   constructor() {

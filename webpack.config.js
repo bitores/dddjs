@@ -1,10 +1,15 @@
 const path = require('path');
-
 const webpack = require('webpack')
+
+
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const cwd = process.cwd();
+
 // https://www.cnblogs.com/skylor/p/7008756.html 【webpack整理】
 module.exports = {
   mode: 'development', // development || production or webpack --mode developmen
   entry: './src/index.ts',
+  context: cwd,
   output: {
     filename: 'ddd.js',
     path: path.resolve(__dirname, 'dist'),
@@ -21,7 +26,14 @@ module.exports = {
       '.ts'
     ]
   },
-  plugins: [],
+  plugins: [
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: 'test/index.html'
+    }),
+    new webpack.NamedModulesPlugin(),
+    new webpack.HotModuleReplacementPlugin()
+  ],
   devtool: 'source-map',
   module: {
     rules: [{
@@ -32,10 +44,11 @@ module.exports = {
   },
   // 先全局安装  webpack-dev-server -g and --save-dev
   devServer: {
-    contentBase: path.join(__dirname, "test"),
+    contentBase: path.resolve(__dirname, "test"),
+    hot: true,
     compress: false,
     open: true,
-    port: 9090
+    port: 9091
   },
   watchOptions: {
     ignored: [path.resolve(__dirname, './dist/**/*.*'), 'node_modules']
