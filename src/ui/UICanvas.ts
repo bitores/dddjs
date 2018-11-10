@@ -58,6 +58,8 @@ export class UICanvas extends Base {
   }
 
   private boundingRect() {
+    // var realToCSSPixels = window.devicePixelRatio;
+
     let clientRect = this.canvas.getBoundingClientRect();
     this.x = clientRect.left;
     this.y = clientRect.right;

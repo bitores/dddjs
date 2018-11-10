@@ -29,7 +29,8 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      template: 'test/index.html'
+      template: 'test/index.html',
+      inject: 'head'
     }),
     new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin()
@@ -45,7 +46,7 @@ module.exports = {
   // 先全局安装  webpack-dev-server -g and --save-dev
   devServer: {
     contentBase: path.resolve(__dirname, "test"),
-    inline: false,
+    inline: true,
     hot: true,
     compress: false,
     open: true,
