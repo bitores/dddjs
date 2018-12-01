@@ -8,7 +8,7 @@ const cwd = process.cwd();
 // https://www.cnblogs.com/skylor/p/7008756.html 【webpack整理】
 module.exports = {
   mode: 'development', // development || production or webpack --mode developmen
-  entry: './src/index.ts',
+  entry: './test/index.js',
   context: cwd,
   output: {
     filename: 'ddd.js',
@@ -30,7 +30,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'test/index.html',
-      inject: 'head'
+      // inject: 'head'
     }),
     new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin()
