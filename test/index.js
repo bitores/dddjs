@@ -1,5 +1,15 @@
 const DDD = require("../src/index.ts");
 
+// canvas-->image
+function convertCanvasToImage(canvas) {
+  //新Image对象,可以理解为DOM;
+  var image = new Image();
+  //canvas.toDataURL返回的是一串Base64编码的URL,当然,浏览器自己肯定支持
+  //指定格式PNG
+  image.src = canvas.toDataURL("image/jpeg");
+  return image;
+}
+
 var mycanvas = document.getElementById('my_Canvas');
 var client = new DDD.UICanvas(mycanvas, {
   preserveDrawingBuffer: true
