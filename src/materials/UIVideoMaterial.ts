@@ -23,6 +23,7 @@ export class UIVideoMaterial extends UIMaterial {
 
     var video = document.createElement("video");
     this._video = video;
+    this._video.volume = 0.1;
     video.muted = true;
     video.src = this.config['video'];
 
