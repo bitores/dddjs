@@ -6,7 +6,9 @@ export class UIAudioMaterial extends UIMaterial {
   // https://www.web-tinker.com/article/20498.html  绘制音乐的波形图
 
   // text map
+  _audio: HTMLAudioElement | null = null;
   _audioIsReady: boolean = false;
+  _audioPausing: boolean = true;
   constructor(config: {}) {
     super()
 
@@ -20,10 +22,16 @@ export class UIAudioMaterial extends UIMaterial {
     let that = this;
 
     var audio = new Audio(this.config['audio']);
+    this._audio = audio;
+    this._audio.volume = 0.1;
+    // this._audio.currentTime = 1000;
+    audio.addEventListener('timeupdate', function (e) {
+      console.log('00', e.timeStamp)
+    })
     audio.addEventListener("playing", function () {
       that._audioIsReady = true;
       that.config['audio'] = audio;
-      if (that.config['autoPlay'] === false) audio.pause()
+      // if (that.config['autoPlay'] === false) audio.pause()
     }, true);
     audio.addEventListener("ended", function () {
       audio.currentTime = 0;
@@ -37,7 +45,7 @@ export class UIAudioMaterial extends UIMaterial {
     // audio.play();
 
     var AudioContext = window["AudioContext"] || window["webkitAudioContext"] || window["mozAudioContext"] || window["msAudioContext"];
-    var context = AudioContext ? new AudioContext() : '';
+    var context = new AudioContext();
     //从元素创建媒体节点
     var media = context.createMediaElementSource(audio);
     //创建脚本处理节点
@@ -50,10 +58,26 @@ export class UIAudioMaterial extends UIMaterial {
       //获取输入和输出的数据缓冲区
       var input = e.inputBuffer.getChannelData(0);
       var output = e.outputBuffer.getChannelData(0);
+      console.log(e.outputBuffer.numberOfChannels)
       //将输入数缓冲复制到输出缓冲上
       for (var i = 0; i < input.length; i++)output[i] = input[i];
       // output [-1,1]
+      // console.log(output)
     };
+  }
+
+  play() {
+    console.log('play')
+    this._audioPausing = false;
+    this._audio && this._audio.play()
+    if (this._audio)
+      this._audio.muted = false;
+  }
+
+  pause() {
+    console.log('pause')
+    this._audioPausing = true;
+    this._audio && this._audio.pause()
   }
 
   shaderSource() {

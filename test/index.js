@@ -25,13 +25,13 @@ var obj = new DDD.Plane();
 // obj.setPosition(-.8, .8, 0)
 obj._material = new DDD.UIVideoMaterial({
   dynamic: true,
-  autoPlay: false,
+  autoPlay: true,
   video: "assets/vedio.mp4",
 });
 // render.addRenderObject(obj);
 
-var btn = document.getElementById('btn')
-btn.addEventListener('click', function () {
+var videoBtn = document.getElementById('video')
+videoBtn.addEventListener('click', function () {
   if (obj._material._videoPausing) {
     obj._material.play();
   } else {
@@ -107,7 +107,7 @@ box3._material = mapMaterial;
 
 var ball = new DDD.Ball();
 ball.scaling(0.2, 0.2, 0.2)
-ball.setPosition(.8, -.8, 0)
+// ball.setPosition(.8, -.8, 0)
 ball.rotateX(0.25);
 ball.rotateY(0.25);
 ball._material = colorMaterial;
@@ -157,24 +157,32 @@ box3.add(axis3);
 
 var obj3 = new DDD.Plane();
 obj3._material = new DDD.UIAudioMaterial({
-  audio: 'assets/SuperMario.mp3'
+  audio: 'assets/SuperMario.mp3',
 });
 obj3.scaling(0.2, 0.2, 1.0);
 obj3.setPosition(0, .8, 0)
 // obj1.lookAt(0, .8, 1)
 
+var audioBtn = document.getElementById('audio')
+audioBtn.addEventListener('click', function () {
+  if (obj3._material._audioPausing) {
+    obj3._material.play();
+  } else {
+    obj3._material.pause();
+  }
+})
 
 var animation = new DDD.Animation(true)
-animation._duration = 2000;
+animation._duration = 20000;
 animation._repeatCount = 40;
 animation._startOffset = 1000;
 animation._repeatMode = 'reverse'
-// animation._fillBefore = false;
-// animation._fillAfter = true;
+animation._fillBefore = false;
+animation._fillAfter = true;
 animation.applyTransformation = (interpolatedTime) => {
   // console.log('...', interpolatedTime * 2 - 1, interpolatedTime * 2 - 1)
   // obj.setPosition(interpolatedTime * 2 - 1, interpolatedTime * 2 - 1, 0)
-  obj.setPosition(0, 0, interpolatedTime * 2 - 1)
+  // obj.setPosition(0, 0, interpolatedTime * 2 - 1)
   // box3.followAt(obj)
 }
 
@@ -186,7 +194,11 @@ animation.registerAnimationStartListener((ani) => {
   // console.log('repeat...', ani._repeated)
 }).registerAnimationProgressListener((ani, progress) => {
   // console.log('animation', progress)
+  ball.setPosition(0, 0, (progress * 2 - 1.0) * 10)
+  // box3.followAt(ball)
 })
+
+box3.lookAt(0, 0, 0)
 
 animation.start()
 
@@ -212,6 +224,8 @@ ani
 
     box5.lookAt(progress * 2 - 1.0, ani.getValue() * 2.0 / 52.0 - 1, 2)
     // box5.followAt(pointer)
+
+
 
     center.add(pointer)
   });

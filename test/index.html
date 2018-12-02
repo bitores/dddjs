@@ -26,13 +26,36 @@
       /* left: 100px;
       top: 100px; */
     }
+
+    button {
+      position: fixed;
+
+      z-index: 1000;
+      padding: 1rem;
+      font-size: 16px;
+    }
+
+    #video {
+      top: 0;
+      left: 0;
+    }
+
+    #audio {
+      left: 0;
+      bottom: 0;
+    }
+
+    #pick {
+      top: 0;
+      right: 0;
+    }
   </style>
 </head>
 
 <body>
   <canvas id="my_Canvas"></canvas>
   <br />
-  <button id="btn">Pause/Play</button><button id="pick">PICK</button>
+  <button id="video">Video</button><button id="audio">Audio</button><button id="pick">截屏</button>
   <div id="convertedImg"></div>
 </body>
 <script>
