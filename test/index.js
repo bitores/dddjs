@@ -235,7 +235,7 @@ var animate = function (time) {
   render.renderScene(scene)
   // obj.rotateZ(-0.01)
   // box.rotateZ(-0.01)
-  // box2.rotateZ(-0.01)
+  box2.rotateY(-0.01)
   // box5.rotateZ(-0.01)
   ball.rotateZ(-0.01)
   // center.rotateZ(-0.1)
@@ -253,7 +253,8 @@ mycanvas.addEventListener('webgl', (e) => {
     box.lookAt(e.webglX, e.webglY, 2)
     box2.lookAt(e.webglX, e.webglY, 2)
     box3.lookAt(e.webglX, e.webglY, 2)
-    box5.lookAt(e.webglX, e.webglY, 2)
+    // box5.lookAt(e.webglX, e.webglY, 2)
+    box5.lookAt(box2.position.x, box2.position.y, box2.position.z)
   }
   // if(e.webglke)
   if (e.webglkeydown) {

@@ -162,9 +162,34 @@ export class Object3d extends Base {
       up = new Vec3(0, 1, 0);
 
     let zAxis = target.clone().sub(eye.x, eye.y, eye.z);
+    if (zAxis.length() === 0) {
+
+      // eye and target are in the same position
+
+      zAxis.z = 1;
+
+    }
     let NZ = zAxis.clone().normalize();
 
     let xAxis = up.clone().cross(NZ.x, NZ.y, NZ.z);
+    if (xAxis.length() === 0) {
+
+      // up and z are parallel
+
+      if (Math.abs(up.z) === 1) {
+
+        NZ.x += 0.0001;
+
+      } else {
+
+        NZ.z += 0.0001;
+
+      }
+
+      NZ = NZ.clone().normalize();
+      xAxis = up.clone().cross(NZ.x, NZ.y, NZ.z);
+
+    }
     let UX = xAxis.clone().normalize();
 
     let yAxis = NZ.clone().cross(UX.x, UX.y, UX.z);
