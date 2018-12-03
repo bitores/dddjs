@@ -26,7 +26,7 @@ export class UIAudioMaterial extends UIMaterial {
     this._audio.volume = 0.1;
     // this._audio.currentTime = 1000;
     audio.addEventListener('timeupdate', function (e) {
-      console.log('00', e.timeStamp)
+      // console.log('00', e.timeStamp)
     })
     audio.addEventListener("playing", function () {
       that._audioIsReady = true;
@@ -53,16 +53,38 @@ export class UIAudioMaterial extends UIMaterial {
     //连接：媒体节点→控制节点→输出源
     media.connect(processor);
     processor.connect(context.destination);
+
+    const audioCanvas: any = document.getElementById('audio_canvas');
+    if (audioCanvas) {
+      var width = audioCanvas.width, height = audioCanvas.height;
+      var g = audioCanvas.getContext("2d");
+    }
+
+    g.lineWidth = 1;
+    g.translate(0.5, height / 2 + 0.5);
+
+
+
     //控制节点的过程处理
     processor.onaudioprocess = function (e) {
       //获取输入和输出的数据缓冲区
       var input = e.inputBuffer.getChannelData(0);
       var output = e.outputBuffer.getChannelData(0);
-      console.log(e.outputBuffer.numberOfChannels)
+      // console.log(e.outputBuffer.numberOfChannels)
       //将输入数缓冲复制到输出缓冲上
       for (var i = 0; i < input.length; i++)output[i] = input[i];
       // output [-1,1]
       // console.log(output)
+
+
+      //将缓冲区的数据绘制到Canvas上
+      g.clearRect(-0.5, -height / 2 - 0.5, width, height);
+      g.beginPath();
+      for (var i = 0; i < width; i++)
+        g.lineTo(i, height / 2 * output[output.length * i / width | 0] * 5);
+      g.stroke();
+
+
     };
   }
 
