@@ -120,6 +120,7 @@ ball.scaling(0.2, 0.2, 0.2)
 // ball.setPosition(.8, -.8, 0)
 ball.rotateX(0.25);
 ball.rotateY(0.25);
+
 ball._material = colorMaterial;
 
 
@@ -262,6 +263,9 @@ var animate = function (time) {
   box2.rotateY(-0.01)
   // box5.rotateZ(-0.01)
   ball.rotateZ(-0.01)
+
+  // camera.rotateZ(.01);
+  // camera.translateZ(.01);
   // center.rotateZ(-0.1)
   animation.updateAnimation();
   ani.updateAnimation();
