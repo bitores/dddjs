@@ -22,6 +22,7 @@ export class UIVideoMaterial extends UIMaterial {
     let that = this;
 
     var video = document.createElement("video");
+    video.setAttribute('x5-video-player-type', "h5")
     this._video = video;
     this._video.volume = 0.1;
     video.muted = true;
