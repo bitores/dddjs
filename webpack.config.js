@@ -8,7 +8,7 @@ const cwd = process.cwd();
 // https://www.cnblogs.com/skylor/p/7008756.html 【webpack整理】
 module.exports = {
   mode: 'development', // development || production or webpack --mode developmen
-  entry: './test/index.js',
+  entry: './test/a.js',
   context: cwd,
   output: {
     filename: 'ddd.js',
@@ -35,7 +35,7 @@ module.exports = {
     new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin()
   ],
-  devtool: 'source-map',
+  // devtool: 'source-map',
   module: {
     rules: [{
       test: /\.ts?$/,
@@ -45,12 +45,13 @@ module.exports = {
   },
   // 先全局安装  webpack-dev-server -g and --save-dev
   devServer: {
-    contentBase: path.resolve(__dirname, "test"),
-    inline: false,
-    hot: true,
-    compress: false,
+    contentBase: path.join(process.cwd(), "dist"),
     open: true,
-    port: 9091
+    host: '0.0.0.0',
+    port: 9091,
+    inline: true,
+    hot: true,
+    compress: false
   },
   watchOptions: {
     ignored: [path.resolve(__dirname, './dist/**/*.*'), 'node_modules']
